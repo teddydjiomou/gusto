@@ -1,5 +1,13 @@
 <?php
-require_once 'BaseModel.php';
+require_once __DIR__ . '/BaseModel.php';
+
+require_once __DIR__ . '/../utils/phpmailer/src/Exception.php';
+require_once __DIR__ . '/../utils/phpmailer/src/PHPMailer.php';
+require_once __DIR__ . '/../utils/phpmailer/src/SMTP.php';
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
 
 class Utilisateur extends BaseModel {
 
@@ -21,7 +29,12 @@ class Utilisateur extends BaseModel {
     }
 
     public function getAllUsers() {
-        $stmt = $this->getAll("utilisateur");
+        $stmt = $this->personnalSelect(
+            "utilisateur",
+            "*",
+            "WHERE role != ?",
+            [0]
+        );
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
@@ -44,8 +57,10 @@ class Utilisateur extends BaseModel {
         $data['statu'] = $data['statu'] ?? 'Activer';
 
         // Génération automatique du mot de passe
-        $data['password'] = $data['password'] ?? $this->generateRestaurantCode($data['nom']);
+        $password = $data['password'] ?? $this->generateRestaurantCode($data['nom']);
+        $data['password'] = $password;
 
+        // Insertion en base
         $this->insert(
             "utilisateur",
             [
@@ -66,7 +81,7 @@ class Utilisateur extends BaseModel {
                 $data['email'],
                 $data['telephone'],
                 $data['login'],
-                password_hash($data['password'], PASSWORD_DEFAULT),
+                password_hash($password, PASSWORD_DEFAULT),
                 $data['id_etablissement'],
                 $data['role'],
                 date('Y-m-d'),
@@ -74,7 +89,40 @@ class Utilisateur extends BaseModel {
             ]
         );
 
-        return $this->pdo->lastInsertId();
+        $id = $this->pdo->lastInsertId();
+
+        // 🔔 Envoi du mail uniquement si rôle = 1 (Gérant)
+        if ((int)$data['role'] === 1) {
+            try {
+                $mail = new PHPMailer(true);
+                $mail->isSMTP();
+                $mail->Host       = 'smtp.gmail.com';   // à adapter
+                $mail->SMTPAuth   = true;
+                $mail->Username   = 'djiomounandavivienenderlin@gmail.com'; // à adapter
+                $mail->Password   = 'vvzm ioaa gckv vcze ';       // à adapter
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+                $mail->Port       = 587;
+
+                $mail->setFrom('djiomounandavivienenderlin@gmail.com', 'Gusto');
+                $mail->addAddress($data['email'], $data['nom']);
+
+                $mail->isHTML(true);
+                $mail->Subject = 'Information de connexion au compte Gérant';
+                $mail->Body    = "
+                    <h3>Bonjour {$data['nom']},</h3>
+                    <p>Votre compte Gérant a été créé avec succès.</p>
+                    <p><strong>Login :</strong> {$data['login']}<br>
+                       <strong>Mot de passe :</strong> {$password}</p>
+                    <p>Merci de vous connecter et de changer votre mot de passe dès la première connexion.</p>
+                ";
+
+                $mail->send();
+            } catch (Exception $e) {
+                error_log("Erreur envoi mail à {$data['email']} : " . $mail->ErrorInfo);
+            }
+        }
+
+        return $id;
     }
 
     public function update($id, $data) {
@@ -88,6 +136,7 @@ class Utilisateur extends BaseModel {
                 "login",
                 "id_etablissement",
                 "role"
+                
             ],
             [
                 $data['nom'],
@@ -109,15 +158,25 @@ class Utilisateur extends BaseModel {
         $e = $this->getById($id);
         if (!$e) return false;
 
-        $newStatu = ($e['statu'] === 'Activer') ? 'Bloquer' : 'Activer';
-
-        return $this->set(
-            "utilisateur",
-            ["statu"],
-            [$newStatu],
-            "WHERE id_utilisateur = ?",
-            [$id]
-        );
+        if ($e['statu'] === 'Activer') {
+            // Désactivation → on ne change QUE le statut
+            return $this->set(
+                "utilisateur",
+                ["statu"],
+                ["Bloquer"],
+                "WHERE id_utilisateur = ?",
+                [$id]
+            );
+        } else {
+            // Activation → on change le statut ET la date
+            return $this->set(
+                "utilisateur",
+                ["statu", "date_enreg"],
+                ["Activer", date('Y-m-d')],
+                "WHERE id_utilisateur = ?",
+                [$id]
+            );
+        }
     }
 
     /* =======================
@@ -133,4 +192,32 @@ class Utilisateur extends BaseModel {
         );
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+
+    /* =======================
+       Update login
+    ======================= */
+
+    public function updateLogin($id, $login, $password = null) {
+        if ($password !== null && $password !== '') {
+            return $this->set(
+                "utilisateur",
+                ["login", "password"],
+                [
+                    $login,
+                    password_hash($password, PASSWORD_DEFAULT)
+                ],
+                "WHERE id_utilisateur = ?",
+                [$id]
+            );
+        }
+
+        return $this->set(
+            "utilisateur",
+            ["login"],
+            [$login],
+            "WHERE id_utilisateur = ?",
+            [$id]
+        );
+    }
+
 }

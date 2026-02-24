@@ -112,7 +112,7 @@ $utilisateurs = $utilisateurModel->getAllUsers();
               <div class="topbar-divider d-sm-block"></div>
               <li class="nav-item">
                 <a class="nav-link" href="#" aria-haspopup="true" aria-expanded="false">
-                  <img src="" class="img-fluid logo rounded-circle" style="height: 40px; width: 40px;" alt="">
+                  <img src="./assets/img/avatar.png" class="img-fluid logo rounded-circle userLogin" style="height: 40px; width: 40px;" alt="">
                 </a>
               </li>
             </ul>
@@ -166,7 +166,7 @@ $utilisateurs = $utilisateurModel->getAllUsers();
                                   <td>{$e['adresse']}</td>
                                   <td>{$e['date_enreg']}</td>
                                   <td>$statutHTML</td>
-                              <td>
+                              <td width=150>
                                   <button class='btn btn-sm btn-primary edit-ets' data-id='{$e['id_etablissement']}'>Modifier</button>
                                   $btnStatut
                               </td>
@@ -196,7 +196,7 @@ $utilisateurs = $utilisateurModel->getAllUsers();
                           <th>Nom</th>
                           <th>Adresse</th>
                           <th>Téléphone</th>
-                          <th>Etablissement</th>
+                          <th>role</th>
                           <th>Date</th>
                           <th>Statu</th>
                           <th>Action</th>
@@ -204,6 +204,10 @@ $utilisateurs = $utilisateurModel->getAllUsers();
                       </thead>
                       <tbody>
                         <?php
+                            $roles = [
+                                0 => 'Admin',
+                                1 => 'Gérant'
+                            ];
                             foreach ($utilisateurs as $e) {
                               if ($e['statu'] === 'Activer') {
                                   $statutHTML = "<span class='statu-actif'>Activer</span>";
@@ -217,10 +221,10 @@ $utilisateurs = $utilisateurModel->getAllUsers();
                                       <td>{$e['nom']}</td>
                                       <td>{$e['adresse']}</td>
                                       <td>{$e['telephone']}</td>
-                                      <td>{$e['id_etablissement']}</td>
+                                      <td>{$roles[$e['role']]}</td>
                                       <td>{$e['date_enreg']}</td>
                                       <td>$statutHTML</td>
-                                      <td width=120>
+                                      <td width=150>
                                           <button class='btn btn-sm btn-primary edit-user' data-id='{$e['id_utilisateur']}'>Modifier</button>
                                           $btnStatut
                                       </td>
@@ -298,6 +302,34 @@ $utilisateurs = $utilisateurModel->getAllUsers();
       </div>
     </div>
 
+    <div class="modal fade modal-login" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title m-0 font-weight-bold" id="modalLabel"></h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">×</span>
+              </button>
+          </div>
+          <div class="modal-body">
+            <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>" method="post" role="form" id='userLoginForm' class="php-form">
+              <div class="row">
+                <div class="col-lg-12">
+                  <input type="text" name="login" class="form-control" id="modalLoginField">
+                </div>
+                <div class="col-lg-12">
+                  <input type="password" name="password" class="form-control password">
+                </div>
+                <div class="col-md-12 text-center">
+                  <button class="loading" type="submit"></button>
+                </div>
+              </div>
+            </form>  
+          </div>
+        </div>
+      </div>
+    </div>
+
 
     <div class="modal fade modal-ets" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
       <div class="modal-dialog modal-md" role="document">
@@ -315,7 +347,7 @@ $utilisateurs = $utilisateurModel->getAllUsers();
                   <div class="cam"></div>
                   <label for="imgInp" class="btn-img">Entrer le logo</label>             
                   <input type="file" name="logo" accept=".png, .jpg, .jpeg, .gif, .ico" id="imgInp">
-                </center>
+              </center>
               <div class="row">
                 <div class="col-lg-6">
                   <input type="text" name="nom" class="form-control nom" placeholder="Nom de l'etablissement" required>
@@ -445,19 +477,15 @@ $utilisateurs = $utilisateurModel->getAllUsers();
         const token = localStorage.getItem('token');
 
         if (token) {
-            // Décoder le token pour obtenir le payload
-            const payload = parseJwt(token);
+          const payload = parseJwt(token);
 
-            // Vérifier si le payload contient la clé 'user' (ou 'login') et l'afficher dans l'UI
-            if (payload && payload.user) {
-                document.getElementById('userLogin').textContent = payload.user;
-            } else {
-                // Si le token est présent mais malformé ou sans user, afficher "Invité"
-                document.getElementById('userLogin').textContent = 'admin';
-            }
+          if (payload && payload.data && payload.data.login) {
+              document.getElementById('userLogin').textContent = payload.data.login;
+          } else {
+              document.getElementById('userLogin').textContent = 'Invité';
+          }
         } else {
-            // Si aucun token, afficher "Invité"
-             window.location.href = './login.php';
+          window.location.href = './login.php';
         }
     </script>
 

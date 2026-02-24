@@ -1,5 +1,5 @@
 <?php
-require_once 'BaseModel.php';
+require_once __DIR__ . '/BaseModel.php';
 
 class Etablissement extends BaseModel {
 
@@ -70,15 +70,25 @@ class Etablissement extends BaseModel {
         $e = $this->getById($id);
         if (!$e) return false;
 
-        $newStatu = ($e['statu'] === 'Activer') ? 'Bloquer' : 'Activer';
-
-        return $this->set(
-            "etablissement",
-            ["statu"],
-            [$newStatu],
-            "WHERE id_etablissement = ?",
-            [$id]
-        );
+        if ($e['statu'] === 'Activer') {
+            // Désactivation → on ne change QUE le statut
+            return $this->set(
+                "etablissement",
+                ["statu"],
+                ["Bloquer"],
+                "WHERE id_etablissement = ?",
+                [$id]
+            );
+        } else {
+            // Activation → on change le statut ET la date
+            return $this->set(
+                "etablissement",
+                ["statu", "date_enreg"],
+                ["Activer", date('Y-m-d')],
+                "WHERE id_etablissement = ?",
+                [$id]
+            );
+        }
     }
 
 }

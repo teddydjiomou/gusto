@@ -84,6 +84,48 @@ $('.btn-user').on('click', function() {
     $('.modal-user').modal({backdrop: 'static', keyboard: false});
 });
 
+$('.userLogin').on('click', function() {
+    $('.modal-login .modal-title').text("Modifier mes informations");
+    $('.modal-login button[type=submit]').text("Modifier");
+    let login = $('#userLogin').text().trim();
+    $('#modalLoginField').val(login);
+    $('.modal-login').modal({backdrop:'static', keyboard:false});
+});
+
+$('#userLoginForm').on('submit', function(e){
+    e.preventDefault();
+    const form = this;
+    const submitBtn = $(form).find('button[type="submit"]');
+    submitBtn.addClass('show-loader').prop('disabled', true);
+
+    $.ajax({
+        url: 'http://gusto/api-commande/routes/updateLogin.php',
+        type: 'POST',
+        headers: {
+            'Authorization': 'Bearer ' + token // token actuel
+        },
+        data: $(this).serialize(),
+        success: function(res){
+            submitBtn.removeClass('show-loader').prop('disabled', false);
+            if(res.success){
+                alert(res.message);
+                localStorage.setItem('token', res.token);
+                document.getElementById('userLogin').textContent = parseJwt(res.token).data.login;
+
+                $('.modal-login').modal('hide');
+            } else {
+                alert(res.message);
+            }
+        },
+        error: function(){
+            submitBtn.removeClass('show-loader').prop('disabled', false);
+            alert('Erreur serveur');
+        }
+    });
+});
+
+
+
 // ⚡ Initialisation DataTable
 let editingRow;
 let ets = $('.info-ets').DataTable();

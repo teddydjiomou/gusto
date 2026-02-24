@@ -40,6 +40,7 @@ if ($method === 'POST') {
     exit;
 }
 
+
 // Méthodes non autorisées
 http_response_code(405);
 echo json_encode(['success'=>false,'message'=>'Méthode non autorisée']);

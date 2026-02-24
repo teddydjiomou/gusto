@@ -1,12 +1,16 @@
 <?php
 require_once __DIR__ . '/../models/Utilisateur.php';
-require_once __DIR__ . '/../core/Response.php';
 require_once __DIR__ . '/../core/Middleware.php';
 
 class UtilisateurController {
 
     private $model;
     private $user; // utilisateur connecté
+
+    private $roles = [
+        0 => 'Admin',
+        1 => 'Gérant'
+    ];
 
     public function __construct() {
         // 🔐 Vérifie le token
@@ -18,6 +22,7 @@ class UtilisateurController {
     // =========================
     // LISTE
     // =========================
+
     public function index() {
         header('Content-Type: application/json; charset=utf-8');
         $data = $this->model->getAllUsers();
@@ -37,9 +42,8 @@ class UtilisateurController {
             $rows[] = [
                 $e['nom'],
                 $e['adresse'],
-                $e['email'],
                 $e['telephone'],
-                $e['id_etablissement'],
+                $this->roles[$e['role']],
                 $e['date_enreg'],
                 $statutHTML,
                 "<button class='btn btn-sm btn-primary edit-user' data-id='{$e['id_utilisateur']}'>Modifier</button>
@@ -76,7 +80,7 @@ class UtilisateurController {
              $e['nom'],
              $e['adresse'],
              $e['telephone'],
-             $e['id_etablissement'],
+             $this->roles[$e['role']],
              $e['date_enreg'],
              "<span class='statu-actif'>Activer</span>",
             "<button class='btn btn-sm btn-primary edit-user' data-id='$id'>Modifier</button>
@@ -119,7 +123,7 @@ class UtilisateurController {
             $e['nom'],
             $e['adresse'],
             $e['telephone'],
-            $e['id_etablissement'],
+            $this->roles[$e['role']],
             $e['date_enreg'],
             $statutHTML,
             "<button class='btn btn-sm btn-primary edit-user' data-id='{$e['id_utilisateur']}'>Modifier</button>
@@ -153,7 +157,7 @@ class UtilisateurController {
             $e['nom'],
             $e['adresse'],
             $e['telephone'],
-            $e['id_etablissement'],
+            $this->roles[$e['role']],
             $e['date_enreg'],
             $statutHTML,
             "<button class='btn btn-sm btn-primary edit-user' data-id='{$e['id_utilisateur']}'>Modifier</button>
@@ -163,4 +167,5 @@ class UtilisateurController {
         echo json_encode(['success'=>true,'data'=>$row]);
         exit;
     }
+
 }

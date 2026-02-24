@@ -1,6 +1,5 @@
 <?php
 require_once __DIR__ . '/../models/BaseModel.php';
-require_once __DIR__ . '/../core/Response.php';
 require_once __DIR__ . '/../core/Auth.php';
 
 class AuthController extends BaseModel {
