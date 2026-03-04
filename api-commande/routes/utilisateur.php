@@ -24,10 +24,6 @@ if ($method === 'GET') {
     exit;
 }
 
-if ($method === 'PATCH' && isset($_GET['id'])) {
-    $controller->changeStatus($_GET['id']);
-    exit;
-}
 
 // POST : ajouter ou modifier
 if ($method === 'POST') {

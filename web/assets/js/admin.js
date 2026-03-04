@@ -92,6 +92,16 @@ $('.btn-app').on('click', function() {
     $('.modal-app').modal({backdrop: 'static', keyboard: false});
 });
 
+
+$('.btn-licence').on('click', function() {
+    $('#contrat')[0].reset();
+    $('#contrat input[name="id"]').val('');
+    $('.modal-licence .modal-title').text("Ajouter un contrat");
+    $('.modal-licence button[type=submit]').text("Ajouter");
+    $('.modal-licence').modal({backdrop: 'static', keyboard: false});
+}); 
+
+
 $('.userLogin').on('click', function() {
     $('.modal-login .modal-title').text("Modifier mes informations");
     $('.modal-login button[type=submit]').text("Modifier");
@@ -138,6 +148,7 @@ let editingRow;
 let ets = $('.info-ets').DataTable();
 let user = $('.info-user').DataTable();
 let app = $('.info-app').DataTable();
+let licence = $('.info-licence').DataTable();
 
 // Submit 
 
@@ -214,38 +225,6 @@ $(document).on('click', '.edit-ets', async function() {
     }
 });
 
-//change
-
-$(document).on('click', '.change-ets', async function () {
-    const id = $(this).data('id');
-    try {
-        const response = await fetch(
-            `http://gusto/api-commande/routes/etablissement.php?id=${id}`,
-            {
-                method: 'PATCH',
-                headers: {
-                    'Authorization': 'Bearer ' + token
-                }
-            }
-        );
-        const result = await response.json();
-        if (result.success && result.data) {
-            // Met à jour UNIQUEMENT la ligne concernée
-            ets.rows().every(function () {
-                const row = this.node();
-                if ($(row).find('.change-ets').data('id') == id) {
-                    this.data(result.data).draw(false);
-                }
-            });
-        } else {
-            alert(result.message || "Impossible de mettre à jour la ligne");
-        }
-    } catch (err) {
-        console.error(err);
-        alert("Erreur serveur : " + err.message);
-    }
-});
-
 /*-------------USER------------------------*/
 
 $('#user').on('submit', async function(e) {
@@ -312,38 +291,6 @@ $(document).on('click', '.edit-user', async function() {
             alert(result.message);
         }
     } catch(err) {
-        console.error(err);
-        alert("Erreur serveur : " + err.message);
-    }
-});
-
-//change
-
-$(document).on('click', '.change-user', async function () {
-    const id = $(this).data('id');
-    try {
-        const response = await fetch(
-            `http://gusto/api-commande/routes/utilisateur.php?id=${id}`,
-            {
-                method: 'PATCH',
-                headers: {
-                    'Authorization': 'Bearer ' + token
-                }
-            }
-        );
-        const result = await response.json();
-        if (result.success && result.data) {
-            // Met à jour UNIQUEMENT la ligne concernée
-            user.rows().every(function () {
-                const row = this.node();
-                if ($(row).find('.change-user').data('id') == id) {
-                    this.data(result.data).draw(false);
-                }
-            });
-        } else {
-            alert(result.message || "Impossible de mettre à jour la ligne");
-        }
-    } catch (err) {
         console.error(err);
         alert("Erreur serveur : " + err.message);
     }
@@ -454,5 +401,106 @@ $(document).on('click', '.drop-app', async function () {
         alert("Erreur serveur : " + err.message);
     }
 });
+
+//-----------------contrat--------------------
+
+$('#contrat').on('submit', async function(e) {
+    e.preventDefault();
+    const form = this;
+    const formData = new FormData(form);
+    const isEdit = formData.get('id') ? true : false;
+    const submitBtn = $(form).find('button[type="submit"]');
+    submitBtn.addClass('show-loader').prop('disabled', true);
+    try {
+        const response = await fetch('http://gusto/api-commande/routes/contrat.php', {
+            method: 'POST',
+            headers: { 'Authorization': 'Bearer ' + token },
+            body: formData
+        });
+        const result = await response.json();
+        submitBtn.prop('disabled', false).text(isEdit ? "Modifier" : "Ajouter");
+        if(result.success) {
+            submitBtn.removeClass('show-loader').prop('disabled', false);
+            $('.modal-licence').modal('hide');
+            form.reset();
+            if(isEdit && editingRow) {
+                // ⚡ Mettre à jour uniquement la ligne modifiée
+                editingRow.data(result.data).draw(false);
+                editingRow = null; // reset la référence
+            } else {
+                licence.row.add(result.data).draw(false);
+            }
+        } else {
+            alert(result.message || "Erreur lors de l'enregistrement");
+        }
+    } catch(err) {
+        console.error(err);
+        submitBtn.prop('disabled', false).text(isEdit ? "Modifier" : "Ajouter");
+        alert("Erreur serveur : " + err.message);
+    }
+});
+
+// Bouton Edit
+
+$(document).on('click', '.edit-contrat', async function() {
+    const licenceId = $(this).data('id');
+    editingRow = licence.row($(this).closest('tr'));
+    try {
+        const response = await fetch(`http://gusto/api-commande/routes/contrat.php?id=${licenceId}`, {
+            headers: { 'Authorization': 'Bearer ' + token }
+        });
+        const result = await response.json();
+        if(result.success) {
+            const e = result.data;
+            $('#contrat input[name="id"]').val(licenceId);
+            $('#contrat select[name="id_etablissement"]').val(e.id_etablissement);
+            $('#contrat input[name="date_validite"]').val(e.date_validite);
+            $('#contrat textarea[name="description"]').val(e.description);
+            
+            $('.modal-licence .modal-title').text("Modifier le contrat");
+            $('.modal-licence button[type=submit]').text("Modifier");
+            $('.modal-licence').modal({backdrop:'static', keyboard:false});
+        } else {
+            alert(result.message);
+        }
+    } catch(err) {
+        console.error(err);
+        alert("Erreur serveur : " + err.message);
+    }
+});
+
+
+//change
+
+$(document).on('click', '.change-contrat', async function () {
+    const id = $(this).data('id');
+    try {
+        const response = await fetch(
+            `http://gusto/api-commande/routes/contrat.php?id=${id}`,
+            {
+                method: 'PATCH',
+                headers: {
+                    'Authorization': 'Bearer ' + token
+                }
+            }
+        );
+        const result = await response.json();
+        if (result.success && result.data) {
+            // Met à jour UNIQUEMENT la ligne concernée
+            licence.rows().every(function () {
+                const row = this.node();
+                if ($(row).find('.change-contrat').data('id') == id) {
+                    this.data(result.data).draw(false);
+                }
+            });
+        } else {
+            alert(result.message || "Impossible de mettre à jour la ligne");
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Erreur serveur : " + err.message);
+    }
+});
+
 
 

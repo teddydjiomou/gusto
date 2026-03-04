@@ -29,25 +29,13 @@ class UtilisateurController {
         $rows = [];
         foreach ($data as $e) {
 
-            if ($e['statu'] === 'Activer') {
-                $statutHTML = "<span class='statu-actif'>Activer</span>";
-                $btnClass = 'danger';
-                $btnText  = 'Bloquer';
-            } else {
-                $statutHTML = "<span class='statu-bloque'>Bloquer</span>";
-                $btnClass = 'success';
-                $btnText  = 'Activer';
-            }
-
             $rows[] = [
                 $e['nom'],
                 $e['adresse'],
                 $e['telephone'],
                 $this->roles[$e['role']],
                 $e['date_enreg'],
-                $statutHTML,
-                "<button class='btn btn-sm btn-primary edit-user' data-id='{$e['id_utilisateur']}'>Modifier</button>
-                 <button class='btn btn-sm btn-$btnClass change-user' data-id='{$e['id_utilisateur']}'>$btnText</button>"
+                "<button class='btn btn-sm btn-primary edit-user' data-id='{$e['id_utilisateur']}'>Modifier</button>"
             ];
         }
 
@@ -82,9 +70,7 @@ class UtilisateurController {
              $e['telephone'],
              $this->roles[$e['role']],
              $e['date_enreg'],
-             "<span class='statu-actif'>Activer</span>",
-            "<button class='btn btn-sm btn-primary edit-user' data-id='$id'>Modifier</button>
-             <button class='btn btn-sm btn-danger change-user' data-id='$id'>Bloquer</button>"
+            "<button class='btn btn-sm btn-primary edit-user' data-id='$id'>Modifier</button>"
         ];
 
         echo json_encode(['success'=>true,'data'=>$row]);
@@ -107,17 +93,6 @@ class UtilisateurController {
         // Relecture
         $e = $this->model->getById($id);
 
-        // Statut + boutons
-        if ($e['statu'] === 'Activer') {
-            $statutHTML = "<span class='statu-actif'>Activer</span>";
-            $btnClass = 'danger';
-            $btnText  = 'Bloquer';
-        } else {
-            $statutHTML = "<span class='statu-bloque'>Bloquer</span>";
-            $btnClass = 'success';
-            $btnText  = 'Activer';
-        }
-
         // Ligne tableau
         $row = [
             $e['nom'],
@@ -125,43 +100,7 @@ class UtilisateurController {
             $e['telephone'],
             $this->roles[$e['role']],
             $e['date_enreg'],
-            $statutHTML,
-            "<button class='btn btn-sm btn-primary edit-user' data-id='{$e['id_utilisateur']}'>Modifier</button>
-            <button class='btn btn-sm btn-$btnClass change-user' data-id='{$e['id_utilisateur']}'>$btnText</button>"
-        ];
-
-        echo json_encode(['success'=>true,'data'=>$row]);
-        exit;
-    }
-
-    // =========================
-    // CHANGER STATUT
-    // =========================
-    public function changeStatus($id) {
-        header('Content-Type: application/json; charset=utf-8');
-
-        $this->model->toggleStatut($id);
-        $e = $this->model->getById($id);
-
-        if ($e['statu'] === 'Activer') {
-            $statutHTML = "<span class='statu-actif'>Activer</span>";
-            $btnClass = 'danger';
-            $btnText  = 'Bloquer';
-        } else {
-            $statutHTML = "<span class='statu-bloque'>Bloquer</span>";
-            $btnClass = 'success';
-            $btnText  = 'Activer';
-        }
-
-        $row = [
-            $e['nom'],
-            $e['adresse'],
-            $e['telephone'],
-            $this->roles[$e['role']],
-            $e['date_enreg'],
-            $statutHTML,
-            "<button class='btn btn-sm btn-primary edit-user' data-id='{$e['id_utilisateur']}'>Modifier</button>
-            <button class='btn btn-sm btn-$btnClass change-user' data-id='{$e['id_utilisateur']}'>$btnText</button>"
+            "<button class='btn btn-sm btn-primary edit-user' data-id='{$e['id_utilisateur']}'>Modifier</button>"
         ];
 
         echo json_encode(['success'=>true,'data'=>$row]);

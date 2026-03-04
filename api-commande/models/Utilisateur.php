@@ -54,8 +54,6 @@ class Utilisateur extends BaseModel {
 
     public function create($data) {
 
-        $data['statu'] = $data['statu'] ?? 'Activer';
-
         // Génération automatique du mot de passe
         $password = $data['password'] ?? $this->generateRestaurantCode($data['nom']);
         $data['password'] = $password;
@@ -73,7 +71,6 @@ class Utilisateur extends BaseModel {
                 "id_etablissement",
                 "role",
                 "date_enreg",
-                "statu"
             ],
             [
                 $data['nom'],
@@ -85,7 +82,6 @@ class Utilisateur extends BaseModel {
                 $data['id_etablissement'],
                 $data['role'],
                 date('Y-m-d'),
-                $data['statu']
             ]
         );
 
@@ -149,34 +145,7 @@ class Utilisateur extends BaseModel {
             [$id]
         );
     }
-
-    //change statut
-
-    public function toggleStatut($id) {
-        $e = $this->getById($id);
-        if (!$e) return false;
-
-        if ($e['statu'] === 'Activer') {
-            // Désactivation → on ne change QUE le statut
-            return $this->set(
-                "utilisateur",
-                ["statu"],
-                ["Bloquer"],
-                "WHERE id_utilisateur = ?",
-                [$id]
-            );
-        } else {
-            // Activation → on change le statut ET la date
-            return $this->set(
-                "utilisateur",
-                ["statu", "date_enreg"],
-                ["Activer", date('Y-m-d')],
-                "WHERE id_utilisateur = ?",
-                [$id]
-            );
-        }
-    }
-
+    
     /* =======================
        AUTH
     ======================= */

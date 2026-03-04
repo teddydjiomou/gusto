@@ -70,14 +70,16 @@
 
         <section id="presentation" class="menu-section">
             <h2>Présentation du système</h2>
-            
-
+            <span>Gusto est une plateforme digitale conçue pour simplifier la gestion des commandes dans un etablissement (restaurant,bar, snack...). Grâce à ce systeme bien definit, la gestion devient fluide, securisé et intelligente, tout en permettant une prise de décision rapide grâce à des informations claires et accessibles en temps réel.</span>.
         </section>
 
         <!-- Menu Section -->
        <section id="foctionnement" class="menu-section">
             <h2>Comment ça marche</h2>
-            
+            <h3>chez le client</h3>
+            <span>Le client Scanne le Qcode sur sa table, accede au menu digitale via une interface web sur son mobile et passe la commande</span>
+            <h3>chez les membre de l'equipage</h3>
+            <span>chaque membre(seveur, gerant) disposera d'un equipement fourni par l'entreprise  qui l'aidera dans l'accomplissement de ses taches</span>
 
         </section>
 

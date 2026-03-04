@@ -38,8 +38,7 @@ class Database {
                         telephone VARCHAR(50) NOT NULL,
                         site_web VARCHAR(50) NOT NULL,
                         description TEXT NOT NULL,
-                        date_enreg DATE,
-                        statu varchar(20)
+                        date_enreg DATE
                     )",
 
                 "appareil" => "
@@ -63,6 +62,8 @@ class Database {
                         id_etablissement INT,
                         code VARCHAR(50) NOT NULL,
                         date_validite DATE,
+                        description TEXT,
+                        statu VARCHAR(20) NOT NULL,
                         FOREIGN KEY (id_etablissement) REFERENCES etablissement(id_etablissement)
                         ON DELETE CASCADE ON UPDATE CASCADE
                     )",
@@ -79,15 +80,16 @@ class Database {
                         id_etablissement INT,
                         role INT,
                         date_enreg DATE,
-                        statu varchar(20),
                         FOREIGN KEY (id_etablissement) REFERENCES etablissement(id_etablissement)
                         ON DELETE CASCADE ON UPDATE CASCADE
                     )",
+                    
+                //admin
 
                 "tables_restaurant" => "
                     CREATE TABLE IF NOT EXISTS tables_restaurant (
                         id_table INT AUTO_INCREMENT PRIMARY KEY,
-                        id_unique_table VARCHAR(10) NOT NULL,
+                        Nom VARCHAR(10) NOT NULL,
                         id_etablissement INT,
                         id_utilisateur INT,
                         FOREIGN KEY (id_utilisateur) REFERENCES utilisateur(id_utilisateur)
@@ -114,13 +116,14 @@ class Database {
                         idcategorie INT,
                         prix INT,
                         description TEXT,
+                        statu VARCHAR(50),
                         FOREIGN KEY (id_etablissement) REFERENCES etablissement(id_etablissement)
                         ON DELETE CASCADE ON UPDATE CASCADE,
                         FOREIGN KEY (idcategorie) REFERENCES categorie(idcategorie)
                         ON DELETE SET NULL
                     )",
 
-                    //lorsque le serveur installe le clien il ouvre la commande ces element s'enregistrent dans la table service sauf date de fermeture. lui meme apres que le service soit fini il ferme le service et la date de fermeture marque la fin d'un servce. lorsque le clien commande ca verifie le dernier id  de la table service si ca corresond avec l'id de sa table si il ya pas la date de fermeture il peu comande si y'en a ca bloc ca bloque ou alors ca alerte (serveur gerant) pour voir si c'est pas un individu qui derange ou pas
+                    //lorsque le serveur installe le client il ouvre le service sur la table toutes les commandes s'enregistrent dans l'objet service sauf date de fermeture. lui meme apres que le service soit fini il ferme le service et la date de fermeture marque la fin d'un servce. lorsque le client commande ca verifie le dernier id  de la table service si ca corresond avec l'id de sa table si il ya pas la date de fermeture il peu comande si y'en a ca bloque ou ca met une erreurdisant que que la table est en cours s'utilisation
 
                 "service" => "
                     CREATE TABLE IF NOT EXISTS service (
@@ -133,14 +136,30 @@ class Database {
                         ON DELETE CASCADE ON UPDATE CASCADE
                     )",
 
+                "item_commande" => "
+                    CREATE TABLE IF NOT EXISTS item_commande (
+                        id_item_commande INT AUTO_INCREMENT PRIMARY KEY,
+                        id_etablissement INT,
+                        id_table INT,
+                        commande VARCHAR(50) NOT NULL,
+                        quantite VARCHAR(2) NOT NULL,
+                        prix VARCHAR(10) NOT NULL,
+                        montant VARCHAR(20) NOT NULL,
+                        FOREIGN KEY (id_table) REFERENCES tables_restaurant(id_table)
+                        ON DELETE CASCADE ON UPDATE CASCADE,
+                        FOREIGN KEY (id_etablissement) REFERENCES etablissement(id_etablissement)
+                        ON DELETE CASCADE ON UPDATE CASCADE
+                    )",
+
+
                 "commande" => "
                     CREATE TABLE IF NOT EXISTS commande (
                         id_commande INT AUTO_INCREMENT PRIMARY KEY,
                         id_etablissement INT,
+                        id_table INT,
                         commande TEXT,
-                        montant_a_payer VARCHAR(50) NOT NULL,
-                        date_jour DATETIME,
-                        etat VARCHAR(50) NOT NULL,
+                        FOREIGN KEY (id_table) REFERENCES tables_restaurant(id_table)
+                        ON DELETE CASCADE ON UPDATE CASCADE,
                         FOREIGN KEY (id_etablissement) REFERENCES etablissement(id_etablissement)
                         ON DELETE CASCADE ON UPDATE CASCADE
                     )"
@@ -160,10 +179,10 @@ class Database {
                 ");
 
                 $stmt->execute([
-                    ':nom' => '',
-                    ':adresse' => '',
-                    ':email' => '',
-                    ':telephone' => '',
+                    ':nom' => 'Djiomou Vivien',
+                    ':adresse' => 'Yaoundé-Cameroun',
+                    ':email' => 'admin@gmail.com',
+                    ':telephone' => '680468901',
                     ':login' => 'admin',
                     ':id_etablissement' => 0,
                     ':password' => password_hash("admin", PASSWORD_DEFAULT),

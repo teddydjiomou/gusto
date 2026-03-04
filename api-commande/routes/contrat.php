@@ -1,9 +1,9 @@
 <?php
-require_once __DIR__ . '/../controllers/EtablissementController.php';
+require_once __DIR__ . '/../controllers/ContratController.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
-$controller = new EtablissementController();
+$controller = new ContratController();
 $method = $_SERVER['REQUEST_METHOD'];
 $headers = getallheaders();
 
@@ -14,13 +14,18 @@ if (!isset($headers['Authorization'])) {
     exit;
 }
 
-// GET : lister ou récupérer un établissement
+// GET : lister ou récupérer 
 if ($method === 'GET') {
     if (isset($_GET['id'])) {
-        $controller->show($_GET['id']); //S’il y a un ID → afficher un établissement
+        $controller->show($_GET['id']); //S’il y a un ID → afficher
     } else {
-        $controller->index(); //Sinon → afficher tous les établissements
+        $controller->index(); //Sinon → afficher tous 
     }
+    exit;
+}
+
+if ($method === 'PATCH' && isset($_GET['id'])) {
+    $controller->changeStatus($_GET['id']);
     exit;
 }
 

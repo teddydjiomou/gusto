@@ -445,16 +445,16 @@ a:hover{
    MENU SECTION
 ============================ */
 .menu-section {
-    padding: 4rem 1rem;
-    max-width: 1280px;
-    margin: auto;
-    text-align: center;
+    padding: 2rem;
+    max-width: 1280px;  
+    text-align: justify; 
 }
 
 .menu-section h2 {
     font-size: 2rem;
     font-weight: 700;
     margin-bottom: 1rem;
+    text-align: center;
 }
 
 .menu-section p {
@@ -965,12 +965,12 @@ button.loading.show-loader::after {
   font-size: 17px;
 }
 
-.statu-actif {
+.statu-valide {
     color: #28a745; /* vert bootstrap */
 }
 
 /* Statut Bloquer */
-.statu-bloque {
+.statu-expire {
     color: #dc3545; /* rouge bootstrap */
 }
 

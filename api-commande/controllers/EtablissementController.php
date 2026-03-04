@@ -32,25 +32,14 @@ class EtablissementController {
                 }
             }
 
-            if ($e['statu'] === 'Activer') {
-                $statutHTML = "<span class='statu-actif'>Activer</span>";
-                $btnClass = 'danger';
-                $btnText  = 'Bloquer';
-            } else {
-                $statutHTML = "<span class='statu-bloque'>Bloquer</span>";
-                $btnClass = 'success';
-                $btnText  = 'Activer';
-            }
-
             $rows[] = [
                 $logoHTML,
                 $e['nom'],
                 $e['type'],
                 $e['adresse'],
                 $e['date_enreg'],
-                $statutHTML,
-                "<button class='btn btn-sm btn-primary edit-ets' data-id='{$e['id_etablissement']}'>Modifier</button>
-                 <button class='btn btn-sm btn-$btnClass change-ets' data-id='{$e['id_etablissement']}'>$btnText</button>"
+
+                "<button class='btn btn-sm btn-primary edit-ets' data-id='{$e['id_etablissement']}'>Modifier</button>"
             ];
         }
 
@@ -91,9 +80,7 @@ class EtablissementController {
             $e['type'],
             $e['adresse'],
             $e['date_enreg'],
-            "<span class='statu-actif'>Activer</span>",
-            "<button class='btn btn-sm btn-primary edit-ets' data-id='$id'>Modifier</button>
-             <button class='btn btn-sm btn-danger change-ets' data-id='$id'>Bloquer</button>"
+            "<button class='btn btn-sm btn-primary edit-ets' data-id='$id'>Modifier</button>"
         ];
 
         echo json_encode(['success'=>true,'data'=>$row]);
@@ -130,17 +117,6 @@ class EtablissementController {
         // Relecture
         $e = $this->etablissement->getById($id);
 
-        // Statut + boutons
-        if ($e['statu'] === 'Activer') {
-            $statutHTML = "<span class='statu-actif'>Activer</span>";
-            $btnClass = 'danger';
-            $btnText  = 'Bloquer';
-        } else {
-            $statutHTML = "<span class='statu-bloque'>Bloquer</span>";
-            $btnClass = 'success';
-            $btnText  = 'Activer';
-        }
-
         // Ligne tableau
         $row = [
             implode(' ', array_map(
@@ -151,44 +127,7 @@ class EtablissementController {
             $e['type'],
             $e['adresse'],
             $e['date_enreg'],
-            $statutHTML,
-            "<button class='btn btn-sm btn-primary edit-ets' data-id='{$e['id_etablissement']}'>Modifier</button>
-             <button class='btn btn-sm btn-$btnClass change-ets' data-id='{$e['id_etablissement']}'>$btnText</button>"
-        ];
-
-        echo json_encode(['success'=>true,'data'=>$row]);
-        exit;
-    }
-
-
-    // =========================
-    // CHANGER STATUT
-    // =========================
-    public function changeStatus($id) {
-        header('Content-Type: application/json; charset=utf-8');
-
-        $this->etablissement->toggleStatut($id);
-        $e = $this->etablissement->getById($id);
-
-        if ($e['statu'] === 'Activer') {
-            $statutHTML = "<span class='statu-actif'>Activer</span>";
-            $btnClass = 'danger';
-            $btnText  = 'Bloquer';
-        } else {
-            $statutHTML = "<span class='statu-bloque'>Bloquer</span>";
-            $btnClass = 'success';
-            $btnText  = 'Activer';
-        }
-
-        $row = [
-            implode(' ', array_map(fn($l)=>"<img src='$l' width='40'>", json_decode($e['logo'], true))),
-            $e['nom'],
-            $e['type'],
-            $e['adresse'],
-            $e['date_enreg'],
-            $statutHTML,
-            "<button class='btn btn-sm btn-primary edit-ets' data-id='{$e['id_etablissement']}'>Modifier</button>
-             <button class='btn btn-sm btn-$btnClass change-ets' data-id='{$e['id_etablissement']}'>$btnText</button>"
+            "<button class='btn btn-sm btn-primary edit-ets' data-id='{$e['id_etablissement']}'>Modifier</button>"
         ];
 
         echo json_encode(['success'=>true,'data'=>$row]);

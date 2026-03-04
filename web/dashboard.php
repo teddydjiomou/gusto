@@ -1,15 +1,19 @@
 <?php
-require_once './../api-commande/models/Etablissement.php';
-$etablissementModel = new Etablissement();
-$etablissements = $etablissementModel->getAllEtablissements();
+  require_once './../api-commande/models/Etablissement.php';
+  $etablissementModel = new Etablissement();
+  $etablissements = $etablissementModel->getAllEtablissements();
 
-require_once './../api-commande/models/Utilisateur.php';
-$utilisateurModel = new utilisateur();
-$utilisateurs = $utilisateurModel->getAllUsers();
+  require_once './../api-commande/models/Utilisateur.php';
+  $utilisateurModel = new utilisateur();
+  $utilisateurs = $utilisateurModel->getAllUsers();
 
-require_once './../api-commande/models/Appareil.php';
-$appareilModel = new appareil();
-$appareils = $appareilModel->getAllAppareils();
+  require_once './../api-commande/models/Appareil.php';
+  $appareilModel = new appareil();
+  $appareils = $appareilModel->getAllAppareils();
+
+  require_once './../api-commande/models/Contrat.php';
+  $contratModel = new contrat();
+  $contrats = $contratModel->getAllContrats();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -141,7 +145,6 @@ $appareils = $appareilModel->getAllAppareils();
                               <th>Type</th>
                               <th>Adresse</th>
                               <th>Date</th>
-                              <th>Statu</th>
                               <th>Action</th>
                           </tr>
                       </thead>
@@ -155,13 +158,6 @@ $appareils = $appareilModel->getAllAppareils();
                                       $logoHTML .= "<img src='$l' width='50'> ";
                                   }
                               }
-                              if ($e['statu'] === 'Activer') {
-                                  $statutHTML = "<span class='statu-actif'>Activer</span>";
-                                  $btnStatut  = "<button class='btn btn-sm btn-danger change-ets' data-id='{$e['id_etablissement']}'>Bloquer</button>";
-                              } else {
-                                  $statutHTML = "<span class='statu-bloque'>Bloquer</span>";
-                                  $btnStatut  = "<button class='btn btn-sm btn-success change-ets' data-id='{$e['id_etablissement']}'>Activer</button>";
-                              }
                               echo "
                               <tr>
                                   <td>$logoHTML</td>
@@ -169,10 +165,8 @@ $appareils = $appareilModel->getAllAppareils();
                                   <td>{$e['type']}</td>
                                   <td>{$e['adresse']}</td>
                                   <td>{$e['date_enreg']}</td>
-                                  <td>$statutHTML</td>
-                              <td width=150>
+                              <td>
                                   <button class='btn btn-sm btn-primary edit-ets' data-id='{$e['id_etablissement']}'>Modifier</button>
-                                  $btnStatut
                               </td>
                             </tr>";
                           }
@@ -202,7 +196,6 @@ $appareils = $appareilModel->getAllAppareils();
                           <th>Téléphone</th>
                           <th>role</th>
                           <th>Date</th>
-                          <th>Statu</th>
                           <th>Action</th>
                         </tr>
                       </thead>
@@ -213,13 +206,6 @@ $appareils = $appareilModel->getAllAppareils();
                                 1 => 'Gérant'
                             ];
                             foreach ($utilisateurs as $e) {
-                              if ($e['statu'] === 'Activer') {
-                                  $statutHTML = "<span class='statu-actif'>Activer</span>";
-                                  $btnStatut  = "<button class='btn btn-sm btn-danger change-user' data-id='{$e['id_utilisateur']}'>Bloquer</button>";
-                              } else {
-                                  $statutHTML = "<span class='statu-bloque'>Bloquer</span>";
-                                  $btnStatut  = "<button class='btn btn-sm btn-success change-user' data-id='{$e['id_utilisateur']}'>Activer</button>";
-                              }
                               echo "
                                   <tr>
                                       <td>{$e['nom']}</td>
@@ -227,10 +213,8 @@ $appareils = $appareilModel->getAllAppareils();
                                       <td>{$e['telephone']}</td>
                                       <td>{$roles[$e['role']]}</td>
                                       <td>{$e['date_enreg']}</td>
-                                      <td>$statutHTML</td>
-                                      <td width=100>
+                                      <td>
                                           <button class='btn btn-sm btn-primary edit-user' data-id='{$e['id_utilisateur']}'>Modifier</button>
-                                          $btnStatut
                                       </td>
                                   </tr>
                               ";
@@ -300,13 +284,34 @@ $appareils = $appareilModel->getAllAppareils();
                     <table class="table table-bordered dataTable info-licence" width="100%" cellspacing="0">
                       <thead class="text-light">
                         <tr>
-                          <th>Etablissement</th>
                           <th>Code licence</th>
                           <th>Date de validité</th>
+                          <th>statu</th>
                           <th>Action</th>
                         </tr>
                       </thead>
                       <tbody>
+                         <?php
+                            foreach ($contrats as $e) {
+                              if ($e['statu'] === 'Valide') {
+                                  $statutHTML = "<span class='statu-valide'>Valide</span>";
+                                  $btnStatut  = "<button class='btn btn-sm btn-danger change-contrat' data-id='{$e['id_contrat']}'>Bloquer</button>";
+                              } else {
+                                  $statutHTML = "<span class='statu-expire'>Expiré</span>";
+                                  $btnStatut  = "<button class='btn btn-sm btn-success change-contrat' data-id='{$e['id_contrat']}'>Renouveler</button>";
+                              }
+                              echo "
+                              <tr>
+                                  <td>{$e['code']}</td>
+                                  <td>{$e['date_validite']}</td>
+                                  <td>$statutHTML</td>
+                              <td width=100>
+                                  <button class='btn btn-sm btn-primary edit-contrat' data-id='{$e['id_contrat']}'>Modifier</button>
+                                  $btnStatut
+                              </td>
+                            </tr>";
+                          }
+                        ?>  
                        
                       </tbody>
                     </table>
@@ -486,7 +491,7 @@ $appareils = $appareilModel->getAllAppareils();
                   <input type="date" class="form-control" name="date_fin_support">
                </div>
                 <div class="col-lg-12 mb-4">
-                  <select name="id_etablissement" class="bg-white w-100 h-100">
+                  <select name="id_etablissement" class="bg-white w-100 h-100" required>
                     <option value="" disabled selected>Choisir l'etablissement destinataire</option>
                     <?php
                       foreach ($etablissements as $e) {
@@ -506,6 +511,45 @@ $appareils = $appareilModel->getAllAppareils();
         </div>
       </div>
     </div>
+
+    <div class="modal fade modal-licence" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title m-0 font-weight-bold" id="modalLabel"></h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">×</span>
+              </button>
+          </div>
+          <div class="modal-body">
+            <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>" method="post" role="form" id='contrat' class="php-form">
+              <div class="row">
+                <div class="col-lg-12 mb-4">
+                  <select name="id_etablissement" class="bg-white w-100 h-100" required>
+                    <option value="" disabled selected>Choisir l'etablissement destinataire</option>
+                    <?php
+                      foreach ($etablissements as $e) {
+                        echo '<option value="'.$e['id_etablissement'].'">'.$e['nom'].'</option>';
+                      }
+                    ?> 
+                  </select>
+                </div>
+                <div class="col-lg-12">
+                  <small class="ml-3">Date d'expiration</small>
+                  <input type="date" name="date_validite" class="form-control" required>
+                </div>
+                <textarea name="description" class="form-control" rows="4" placeholder="Ecrivez quelques choses"></textarea>
+                <input type="hidden" name="id">
+                <div class="col-md-12 text-center">
+                  <button class="loading" type="submit"></button>
+                </div>
+              </div>
+            </form>  
+          </div>
+        </div>
+      </div>
+    </div>
+
 
 
    
