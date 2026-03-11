@@ -5,12 +5,10 @@ require_once __DIR__ . '/../core/Middleware.php';
 class CategorieController {
 
     private $categorie;
+    private $user; // infos JWT
 
     public function __construct() {
-         if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-        Middleware::checkAuth();
+        $this->user = Middleware::checkAuth(); // récupère le token décodé
         $this->categorie = new Categorie();
         error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING);
     }
@@ -21,7 +19,7 @@ class CategorieController {
     public function index() {
         header('Content-Type: application/json; charset=utf-8');
 
-        $id_etablissement = $_SESSION['id_etablissement'];
+        $id_etablissement = $this->user->id_etablissement;
 
         $data = $this->categorie->getCategoriesByEtablissement($id_etablissement);
         $rows = [];
@@ -30,7 +28,7 @@ class CategorieController {
             $rows[] = [
                 $e['libelle'],
                 "<button class='btn btn-sm btn-primary edit-categorie' data-id='{$e['id_categorie']}'>Modifier</button>
-                <button class='btn btn-sm btn-danger drop-categorie' data-id='{$e['id_categorie']}'>Supprimer</button>"
+                 <button class='btn btn-sm btn-danger drop-categorie' data-id='{$e['id_categorie']}'>Supprimer</button>"
             ];
         }
 
@@ -38,27 +36,30 @@ class CategorieController {
         exit;
     }
 
+    // =========================
+    // AFFICHER UNE CATEGORIE
+    // =========================
     public function show($id) {
         header('Content-Type: application/json; charset=utf-8');
 
-        $id_etablissement = $_SESSION['id_etablissement'];
-
+        $id_etablissement = $this->user->id_etablissement;
         $e = $this->categorie->getByIdAndEtablissement($id, $id_etablissement);
+
         if ($e) {
-            echo json_encode(['success'=>true, 'data'=>$e]);
+            echo json_encode(['success'=>true,'data'=>$e]);
         } else {
-            echo json_encode(['success'=>false, 'message'=>'Categorie introuvable']);
+            echo json_encode(['success'=>false,'message'=>'Categorie introuvable']);
         }
         exit;
     }
 
     // =========================
-    // AJOUT
+    // AJOUTER UNE CATEGORIE
     // =========================
     public function store($data) {
         header('Content-Type: application/json; charset=utf-8');
 
-        $data['id_etablissement'] = $_SESSION['id_etablissement'];
+        $data['id_etablissement'] = $this->user->id_etablissement;
 
         $id = $this->categorie->create($data);
         $e  = $this->categorie->getByIdAndEtablissement($id, $data['id_etablissement']);
@@ -66,7 +67,7 @@ class CategorieController {
         $row = [
             $e['libelle'],
             "<button class='btn btn-sm btn-primary edit-categorie' data-id='{$e['id_categorie']}'>Modifier</button>
-            <button class='btn btn-sm btn-danger drop-categorie' data-id='{$e['id_categorie']}'>Supprimer</button>"
+             <button class='btn btn-sm btn-danger drop-categorie' data-id='{$e['id_categorie']}'>Supprimer</button>"
         ];
 
         echo json_encode(['success'=>true,'data'=>$row]);
@@ -74,14 +75,14 @@ class CategorieController {
     }
 
     // =========================
-    // MODIFIER
+    // MODIFIER UNE CATEGORIE
     // =========================
     public function update($id, $data) {
         header('Content-Type: application/json; charset=utf-8');
 
-        $id_etablissement = $_SESSION['id_etablissement'];
-
+        $id_etablissement = $this->user->id_etablissement;
         $e = $this->categorie->getByIdAndEtablissement($id, $id_etablissement);
+
         if (!$e) {
             echo json_encode(['success'=>false,'message'=>'Categorie introuvable']);
             exit;
@@ -94,7 +95,7 @@ class CategorieController {
         $row = [
             $e['libelle'],
             "<button class='btn btn-sm btn-primary edit-categorie' data-id='{$e['id_categorie']}'>Modifier</button>
-            <button class='btn btn-sm btn-danger drop-categorie' data-id='{$e['id_categorie']}'>Supprimer</button>"
+             <button class='btn btn-sm btn-danger drop-categorie' data-id='{$e['id_categorie']}'>Supprimer</button>"
         ];
 
         echo json_encode(['success'=>true,'data'=>$row]);
@@ -102,30 +103,23 @@ class CategorieController {
     }
 
     // =========================
-    // SUPPRIMER
+    // SUPPRIMER UNE CATEGORIE
     // =========================
     public function delete($id) {
         header('Content-Type: application/json; charset=utf-8');
 
-        $id_etablissement = $_SESSION['id_etablissement'];
-
+        $id_etablissement = $this->user->id_etablissement;
         $e = $this->categorie->getByIdAndEtablissement($id, $id_etablissement);
+
         if (!$e) {
-            echo json_encode([
-                'success' => false,
-                'message' => 'Categorie introuvable'
-            ]);
+            echo json_encode(['success'=>false,'message'=>'Categorie introuvable']);
             exit;
         }
 
         $this->categorie->delete($id, $id_etablissement);
 
-        echo json_encode([
-            'success' => true,
-            'message' => 'Categorie supprimée'
-        ]);
+        echo json_encode(['success'=>true,'message'=>'Categorie supprimée']);
         exit;
     }
-
 }
 ?>

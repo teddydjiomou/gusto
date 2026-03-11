@@ -5,12 +5,10 @@ require_once __DIR__ . '/../core/Middleware.php';
 class TableController {
 
     private $table;
+    private $user; // infos du JWT
 
     public function __construct() {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-        Middleware::checkAuth();
+        $this->user = Middleware::checkAuth(); // récupère le token décodé
         $this->table = new Table();
         error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING);
     }
@@ -21,14 +19,14 @@ class TableController {
     public function index() {
         header('Content-Type: application/json; charset=utf-8');
 
-        $id_etablissement = $_SESSION['id_etablissement'];
+        $id_etablissement = $this->user->id_etablissement;
 
         $data = $this->table->getTablesByEtablissement($id_etablissement);
         $rows = [];
 
         foreach ($data as $e) {
             $rows[] = [
-                $e['Nom'],
+                $e['nom'],
                 "<button class='btn btn-sm btn-primary edit-table' data-id='{$e['id_table']}'>Modifier</button>
                 <button class='btn btn-sm btn-danger drop-table' data-id='{$e['id_table']}'>Supprimer</button>"
             ];
@@ -44,7 +42,7 @@ class TableController {
     public function show($id) {
         header('Content-Type: application/json; charset=utf-8');
 
-        $id_etablissement = $_SESSION['id_etablissement'];
+        $id_etablissement = $this->user->id_etablissement;
 
         $e = $this->table->getByIdAndRestaurant($id, $id_etablissement);
         if ($e) {
@@ -61,13 +59,13 @@ class TableController {
     public function store($data) {
         header('Content-Type: application/json; charset=utf-8');
 
-        $data['id_etablissement'] = $_SESSION['id_etablissement'];
+        $data['id_etablissement'] = $this->user->id_etablissement;
 
         $id = $this->table->create($data);
         $e  = $this->table->getById($id);
 
         $row = [
-            $e['Nom'],
+            $e['nom'],
             "<button class='btn btn-sm btn-primary edit-table' data-id='{$e['id_table']}'>Modifier</button>
             <button class='btn btn-sm btn-danger drop-table' data-id='{$e['id_table']}'>Supprimer</button>"
         ];
@@ -82,7 +80,7 @@ class TableController {
     public function update($id, $data) {
         header('Content-Type: application/json; charset=utf-8');
 
-        $id_etablissement = $_SESSION['id_etablissement'];
+        $id_etablissement = $this->user->id_etablissement;
 
         $e = $this->table->getByIdAndRestaurant($id, $id_etablissement);
         if (!$e) {
@@ -95,7 +93,7 @@ class TableController {
         $e = $this->table->getByIdAndRestaurant($id, $id_etablissement);
 
         $row = [
-            $e['Nom'],
+            $e['nom'],
             "<button class='btn btn-sm btn-primary edit-table' data-id='{$e['id_table']}'>Modifier</button>
             <button class='btn btn-sm btn-danger drop-table' data-id='{$e['id_table']}'>Supprimer</button>"
         ];
@@ -110,7 +108,7 @@ class TableController {
     public function delete($id) {
         header('Content-Type: application/json; charset=utf-8');
 
-        $id_etablissement = $_SESSION['id_etablissement'];
+        $id_etablissement = $this->user->id_etablissement;
 
         $e = $this->table->getByIdAndRestaurant($id, $id_etablissement);
         if (!$e) {
@@ -120,7 +118,7 @@ class TableController {
 
         $this->table->delete($id, $id_etablissement);
 
-        echo json_encode(['success'=>true,'message'=>'table supprimée']);
+        echo json_encode(['success'=>true,'message'=>'Table supprimée']);
         exit;
     }
 

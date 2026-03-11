@@ -5,12 +5,10 @@ require_once __DIR__ . '/../core/Middleware.php';
 class ServiceController {
 
     private $service;
+    private $user;
 
     public function __construct(){
-         if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-        Middleware::checkAuth();
+        $this->user = Middleware::checkAuth(); // récupère JWT décodé
         $this->service = new Service();
         error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING);
     }
@@ -19,23 +17,21 @@ class ServiceController {
     // LISTE
     // =========================
     public function index(){
-
         header('Content-Type: application/json; charset=utf-8');
 
-        $id_etablissement = $_SESSION['id_etablissement'];
-
+        $id_etablissement = $this->user->id_etablissement;
         $data = $this->service->getServicesByEtablissement($id_etablissement);
 
         $rows = [];
-
         foreach($data as $e){
-
             if ($e['statu'] === 'Ouvert') {
                 $statutHTML = "<span class='statu-valide'>Ouvert</span>";
                 $btnClass = 'danger';
                 $btnText  = 'Fermer';
             } else {
                 $statutHTML = "<span class='statu-expire'>Fermer</span>";
+                $btnClass = 'success';
+                $btnText  = 'Ouvrir';
             }
 
             $rows[] = [
@@ -43,16 +39,11 @@ class ServiceController {
                 $e['date_heure_ouverture'],
                 $e['date_heure_fermeture'],
                 $statutHTML,
-                "<button class='btn btn-sm btn-$btnClass edit-service' data-id='{$e['id_service']}'>$btnText/button>
-"
+                "<button class='btn btn-sm btn-$btnClass edit-service' data-id='{$e['id_service']}'>$btnText</button>"
             ];
         }
 
-        echo json_encode([
-            'success'=>true,
-            'data'=>$rows
-        ]);
-
+        echo json_encode(['success'=>true,'data'=>$rows]);
         exit;
     }
 
@@ -60,28 +51,16 @@ class ServiceController {
     // AFFICHER
     // =========================
     public function show($id){
-
         header('Content-Type: application/json; charset=utf-8');
 
-        $id_etablissement = $_SESSION['id_etablissement'];
-
+        $id_etablissement = $this->user->id_etablissement;
         $e = $this->service->getByIdAndRestaurant($id,$id_etablissement);
 
         if($e){
-
-            echo json_encode([
-                'success'=>true,
-                'data'=>$e
-            ]);
-
-        }else{
-
-            echo json_encode([
-                'success'=>false,
-                'message'=>'Service introuvable'
-            ]);
+            echo json_encode(['success'=>true,'data'=>$e]);
+        } else {
+            echo json_encode(['success'=>false,'message'=>'Service introuvable']);
         }
-
         exit;
     }
 
@@ -89,13 +68,10 @@ class ServiceController {
     // AJOUT
     // =========================
     public function store($data){
-
         header('Content-Type: application/json; charset=utf-8');
 
-        $data['id_etablissement'] = $_SESSION['id_etablissement'];
-
+        $data['id_etablissement'] = $this->user->id_etablissement;
         $id = $this->service->create($data);
-
         $e = $this->service->getById($id);
 
         if ($e['statu'] === 'Ouvert') {
@@ -104,6 +80,8 @@ class ServiceController {
             $btnText  = 'Fermer';
         } else {
             $statutHTML = "<span class='statu-expire'>Fermer</span>";
+            $btnClass = 'success';
+            $btnText  = 'Ouvrir';
         }
 
         $row = [
@@ -114,22 +92,18 @@ class ServiceController {
             "<button class='btn btn-sm btn-$btnClass edit-service' data-id='{$e['id_service']}'>$btnText</button>"
         ];
 
-        echo json_encode([
-            'success'=>true,
-            'data'=>$row
-        ]);
-
+        echo json_encode(['success'=>true,'data'=>$row]);
         exit;
     }
 
     // =========================
     // CHANGER STATUT
     // =========================
-    public function changeStatus($id) {
+    public function changeStatus($id){
         header('Content-Type: application/json; charset=utf-8');
 
-        $this->contrat->toggleStatut($id);
-        $e = $this->contrat->getById($id);
+        $this->service->toggleStatut($id);
+        $e = $this->service->getById($id);
 
         if ($e['statu'] === 'Ouvert') {
             $statutHTML = "<span class='statu-valide'>Ouvert</span>";
@@ -151,3 +125,4 @@ class ServiceController {
         exit;
     }
 }
+?>

@@ -5,52 +5,54 @@ header('Content-Type: application/json; charset=utf-8');
 
 $controller = new ServiceController();
 $method = $_SERVER['REQUEST_METHOD'];
-$headers = getallheaders();
 
-if (!isset($headers['Authorization'])) {
-
-    echo json_encode([
-        'success'=>false,
-        'message'=>'Token requis'
-    ]);
-
-    exit;
-}
-
+// ========================
 // GET
+// ========================
 if ($method === 'GET') {
-
     if (isset($_GET['id'])) {
         $controller->show($_GET['id']);
     } else {
         $controller->index();
     }
-
     exit;
 }
 
-// POST
+// ========================
+// POST : créer ou modifier
+// ========================
 if ($method === 'POST') {
-
-    $data = $_POST;
-
-    if (!empty($data['id'])) {
-        $controller->update($data['id'],$data);
-    } else {
-        $controller->store($data);
+    $input = json_decode(file_get_contents('php://input'), true);
+    if (!$input) {
+        echo json_encode(['success'=>false,'message'=>'Données invalides']);
+        exit;
     }
 
+    if (!empty($input['id'])) {
+        $controller->store($input); // si tu veux update, ajoute update() dans le controller
+    } else {
+        $controller->store($input);
+    }
     exit;
 }
 
-if ($method === 'PATCH' && isset($_GET['id'])) {
-    $controller->changeStatus($_GET['id']);
+// ========================
+// PATCH : changer statut
+// ========================
+if ($method === 'PATCH') {
+    $input = json_decode(file_get_contents('php://input'), true);
+    if (!$input || !isset($input['id'])) {
+        echo json_encode(['success'=>false,'message'=>'ID requis']);
+        exit;
+    }
+    $controller->changeStatus($input['id']);
     exit;
 }
 
-
-
-echo json_encode([
-    'success'=>false,
-    'message'=>'Méthode non autorisée'
-]);
+// ========================
+// Méthodes non autorisées
+// ========================
+http_response_code(405);
+echo json_encode(['success'=>false,'message'=>'Méthode non autorisée']);
+exit;
+?>

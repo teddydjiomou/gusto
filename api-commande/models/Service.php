@@ -4,17 +4,15 @@ require_once __DIR__ . '/BaseModel.php';
 class Service extends BaseModel {
 
     // =========================
-    // Tous les services d'un restaurant
+    // Tous les services d’un établissement
     // =========================
     public function getServicesByEtablissement($id_etablissement){
-
         $stmt = $this->personnalSelect(
             "service",
             "*",
             "WHERE id_etablissement = ?",
             [$id_etablissement]
         );
-
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
@@ -22,29 +20,25 @@ class Service extends BaseModel {
     // Récupérer par ID
     // =========================
     public function getById($id){
-
         $stmt = $this->personnalSelect(
             "service",
             "*",
             "WHERE id_service = ?",
             [$id]
         );
-
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
     // =========================
-    // Sécurisé par restaurant
+    // Sécurisé par établissement
     // =========================
     public function getByIdAndRestaurant($id,$id_etablissement){
-
         $stmt = $this->personnalSelect(
             "service",
             "*",
             "WHERE id_service = ? AND id_etablissement = ?",
             [$id,$id_etablissement]
         );
-
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
@@ -52,7 +46,6 @@ class Service extends BaseModel {
     // Création
     // =========================
     public function create($data){
-
         $this->insert(
             "service",
             [
@@ -70,25 +63,25 @@ class Service extends BaseModel {
                 $data["statu"]
             ]
         );
-
         return $this->pdo->lastInsertId();
     }
 
+    // =========================
     // Changer le statut
+    // =========================
     public function toggleStatut($id) {
         $e = $this->getById($id);
         if (!$e) return false;
 
         if ($e['statu'] === 'Ouvert') {
-            // Désactivation → on ne change QUE le statut
             return $this->set(
                 "service",
                 ["statu", "date_heure_fermeture"],
-                ["Fermer", "date('Y-m-d H:mm:ss')"],
+                ["Fermer", date('Y-m-d H:i:s')],
                 "WHERE id_service = ?",
                 [$id]
             );
         } 
     }
-
 }
+?>

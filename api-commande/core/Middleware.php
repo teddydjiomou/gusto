@@ -9,7 +9,6 @@ use Firebase\JWT\Key;
 class Middleware {
 
     public static function checkAuth() {
-        // Récupérer config
         $config = require __DIR__ . '/../config/config.php';
         $secret = $config['JWT_SECRET'];
         $algo   = $config['JWT_ALGO'];
@@ -21,7 +20,6 @@ class Middleware {
             exit;
         }
 
-        // Extraire le token
         $authHeader = $headers['Authorization'];
         if (!preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
             Response::error("Format du token invalide", 401);
@@ -30,10 +28,9 @@ class Middleware {
 
         $token = $matches[1];
 
-        // Décoder le token
         try {
             $decoded = JWT::decode($token, new Key($secret, $algo));
-            return $decoded;
+            return $decoded; // contient id_etablissement, email, etc.
         } catch (Exception $e) {
             Response::error("Token invalide: " . $e->getMessage(), 401);
             exit;

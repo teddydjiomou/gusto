@@ -40,7 +40,7 @@ class Table extends BaseModel {
     public function create($data) {
         $this->insert(
             "tables_restaurant",
-            ["Nom", "id_etablissement"],
+            ["nom", "id_etablissement"],
             [
                 $data['nom'],
                 $data['id_etablissement']
@@ -54,7 +54,7 @@ class Table extends BaseModel {
     public function update($id, $data) {
         return $this->set(
             "tables_restaurant",
-            ["Nom", "id_etablissement"],
+            ["nom", "id_etablissement"],
             [
                 $data['nom'],
                 $data['id_etablissement']

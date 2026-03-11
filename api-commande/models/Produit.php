@@ -4,7 +4,7 @@ require_once __DIR__ . '/BaseModel.php';
 class Produit extends BaseModel {
 
     // =========================
-    // Récupérer tous les produits d'un restaurant
+    // Récupérer tous les produits d'un établissement
     // =========================
     public function getProduitsByEtablissement($id_etablissement) {
         $stmt = $this->personnalSelect(
@@ -30,7 +30,7 @@ class Produit extends BaseModel {
     }
 
     // =========================
-    // Récupérer par ID et restaurant (sécurisé)
+    // Récupérer par ID et établissement (sécurisé)
     // =========================
     public function getByIdAndRestaurant($id, $id_etablissement) {
         $stmt = $this->personnalSelect(
@@ -48,15 +48,15 @@ class Produit extends BaseModel {
     public function create($data) {
         $this->insert(
             "produit",
-            ["id_etablissement", "Nom", "image", "id_categorie", "prix", "description", "statu"],
+            ["id_etablissement", "nom", "image", "id_categorie", "prix", "description", "statu"],
             [
                 $data['id_etablissement'],
-                $data['Nom'],
-                $data['image'],
-                $data['id_categorie'],
-                $data['prix'],
-                $data['description'],
-                $data['statu']
+                $data['nom'],
+                $data['image'] ?? null,
+                $data['id_categorie'] ?? null,
+                $data['prix'] ?? 0,
+                $data['description'] ?? '',
+                $data['statu'] ?? 1
             ]
         );
 
@@ -69,15 +69,15 @@ class Produit extends BaseModel {
     public function update($id, $data) {
         return $this->set(
             "produit",
-            ["id_etablissement", "Nom", "image", "id_categorie", "prix", "description", "statu"],
+            ["id_etablissement", "nom", "image", "id_categorie", "prix", "description", "statu"],
             [
                 $data['id_etablissement'],
-                $data['Nom'],
-                $data['image'],
-                $data['id_categorie'],
-                $data['prix'],
-                $data['description'],
-                $data['statu']
+                $data['nom'],
+                $data['image'] ?? null,
+                $data['id_categorie'] ?? null,
+                $data['prix'] ?? 0,
+                $data['description'] ?? '',
+                $data['statu'] ?? 1
             ],
             "WHERE id_produit = ?",
             [$id]
@@ -85,7 +85,7 @@ class Produit extends BaseModel {
     }
 
     // =========================
-    // Supprimer un produit (sécurisé par restaurant)
+    // Supprimer un produit (sécurisé par établissement)
     // =========================
     public function delete($id, $id_etablissement){
         return $this->personalDelete(
@@ -94,6 +94,5 @@ class Produit extends BaseModel {
             [$id, $id_etablissement]
         );
     }
-
 }
 ?>

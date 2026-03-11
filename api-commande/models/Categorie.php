@@ -3,7 +3,9 @@ require_once __DIR__ . '/BaseModel.php';
 
 class Categorie extends BaseModel {
 
-    // Récupérer toutes les catégories d'un restaurant
+    // =========================
+    // Récupérer toutes les catégories d'un établissement
+    // =========================
     public function getCategoriesByEtablissement($id_etablissement) {
         $stmt = $this->personnalSelect(
             "categorie",
@@ -14,7 +16,9 @@ class Categorie extends BaseModel {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // Récupérer par ID et restaurant (sécurisé)
+    // =========================
+    // Récupérer par ID et établissement (sécurisé)
+    // =========================
     public function getByIdAndEtablissement($id, $id_etablissement) {
         $stmt = $this->personnalSelect(
             "categorie",
@@ -25,7 +29,9 @@ class Categorie extends BaseModel {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    // Créer
+    // =========================
+    // Créer une catégorie
+    // =========================
     public function create($data) {
         $this->insert(
             "categorie",
@@ -35,11 +41,12 @@ class Categorie extends BaseModel {
                 $data['libelle']
             ]
         );
-
         return $this->pdo->lastInsertId();
     }
 
-    // Mettre à jour
+    // =========================
+    // Mettre à jour une catégorie
+    // =========================
     public function update($id, $data) {
         return $this->set(
             "categorie",
@@ -53,7 +60,9 @@ class Categorie extends BaseModel {
         );
     }
 
-    // Supprimer
+    // =========================
+    // Supprimer une catégorie (sécurisé par établissement)
+    // =========================
     public function delete($id, $id_etablissement){
         return $this->personalDelete(
             "categorie",
@@ -61,6 +70,5 @@ class Categorie extends BaseModel {
             [$id, $id_etablissement]
         );
     }
-
 }
 ?>
