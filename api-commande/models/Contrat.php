@@ -67,13 +67,14 @@ class Contrat extends BaseModel {
     public function update($id, $data) {
         $existing = $this->getById($id);
 
-    $code = $data['code'] ?? $existing['code'];
+     $licence = $data['code'] ?? $this->generateLicenceCode($data['id_etablissement'], $data['date_validite']);
+
         return $this->set(
             "contrat",
             ["id_etablissement", "code", "date_validite", "description", "statu"],
             [
                 $data['id_etablissement'],
-                $code,
+                $licence,
                 $data['date_validite'],
                 $data['description'],
                 $data['statu'] ?? $existing['statu']
@@ -81,33 +82,6 @@ class Contrat extends BaseModel {
             "WHERE id_contrat = ?",
             [$id]
         );
-    }
-
-    // Changer le statut
-    public function toggleStatut($id) {
-        $e = $this->getById($id);
-        if (!$e) return false;
-
-        if ($e['statu'] === 'Valide') {
-            // Désactivation → on ne change QUE le statut
-            return $this->set(
-                "contrat",
-                ["statu"],
-                ["Expiré"],
-                "WHERE id_contrat = ?",
-                [$id]
-            );
-        } else {
-            // Activation → on change le statut, date_validite et génère un nouveau code
-            $nouveauCode = $this->generateLicenceCode($e['id_etablissement'], date('Y-m-d'));
-            return $this->set(
-                "contrat",
-                ["statu", "date_validite", "code"],
-                ["Valide", date('Y-m-d'), $nouveauCode],
-                "WHERE id_contrat = ?",
-                [$id]
-            );
-        }
     }
 
 }

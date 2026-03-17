@@ -295,10 +295,8 @@
                             foreach ($contrats as $e) {
                               if ($e['statu'] === 'Valide') {
                                   $statutHTML = "<span class='statu-valide'>Valide</span>";
-                                  $btnStatut  = "<button class='btn btn-sm btn-danger change-contrat' data-id='{$e['id_contrat']}'>Bloquer</button>";
                               } else {
                                   $statutHTML = "<span class='statu-expire'>Expiré</span>";
-                                  $btnStatut  = "<button class='btn btn-sm btn-success change-contrat' data-id='{$e['id_contrat']}'>Renouveler</button>";
                               }
                               echo "
                               <tr>
@@ -307,7 +305,6 @@
                                   <td>$statutHTML</td>
                               <td width=100>
                                   <button class='btn btn-sm btn-primary edit-contrat' data-id='{$e['id_contrat']}'>Modifier</button>
-                                  $btnStatut
                               </td>
                             </tr>";
                           }

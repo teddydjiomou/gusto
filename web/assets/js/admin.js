@@ -472,33 +472,33 @@ $(document).on('click', '.edit-contrat', async function() {
 
 //change
 
-$(document).on('click', '.change-contrat', async function () {
-    const id = $(this).data('id');
-    try {
-        const response = await fetch(
-            `http://gusto/api-commande/routes/contrat.php?id=${id}`,
-            {
-                method: 'PATCH',
-                headers: {
-                    'Authorization': 'Bearer ' + token
-                }
-            }
-        );
-        const result = await response.json();
-        if (result.success && result.data) {
-            // Met à jour UNIQUEMENT la ligne concernée
-            licence.rows().every(function () {
-                const row = this.node();
-                if ($(row).find('.change-contrat').data('id') == id) {
-                    this.data(result.data).draw(false);
-                }
-            });
-        } else {
-            alert(result.message || "Impossible de mettre à jour la ligne");
-        }
-    } catch (err) {
-        console.error(err);
-        alert("Erreur serveur : " + err.message);
-    }
-});
+// $(document).on('click', '.change-contrat', async function () {
+//     const id = $(this).data('id');
+//     try {
+//         const response = await fetch(
+//             `http://gusto/api-commande/routes/contrat.php?id=${id}`,
+//             {
+//                 method: 'PATCH',
+//                 headers: {
+//                     'Authorization': 'Bearer ' + token
+//                 }
+//             }
+//         );
+//         const result = await response.json();
+//         if (result.success && result.data) {
+//             // Met à jour UNIQUEMENT la ligne concernée
+//             licence.rows().every(function () {
+//                 const row = this.node();
+//                 if ($(row).find('.change-contrat').data('id') == id) {
+//                     this.data(result.data).draw(false);
+//                 }
+//             });
+//         } else {
+//             alert(result.message || "Impossible de mettre à jour la ligne");
+//         }
+//     } catch (err) {
+//         console.error(err);
+//         alert("Erreur serveur : " + err.message);
+//     }
+// });
 
