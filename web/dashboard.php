@@ -1,20 +1,3 @@
-<?php
-  require_once './../api-commande/models/Etablissement.php';
-  $etablissementModel = new Etablissement();
-  $etablissements = $etablissementModel->getAllEtablissements();
-
-  require_once './../api-commande/models/Utilisateur.php';
-  $utilisateurModel = new utilisateur();
-  $utilisateurs = $utilisateurModel->getAllUsers();
-
-  require_once './../api-commande/models/Appareil.php';
-  $appareilModel = new appareil();
-  $appareils = $appareilModel->getAllAppareils();
-
-  require_once './../api-commande/models/Contrat.php';
-  $contratModel = new contrat();
-  $contrats = $contratModel->getAllContrats();
-?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -148,30 +131,7 @@
                               <th>Action</th>
                           </tr>
                       </thead>
-                      <tbody>      
-                          <?php
-                            foreach ($etablissements as $e) {
-                              $logos = json_decode($e['logo'], true);
-                              $logoHTML = '';
-                              if (!empty($logos)) {
-                                  foreach ($logos as $l) {
-                                      $logoHTML .= "<img src='$l' width='50'> ";
-                                  }
-                              }
-                              echo "
-                              <tr>
-                                  <td>$logoHTML</td>
-                                  <td>{$e['nom']}</td>
-                                  <td>{$e['type']}</td>
-                                  <td>{$e['adresse']}</td>
-                                  <td>{$e['date_enreg']}</td>
-                              <td>
-                                  <button class='btn btn-sm btn-primary edit-ets' data-id='{$e['id_etablissement']}'>Modifier</button>
-                              </td>
-                            </tr>";
-                          }
-                        ?>  
-                      </tbody>
+                      <tbody id="tbodyEtablissements"></tbody>
                     </table>
                   </div>
                 </div>
@@ -199,28 +159,7 @@
                           <th>Action</th>
                         </tr>
                       </thead>
-                      <tbody>
-                        <?php
-                            $roles = [
-                                0 => 'Admin',
-                                1 => 'Gérant'
-                            ];
-                            foreach ($utilisateurs as $e) {
-                              echo "
-                                  <tr>
-                                      <td>{$e['nom']}</td>
-                                      <td>{$e['adresse']}</td>
-                                      <td>{$e['telephone']}</td>
-                                      <td>{$roles[$e['role']]}</td>
-                                      <td>{$e['date_enreg']}</td>
-                                      <td>
-                                          <button class='btn btn-sm btn-primary edit-user' data-id='{$e['id_utilisateur']}'>Modifier</button>
-                                      </td>
-                                  </tr>
-                              ";
-                            }
-                          ?> 
-                      </tbody>
+                      <tbody id="tbodyUsers"></tbody>
                     </table>
                   </div>
                 </div>
@@ -247,24 +186,7 @@
                             <th>Action</th>
                           </tr>
                         </thead>
-                        <tbody>
-                          <?php
-                            foreach ($appareils as $e) {
-                              echo "
-                                  <tr>
-                                      <td>{$e['marque']}</td>
-                                      <td>{$e['model']}</td>
-                                      <td>{$e['numero_serie']}</td>
-                                      <td>{$e['systeme_exploitation']}</td>
-                                      <td>
-                                          <button class='btn btn-sm btn-primary edit-app' data-id='{$e['id_appareil']}'>Modifier</button>
-                                          <button class='btn btn-sm btn-danger drop-app' data-id='{$e['id_appareil']}'>Supprimer</button>
-                                      </td>
-                                  </tr>
-                              ";
-                            }
-                          ?> 
-                        </tbody>
+                        <tbody id="tbodyAppareils"></tbody>
                       </table>
                   </div>
                 </div>
@@ -290,27 +212,7 @@
                           <th>Action</th>
                         </tr>
                       </thead>
-                      <tbody>
-                         <?php
-                            foreach ($contrats as $e) {
-                              if ($e['statu'] === 'Valide') {
-                                  $statutHTML = "<span class='statu-valide'>Valide</span>";
-                              } else {
-                                  $statutHTML = "<span class='statu-expire'>Expiré</span>";
-                              }
-                              echo "
-                              <tr>
-                                  <td>{$e['code']}</td>
-                                  <td>{$e['date_validite']}</td>
-                                  <td>$statutHTML</td>
-                              <td width=100>
-                                  <button class='btn btn-sm btn-primary edit-contrat' data-id='{$e['id_contrat']}'>Modifier</button>
-                              </td>
-                            </tr>";
-                          }
-                        ?>  
-                       
-                      </tbody>
+                      <tbody id="tbodyContrats"></tbody>
                     </table>
                   </div>
                 </div>
@@ -429,20 +331,15 @@
                   <input type="text" name="login" class="form-control" placeholder="Entrez le login de l'utilisateur" required>
                 </div>
                 <div class="col-lg-6 mb-4">
-                  <select name="role" class="bg-white w-100 h-100" required>
+                  <select name="role" class="bg-white w-100 h-100"  required>
                     <option value="" disabled selected>Choisir le rôle</option>
                     <option value="0">Admin</option>
                     <option value="1">Gérant</option>
                   </select>
                 </div>
                 <div class="col-lg-6 mb-4">
-                  <select name="id_etablissement" class="bg-white w-100 h-100" required>
+                  <select name="id_etablissement" class="bg-white w-100 h-100 selectEtablissement" required>
                     <option value="" disabled selected>Choisir l'etablissement géré</option>
-                    <?php
-                      foreach ($etablissements as $e) {
-                        echo '<option value="'.$e['id_etablissement'].'">'.$e['nom'].'</option>';
-                      }
-                    ?> 
                   </select>
                 </div>
                 <input type="hidden" name="id">
@@ -488,7 +385,7 @@
                   <input type="date" class="form-control" name="date_fin_support">
                </div>
                 <div class="col-lg-12 mb-4">
-                  <select name="id_etablissement" class="bg-white w-100 h-100" required>
+                  <select name="id_etablissement" class="bg-white w-100 h-100 selectEtablissement" required>
                     <option value="" disabled selected>Choisir l'etablissement destinataire</option>
                     <?php
                       foreach ($etablissements as $e) {
@@ -522,7 +419,7 @@
             <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>" method="post" role="form" id='contrat' class="php-form">
               <div class="row">
                 <div class="col-lg-12 mb-4">
-                  <select name="id_etablissement" class="bg-white w-100 h-100" required>
+                  <select name="id_etablissement" class="bg-white w-100 h-100 selectEtablissement" required>
                     <option value="" disabled selected>Choisir l'etablissement destinataire</option>
                     <?php
                       foreach ($etablissements as $e) {
@@ -548,8 +445,6 @@
     </div>
 
 
-
-   
     <script src="./assets/vendor/jquery/jquery.min.js"></script>
     <script src="./assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="./assets/vendor/admin-2/sb-admin-2.min.js"></script>
@@ -589,6 +484,11 @@
         // Récupérer le token stocké dans localStorage
         const token = localStorage.getItem('token');
 
+        const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+        };
+
         if (token) {
           const payload = parseJwt(token);
 
@@ -610,6 +510,97 @@
           // Rediriger vers la page de login
           window.location.href = './login.php';
       });
+
+      // ================= Fetch API pour peupler les tables =================
+
+      const selectEts = document.querySelectorAll('.selectEtablissement');
+
+      fetch('http://gusto/api-commande/routes/etablissement.php', { headers })
+      .then(res => res.json())
+      .then(response => {
+        if (response.success && Array.isArray(response.data)) {
+          // ⚡ Ici on utilise ton DataTable déjà initialisé
+          response.data.forEach(row => {
+            selectEts.forEach(select => {
+                const option = document.createElement('option');
+                option.value = row[5]; // id_etablissement
+                option.textContent = row[1]; // nom
+                select.appendChild(option);
+            });
+            ets.row.add([
+                row[0], // Logo
+                row[1], // Nom
+                row[2], // Type
+                row[3], // Adresse
+                row[4], // Date
+                row[6], //Action
+            ]).draw(false);
+          });
+        } else {
+          console.error('Pas de données ou format inattendu', response);
+        }
+      })
+      .catch(err => console.error(err));
+
+      // Utilisateurs
+      fetch('http://gusto/api-commande/routes/utilisateur.php', { headers })
+        .then(res => res.json())
+        .then(response => {
+          if (response.success && Array.isArray(response.data)) {
+            response.data.forEach(row => {
+                user.row.add([
+                    row[0], 
+                    row[1], 
+                    row[2], 
+                    row[3], 
+                    row[4], 
+                    row[5], 
+                ]).draw(false);
+            });
+            } else {
+            console.error('Pas de données ou format inattendu', response);
+          }
+        })
+        .catch(err => console.error(err));
+
+      // Appareils
+      fetch('http://gusto/api-commande/routes/appareil.php', { headers })
+        .then(res => res.json())
+        .then(response => {
+          if (response.success && Array.isArray(response.data)) {
+            response.data.forEach(row => {
+                app.row.add([
+                    row[0], 
+                    row[1], 
+                    row[2], 
+                    row[3], 
+                    row[4], 
+                ]).draw(false);
+            });
+            } else {
+            console.error('Pas de données ou format inattendu', response);
+          }
+        })
+        .catch(err => console.error(err));
+
+      // Contrats
+      fetch('http://gusto/api-commande/routes/contrat.php', { headers })
+        .then(res => res.json())
+        .then(response => {
+          if (response.success && Array.isArray(response.data)) {
+            response.data.forEach(row => {
+                licence.row.add([
+                    row[0], 
+                    row[1], 
+                    row[2], 
+                    row[3], 
+                ]).draw(false);
+            });
+            } else {
+            console.error('Pas de données ou format inattendu', response);
+          }
+        })
+        .catch(err => console.error(err));
    </script>
 
    <script>

@@ -38,7 +38,7 @@ class EtablissementController {
                 $e['type'],
                 $e['adresse'],
                 $e['date_enreg'],
-
+                $e['id_etablissement'],
                 "<button class='btn btn-sm btn-primary edit-ets' data-id='{$e['id_etablissement']}'>Modifier</button>"
             ];
         }
