@@ -96,7 +96,7 @@
         <!-- Call to Action -->
         <section id="contact" class="cta-section">
           <h2>Prêt à simplifier votre gestion de commandes ?</h2>
-            <a href="tel://680468901"><button>Contactez nous au 680468901</button></a>
+            <a href="https://wa.me/680468901"><button>Contactez nous au 680468901</button></a>
         </section>
     </main>
 

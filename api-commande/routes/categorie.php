@@ -22,17 +22,11 @@ if ($method === 'GET') {
 // POST : ajouter ou modifier
 // ========================
 if ($method === 'POST') {
-    $input = json_decode(file_get_contents('php://input'), true);
-
-    if (!$input) {
-        echo json_encode(['success'=>false,'message'=>'Données invalides']);
-        exit;
-    }
-
-    if (!empty($input['id'])) {
-        $controller->update($input['id'], $input);
+    $data = $_POST;
+    if (!empty($data['id'])) {
+        $controller->update($data['id'], $data);
     } else {
-        $controller->store($input);
+        $controller->store($data);
     }
     exit;
 }
@@ -41,14 +35,15 @@ if ($method === 'POST') {
 // DELETE : supprimer
 // ========================
 if ($method === 'DELETE') {
-    $input = json_decode(file_get_contents('php://input'), true);
-
-    if (!$input || !isset($input['id'])) {
-        echo json_encode(['success'=>false,'message'=>'ID requis']);
+    if (!isset($_GET['id'])) {
+        echo json_encode([
+            'success' => false,
+            'message' => 'ID requis'
+        ]);
         exit;
     }
 
-    $controller->delete($input['id']);
+    $controller->delete($_GET['id']);
     exit;
 }
 

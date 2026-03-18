@@ -46,6 +46,7 @@ class Service extends BaseModel {
     // Création
     // =========================
     public function create($data){
+        $data['statu'] = $data['statu'] ?? 'Ouvert';
         $this->insert(
             "service",
             [

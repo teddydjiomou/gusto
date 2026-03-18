@@ -21,17 +21,13 @@ if ($method === 'GET') {
 // ========================
 // POST : créer ou modifier
 // ========================
-if ($method === 'POST') {
-    $input = json_decode(file_get_contents('php://input'), true);
-    if (!$input) {
-        echo json_encode(['success'=>false,'message'=>'Données invalides']);
-        exit;
-    }
 
-    if (!empty($input['id'])) {
-        $controller->store($input); // si tu veux update, ajoute update() dans le controller
+if ($method === 'POST') {
+    $data = $_POST;
+    if (!empty($data['id'])) {
+        $controller->update($data['id'], $data);
     } else {
-        $controller->store($input);
+        $controller->store($data);
     }
     exit;
 }
@@ -39,13 +35,8 @@ if ($method === 'POST') {
 // ========================
 // PATCH : changer statut
 // ========================
-if ($method === 'PATCH') {
-    $input = json_decode(file_get_contents('php://input'), true);
-    if (!$input || !isset($input['id'])) {
-        echo json_encode(['success'=>false,'message'=>'ID requis']);
-        exit;
-    }
-    $controller->changeStatus($input['id']);
+if ($method === 'PATCH' && isset($_GET['id'])) {
+    $controller->changeStatus($_GET['id']);
     exit;
 }
 
