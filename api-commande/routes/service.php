@@ -10,33 +10,7 @@ $method = $_SERVER['REQUEST_METHOD'];
 // GET
 // ========================
 if ($method === 'GET') {
-    if (isset($_GET['id'])) {
-        $controller->show($_GET['id']);
-    } else {
-        $controller->index();
-    }
-    exit;
-}
-
-// ========================
-// POST : créer ou modifier
-// ========================
-
-if ($method === 'POST') {
-    $data = $_POST;
-    if (!empty($data['id'])) {
-        $controller->update($data['id'], $data);
-    } else {
-        $controller->store($data);
-    }
-    exit;
-}
-
-// ========================
-// PATCH : changer statut
-// ========================
-if ($method === 'PATCH' && isset($_GET['id'])) {
-    $controller->changeStatus($_GET['id']);
+    $controller->index();
     exit;
 }
 

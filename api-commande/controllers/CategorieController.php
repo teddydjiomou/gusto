@@ -22,17 +22,7 @@ class CategorieController {
         $id_etablissement = $this->user->id_etablissement;
 
         $data = $this->categorie->getCategoriesByEtablissement($id_etablissement);
-        $rows = [];
-
-        foreach ($data as $e) {
-            $rows[] = [
-                $e['libelle'],
-                "<button class='btn btn-sm btn-primary edit-categorie' data-id='{$e['id_categorie']}'>Modifier</button>
-                 <button class='btn btn-sm btn-danger drop-categorie' data-id='{$e['id_categorie']}'>Supprimer</button>"
-            ];
-        }
-
-        echo json_encode(['success'=>true,'data'=>$rows]);
+        echo json_encode(['success'=>true,'data'=>$data]);
         exit;
     }
 
@@ -64,13 +54,7 @@ class CategorieController {
         $id = $this->categorie->create($data);
         $e  = $this->categorie->getByIdAndEtablissement($id, $data['id_etablissement']);
 
-        $row = [
-            $e['libelle'],
-            "<button class='btn btn-sm btn-primary edit-categorie' data-id='{$e['id_categorie']}'>Modifier</button>
-             <button class='btn btn-sm btn-danger drop-categorie' data-id='{$e['id_categorie']}'>Supprimer</button>"
-        ];
-
-        echo json_encode(['success'=>true,'data'=>$row]);
+        echo json_encode(['success'=>true,'data'=>$e]);
         exit;
     }
 
@@ -92,13 +76,8 @@ class CategorieController {
         $this->categorie->update($id, $data);
 
         $e = $this->categorie->getByIdAndEtablissement($id, $id_etablissement);
-        $row = [
-            $e['libelle'],
-            "<button class='btn btn-sm btn-primary edit-categorie' data-id='{$e['id_categorie']}'>Modifier</button>
-             <button class='btn btn-sm btn-danger drop-categorie' data-id='{$e['id_categorie']}'>Supprimer</button>"
-        ];
 
-        echo json_encode(['success'=>true,'data'=>$row]);
+        echo json_encode(['success'=>true,'data'=>$e]);
         exit;
     }
 

@@ -91,6 +91,7 @@ class Database {
                         id_table INT AUTO_INCREMENT PRIMARY KEY,
                         Nom VARCHAR(10) NOT NULL,
                         id_etablissement INT,
+                        statu VARCHAR(10) NOT NULL,
                         FOREIGN KEY (id_etablissement) REFERENCES etablissement(id_etablissement)
                         ON DELETE CASCADE ON UPDATE CASCADE
                     )",
@@ -129,7 +130,6 @@ class Database {
                         id_etablissement INT,
                         date_heure_ouverture DATETIME,
                         date_heure_fermeture DATETIME,
-                        statu VARCHAR(10) NOT NULL,
                         FOREIGN KEY (id_table) REFERENCES tables_restaurant(id_table)
                         ON DELETE CASCADE ON UPDATE CASCADE,
                         FOREIGN KEY (id_utilisateur) REFERENCES utilisateur(id_utilisateur)

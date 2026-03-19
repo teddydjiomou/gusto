@@ -60,6 +60,14 @@ if ($method === 'DELETE') {
 }
 
 // ========================
+// PATCH : changer statut
+// ========================
+if ($method === 'PATCH' && isset($_GET['id'])) {
+    $controller->changeStatus($_GET['id']);
+    exit;
+}
+
+// ========================
 // Méthodes non autorisées
 // ========================
 http_response_code(405);

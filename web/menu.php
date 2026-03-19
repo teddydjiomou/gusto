@@ -10,7 +10,7 @@
     list($id_etablissement, $table) = explode(":", $decoded);
     $check = hash_hmac('sha256', $id_etablissement.":".$table, $secret);
 
-    if(!ctype_digit($id_etablissement) || !ctype_digit($table)){
+    if(!ctype_digit($id_etablissement) || !preg_match('/^[\w\s-]+$/u', $table)){
         exit("QR code modifié ou invalide");
     }
 

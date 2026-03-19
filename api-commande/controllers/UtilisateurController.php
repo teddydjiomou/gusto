@@ -9,7 +9,8 @@ class UtilisateurController {
 
     private $roles = [
         0 => 'Admin',
-        1 => 'Gérant'
+        1 => 'Gérant',
+        2 => 'Serveur'
     ];
 
     public function __construct() {
@@ -70,7 +71,7 @@ class UtilisateurController {
              $e['telephone'],
              $this->roles[$e['role']],
              $e['date_enreg'],
-            "<button class='btn btn-sm btn-primary edit-user' data-id='$id'>Modifier</button>"
+            "<button class='btn btn-sm btn-primary edit-user' data-id={$e['id_utilisateur']}>Modifier</button>"
         ];
 
         echo json_encode(['success'=>true,'data'=>$row]);
