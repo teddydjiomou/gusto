@@ -315,43 +315,56 @@ let socket = new WebSocket("ws://192.168.100.238:8080");
         console.warn("⚠️ WebSocket déconnecté");
     };
 
-    $(document).on('click', '#btn-valider', function () {
+    $(document).on('click', '#btn-valider', async function () {
 
         let numeroTable = $("#numeroTable").val().trim();
-        let totalGeneral = panier.reduce((sum, item) => sum + item.total, 0);
 
-        // 1️⃣ ENREGISTREMENT EN BASE (comme avant)
-        $.post("http://gusto/api-commande/routes/updateLogin.php", {
-            idtable: numeroTable,
-            id_etablissement: id_etablissement,
-            commande: JSON.stringify(panier),
-            montant_a_payer: totalGeneral
-        })
-        .done(function(response){
+        for (const item of panier) {
 
-            const res = JSON.parse(response);
-            const id_commande = res.id_commande; 
+            try {
 
-            // 2️⃣ ENVOI INSTANTANÉ VIA WEBSOCKET
-            if (socket.readyState === WebSocket.OPEN) {
-                socket.send(JSON.stringify({
-                    type: "nouvelle_commande",
-                    id_etablissement: id_etablissement,
-                    table: numeroTable,
-                    commande: panier,
-                    montant: totalGeneral,
-                    date: new Date().toLocaleString(),
-                    statut: "En attente",
-                    id_commande: id_commande
-                }));
+                // 1️⃣ INSERTION BD
+                let response = await $.post(
+                    "http://gusto/api-commande/routes/item_commande.php",
+                    {
+                        id_table: numeroTable,
+                        id_etablissement: id_etablissement,
+                        commande: item.libelle, // ✅ corrigé
+                        quantite: item.quantite,
+                        prix: item.prix,
+                        montant: item.total
+                    }
+                );
+
+                const res = JSON.parse(response);
+
+                // 2️⃣ SOCKET TEMPS RÉEL
+                if (socket.readyState === WebSocket.OPEN) {
+                    socket.send(JSON.stringify({
+                        type: "nouvelle_commande",
+                        id_etablissement: id_etablissement,
+                        table: numeroTable,
+                        produit: item.libelle,
+                        quantite: item.quantite,
+                        prix: item.prix,
+                        montant: item.total,
+                        id_item_commande: res.id_item_commande // ✅ OK
+                    }));
+                }
+
+            } catch (e) {
+                console.error("Erreur envoi :", e);
             }
-            
-            panier = [];
-            mettreAJourModal();
-            $('.modal-c').modal('hide');
-            alert(`Le serveur ${numeroTable} s'occupe de votre commande`);
-        });
+        }
+
+        // RESET
+        panier = [];
+        mettreAJourModal();
+        $('.modal-c').modal('hide');
+
+        alert("Votre commande a été envoyée merci de patienter quelques minutes");
     });
+
 
     // 🔴 FIN DE COMMANDE (bouton "terminer")
     $(document).on('click', '.terminer', function () {
