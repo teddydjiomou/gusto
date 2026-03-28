@@ -75,5 +75,3 @@ wss.on('connection', ws => {
 
 console.log('🚀 WebSocket serveur démarré sur ws://0.0.0.0:8080');
 
-
-console.log('WebSocket serveur démarré sur ws://0.0.0.0:8080');

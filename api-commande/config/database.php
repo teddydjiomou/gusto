@@ -137,23 +137,7 @@ class Database {
                         FOREIGN KEY (id_etablissement) REFERENCES etablissement(id_etablissement)
                         ON DELETE CASCADE ON UPDATE CASCADE
                     )",
-
-                "item_commande" => "
-                    CREATE TABLE IF NOT EXISTS item_commande (
-                        id_item_commande INT AUTO_INCREMENT PRIMARY KEY,
-                        id_etablissement INT,
-                        id_table INT,
-                        commande VARCHAR(50) NOT NULL,
-                        quantite VARCHAR(2) NOT NULL,
-                        prix VARCHAR(10) NOT NULL,
-                        montant VARCHAR(20) NOT NULL,
-                        FOREIGN KEY (id_table) REFERENCES tables_restaurant(id_table)
-                        ON DELETE CASCADE ON UPDATE CASCADE,
-                        FOREIGN KEY (id_etablissement) REFERENCES etablissement(id_etablissement)
-                        ON DELETE CASCADE ON UPDATE CASCADE
-                    )",
-
-
+                    
                 "commande" => "
                     CREATE TABLE IF NOT EXISTS commande (
                         id_commande INT AUTO_INCREMENT PRIMARY KEY,
@@ -161,7 +145,6 @@ class Database {
                         id_table INT,
                         commande TEXT,
                         montant_total  VARCHAR(20) NOT NULL,
-                        date_heure  DATETIME,
                         etat  VARCHAR(20) NOT NULL,
                         FOREIGN KEY (id_table) REFERENCES tables_restaurant(id_table)
                         ON DELETE CASCADE ON UPDATE CASCADE,

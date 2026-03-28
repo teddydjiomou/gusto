@@ -114,7 +114,7 @@ class TableController {
             exit;
         }
 
-        // Changer le statut et gérer service
+        // Changer le statut et gérer les tables
         $this->table->toggleStatut($id, $id_utilisateur, $id_etablissement);
 
         // Recharger la table pour renvoyer toutes les données

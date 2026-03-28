@@ -170,7 +170,7 @@ class Utilisateur extends BaseModel {
     }
 
     // =========================
-    // Supprimer une catégorie (sécurisé par établissement)
+    // Supprimer  (sécurisé par établissement)
     // =========================
     public function delete($id, $id_etablissement){
         return $this->personalDelete(
@@ -198,27 +198,27 @@ class Utilisateur extends BaseModel {
        Update login
     ======================= */
 
-    public function updateLogin($id, $login, $password = null) {
-        if ($password !== null && $password !== '') {
-            return $this->set(
-                "utilisateur",
-                ["login", "password"],
-                [
-                    $login,
-                    password_hash($password, PASSWORD_DEFAULT)
-                ],
-                "WHERE id_utilisateur = ?",
-                [$id]
-            );
-        }
-
+    public function updateLogin($id, $login, $id_etablissement, $password = null) {
+    if ($password !== null && $password !== '') {
         return $this->set(
             "utilisateur",
-            ["login"],
-            [$login],
-            "WHERE id_utilisateur = ?",
-            [$id]
+            ["login", "password"],
+            [
+                $login,
+                password_hash($password, PASSWORD_DEFAULT)
+            ],
+            "WHERE id_utilisateur = ? AND id_etablissement = ?",
+            [$id, $id_etablissement]
         );
     }
+
+    return $this->set(
+        "utilisateur",
+        ["login"],
+        [$login],
+        "WHERE id_utilisateur = ? AND id_etablissement = ?",
+        [$id, $id_etablissement]
+    );
+}
 
 }

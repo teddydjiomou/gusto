@@ -1,11 +1,12 @@
 <?php
-require_once './../models/Utilisateur.php';
-require_once './../core/Auth.php';
-require_once './../core/Middleware.php';
+require_once __DIR__ . './../models/Utilisateur.php';
+require_once __DIR__ . './../core/Auth.php';
+require_once __DIR__ . './../core/Middleware.php';
 
 header('Content-Type: application/json');
 
 $user = Middleware::checkAuth();
+
 if (!$user) {
     http_response_code(401);
     echo json_encode(['success' => false, 'message' => 'Non autorisé']);
@@ -21,15 +22,17 @@ if (!$login) {
 }
 
 $model = new Utilisateur();
-$userId = $user->data->id;
+
+$userId = $user->id;
 
 // Mise à jour
-$model->updateLogin($userId, $login, $password);
+$model->updateLogin($userId, $login, $user->id_etablissement, $password);
 
-// Générer un nouveau token
+// ✅ correction token
 $newToken = Auth::generateToken([
     'id_utilisateur' => $userId,
-    'login' => $login
+    'login' => $login,
+    'id_etablissement' => $user->id_etablissement ?? null
 ]);
 
 echo json_encode([

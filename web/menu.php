@@ -1,28 +1,43 @@
 <?php
-  $code = $_GET['code'] ?? null;
-  $secret = "CLE_SECRETE_GUSTO";
 
-    if(!$code){
+    $code = $_GET['code'] ?? null;
+    $secret = "CLE_SECRETE_GUSTO";
+
+    if (!$code) {
         exit("Lien invalide");
     }
 
-    $decoded = base64_decode($code);
-    list($id_etablissement, $table) = explode(":", $decoded);
-    $check = hash_hmac('sha256', $id_etablissement.":".$table, $secret);
+    // Décodage sécurisé
+    $decoded = base64_decode($code, true);
+    if (!$decoded) exit("QR code invalide");
 
-    if(!ctype_digit($id_etablissement) || !preg_match('/^[\w\s-]+$/u', $table)){
+    // Extraire id, table et signature
+    $parts = explode(":", $decoded);
+    if (count($parts) !== 3) exit("QR code invalide");
+
+    list($id_etablissement, $table, $signature) = $parts;
+
+    // Vérifier format id/table
+    if (!ctype_digit($id_etablissement) || !preg_match('/^[\w\s-]+$/u', $table)) {
         exit("QR code modifié ou invalide");
     }
 
-   require_once './../api-commande/models/Table.php';
+    // Vérifier la signature
+    $expected = hash_hmac('sha256', $id_etablissement . ":" . $table, $secret);
+    if (!hash_equals($expected, $signature)) {
+        exit("QR code modifié ou invalide");
+    }
+
+    // Vérifier que la table existe réellement
+    require_once './../api-commande/models/Table.php';
     $tableModel = new Table();
-    $exists = $tableModel->getTablesByEtablissement($id_etablissement);
-
-    if(!$exists){
+    $exists = $tableModel->getTable($id_etablissement, $table); // méthode à créer pour vérifier table précise
+    if (!$exists) {
         exit("QR code modifié ou invalide");
     }
 
-echo "Etablissement: $id_etablissement, Table: $table";
+    // ✅ Tout est OK, tu peux continuer
+    echo "Etablissement: $id_etablissement, Table: $table";
 
     require_once './../api-commande/models/Etablissement.php';
     $etablissementModel = new Etablissement();
@@ -119,7 +134,7 @@ foreach ($produits as $e) {
 
     <div class="commander">
         <span>🛒</span>
-        Voir mes commandes
+        Mon panier
     </div>
 
     <div class="terminer">
@@ -131,11 +146,11 @@ foreach ($produits as $e) {
 
 <!-- MODAL -->
 
-<div class="modal fade modal-c" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal fade modal-c" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
       <div class="modal-dialog modal-md" role="document">
         <div class="modal-content">
           <div class="modal-header">
-              <h5 class="modal-title m-0 font-weight-bold" style="font-size: 17px;" id="modalLabel">Liste de la commande</h5>
+              <h5 class="modal-title m-0 font-weight-bold" style="font-size: 17px;" id="modalLabel">Mon panier</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                   <span aria-hidden="true">×</span>
               </button>
@@ -147,7 +162,7 @@ foreach ($produits as $e) {
                         <th>Commande</th>
                         <th>Qte</th>
                         <th>Montant</th>
-                        <th>Action</th>
+                        <th class="action">Action</th>
                     </tr>
                 </thead>
                 <tbody id="tablePanier"></tbody>
@@ -315,54 +330,57 @@ let socket = new WebSocket("ws://192.168.100.238:8080");
         console.warn("⚠️ WebSocket déconnecté");
     };
 
-    $(document).on('click', '#btn-valider', async function () {
+    $(document).on('click', '#btn-valider', function () {
 
         let numeroTable = $("#numeroTable").val().trim();
+        let totalGeneral = panier.reduce((sum, item) => sum + item.total, 0);
 
-        for (const item of panier) {
-
-            try {
-
-                // 1️⃣ INSERTION BD
-                let response = await $.post(
-                    "http://gusto/api-commande/routes/item_commande.php",
-                    {
-                        id_table: numeroTable,
-                        id_etablissement: id_etablissement,
-                        commande: item.libelle, // ✅ corrigé
-                        quantite: item.quantite,
-                        prix: item.prix,
-                        montant: item.total
-                    }
-                );
-
-                const res = JSON.parse(response);
-
-                // 2️⃣ SOCKET TEMPS RÉEL
-                if (socket.readyState === WebSocket.OPEN) {
-                    socket.send(JSON.stringify({
-                        type: "nouvelle_commande",
-                        id_etablissement: id_etablissement,
-                        table: numeroTable,
-                        produit: item.libelle,
-                        quantite: item.quantite,
-                        prix: item.prix,
-                        montant: item.total,
-                        id_item_commande: res.id_item_commande // ✅ OK
-                    }));
-                }
-
-            } catch (e) {
-                console.error("Erreur envoi :", e);
+        $.ajax({
+            url: "http://gusto/api-commande/routes/commande.php",
+            method: "POST",
+            data: {
+                id_table: numeroTable,
+                id_etablissement: id_etablissement,
+                commande: JSON.stringify(panier),
+                montant_total: totalGeneral
             }
-        }
+        })
+        .done(function(response){
 
-        // RESET
-        panier = [];
-        mettreAJourModal();
-        $('.modal-c').modal('hide');
+            const res = response;
 
-        alert("Votre commande a été envoyée merci de patienter quelques minutes");
+            // ✅ Vérifier succès
+            if (!res.success) {
+                alert("Erreur: " + res.message);
+                return;
+            }
+
+            const id_Commande = res.id_commande;
+
+            // ✅ WebSocket
+            if (socket.readyState === WebSocket.OPEN) {
+                socket.send(JSON.stringify({
+                    type: "nouvelle_commande",
+                    id_etablissement: id_etablissement,
+                    table: numeroTable,
+                    commande: panier,
+                    montant: totalGeneral,
+                    etat: "En attente",
+                    id_commande: id_Commande
+                }));
+            }
+
+            // RESET
+            panier = [];
+            mettreAJourModal();
+            $('.modal-c').modal('hide');
+
+            alert("Commande envoyée veillez patienter quelques s'il vous plaît");
+        })
+        .fail(function(){
+            alert("Erreur serveur ❌");
+        });
+
     });
 
 
@@ -375,8 +393,7 @@ let socket = new WebSocket("ws://192.168.100.238:8080");
             socket.send(JSON.stringify({
                 type: "table_terminee",
                 id_etablissement: id_etablissement,
-                table: numeroTable,
-                date: new Date().toLocaleString()
+                table: numeroTable
             }));
             alert('votre demande à été prise en compte')
 
