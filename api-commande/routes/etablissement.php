@@ -5,38 +5,77 @@ header('Content-Type: application/json; charset=utf-8');
 
 $controller = new EtablissementController();
 $method = $_SERVER['REQUEST_METHOD'];
-$headers = getallheaders();
 
+// ========================
 // Vérification du token
+// ========================
+$headers = function_exists('getallheaders') ? getallheaders() : [];
+
 if (!isset($headers['Authorization'])) {
     http_response_code(401);
-    echo json_encode(['success'=>false,'message'=>'Token requis']);
+    echo json_encode([
+        'success' => false,
+        'message' => 'Token requis'
+    ]);
     exit;
 }
 
-// GET : lister ou récupérer un établissement
-if ($method === 'GET') {
-    if (isset($_GET['id'])) {
-        $controller->show($_GET['id']); //S’il y a un ID → afficher un établissement
-    } else {
-        $controller->index(); //Sinon → afficher tous les établissements
-    }
-    exit;
-}
+// ========================
+// Lire le body JSON (POST)
+// ========================
+$inputData = [];
 
-// POST : ajouter ou modifier
 if ($method === 'POST') {
-    $data = $_POST;
-    if (!empty($data['id'])) {
-        $controller->update($data['id'], $data);
+    $raw = file_get_contents('php://input');
+    $decoded = json_decode($raw, true);
+
+    if ($raw && !$decoded) {
+        http_response_code(400);
+        echo json_encode([
+            'success' => false,
+            'message' => 'JSON invalide'
+        ]);
+        exit;
+    }
+
+    $inputData = $decoded ?? $_POST;
+}
+
+// ========================
+// GET : liste ou détail
+// ========================
+if ($method === 'GET') {
+    $id = isset($_GET['id']) ? (int) $_GET['id'] : null;
+
+    if ($id) {
+        $controller->show($id);
     } else {
-        $controller->store($data);
+        $controller->index();
     }
     exit;
 }
 
+// ========================
+// POST : ajouter ou modifier
+// ========================
+if ($method === 'POST') {
+    $id = !empty($inputData['id']) ? (int)$inputData['id'] : null;
+
+    if ($id) {
+        $controller->update($id, $inputData);
+    } else {
+        $controller->store($inputData);
+    }
+    exit;
+}
+
+// ========================
 // Méthodes non autorisées
+// ========================
 http_response_code(405);
-echo json_encode(['success'=>false,'message'=>'Méthode non autorisée']);
+echo json_encode([
+    'success' => false,
+    'message' => 'Méthode non autorisée'
+]);
 exit;
 ?>

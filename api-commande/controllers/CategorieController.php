@@ -49,10 +49,9 @@ class CategorieController {
     public function store($data) {
         header('Content-Type: application/json; charset=utf-8');
 
-        $data['id_etablissement'] = $this->user->id_etablissement;
-
-        $id = $this->categorie->create($data);
-        $e  = $this->categorie->getByIdAndEtablissement($id, $data['id_etablissement']);
+        $id_etablissement = $this->user->id_etablissement;
+        $id = $this->categorie->create($data, $id_etablissement);
+        $e  = $this->categorie->getByIdAndEtablissement($id, $id_etablissement);
 
         echo json_encode(['success'=>true,'data'=>$e]);
         exit;
@@ -72,8 +71,7 @@ class CategorieController {
             exit;
         }
 
-        $data['id_etablissement'] = $id_etablissement;
-        $this->categorie->update($id, $data);
+        $this->categorie->update($id, $id_etablissement, $data);
 
         $e = $this->categorie->getByIdAndEtablissement($id, $id_etablissement);
 

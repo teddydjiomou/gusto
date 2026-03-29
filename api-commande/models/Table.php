@@ -26,7 +26,7 @@ class Table extends BaseModel {
     }
 
     // Récupérer par ID et restaurant (sécurisé)
-    public function getByIdAndRestaurant($id, $id_etablissement) {
+    public function getByIdAndEtablissement($id, $id_etablissement) {
         $stmt = $this->personnalSelect(
             "tables_restaurant",
             "*",
@@ -37,13 +37,13 @@ class Table extends BaseModel {
     }
 
     // Créer
-    public function create($data) {
+    public function create($data, $id_etablissement) {
         $this->insert(
             "tables_restaurant",
             ["nom", "id_etablissement", "statu"],
             [
                 $data['nom'],
-                $data['id_etablissement'],
+                $id_etablissement,
                 "Fermer"
             ]
         );
@@ -51,18 +51,16 @@ class Table extends BaseModel {
         return $this->pdo->lastInsertId();
     }
 
-    // Mettre à jour une table
-    public function update($id, $data) {
+    public function update($id, $id_etablissement, $data) {
         return $this->set(
             "tables_restaurant",
-            ["nom", "id_etablissement", "statu"],
+            ["nom", "statu"], // ❌ on retire id_etablissement
             [
                 $data['nom'],
-                $data['id_etablissement'],
                 $data['statu'],
             ],
-            "WHERE id_table = ?",
-            [$id]
+            "WHERE id_table = ? AND id_etablissement = ?", // ✅ sécurité
+            [$id, $id_etablissement]
         );
     }
 
@@ -76,7 +74,7 @@ class Table extends BaseModel {
     }
 
     public function toggleStatut($id, $id_utilisateur, $id_etablissement) {
-        $e = $this->getByIdAndRestaurant($id, $id_etablissement);
+        $e = $this->getByIdAndEtablissement($id, $id_etablissement);
         if (!$e) return false;
 
         if ($e['statu'] === 'Ouvert') {
@@ -85,8 +83,8 @@ class Table extends BaseModel {
                 "tables_restaurant",
                 ["statu"],
                 ["Fermer"],
-                "WHERE id_table = ?",
-                [$id]
+                "WHERE id_table = ? AND id_etablissement = ?",
+                [$id, $id_etablissement]
             );
 
             // Mettre à jour la dernière entrée service ouverte
@@ -104,8 +102,8 @@ class Table extends BaseModel {
                 "tables_restaurant",
                 ["statu"],
                 ["Ouvert"],
-                "WHERE id_table = ?",
-                [$id]
+                "WHERE id_table = ? AND id_etablissement = ?",
+                [$id, $id_etablissement]
             );
 
             // Créer un nouveau service

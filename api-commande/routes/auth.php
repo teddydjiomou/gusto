@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . './../core/Middleware.php';
 require_once __DIR__ . '/../models/Utilisateur.php';
 require_once __DIR__ . '/../core/Auth.php';
 

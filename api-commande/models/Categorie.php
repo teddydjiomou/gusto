@@ -32,7 +32,7 @@ class Categorie extends BaseModel {
     // =========================
     // Créer une catégorie
     // =========================
-    public function create($data) {
+    public function create($data, $id_etablissement) {
         $this->insert(
             "categorie",
             ["id_etablissement", "libelle"],
@@ -47,16 +47,15 @@ class Categorie extends BaseModel {
     // =========================
     // Mettre à jour une catégorie
     // =========================
-    public function update($id, $data) {
+    public function update($id, $id_etablissement, $data) {
         return $this->set(
             "categorie",
-            ["id_etablissement", "libelle"],
+            ["libelle"],
             [
-                $data['id_etablissement'],
-                $data['libelle']
+              $data['libelle']
             ],
-            "WHERE id_categorie = ?",
-            [$id]
+            "WHERE id_categorie = ? AND id_etablissement = ?",
+            [$id, $id_etablissement]
         );
     }
 

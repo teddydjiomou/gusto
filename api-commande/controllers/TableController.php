@@ -32,7 +32,7 @@ class TableController {
         header('Content-Type: application/json; charset=utf-8');
 
         $id_etablissement = $this->user->id_etablissement;
-        $e = $this->table->getByIdAndRestaurant($id, $id_etablissement);
+        $e = $this->table->getByIdAndEtablissement($id, $id_etablissement);
 
         if ($e) {
             // Renvoie toutes les données brutes
@@ -49,9 +49,9 @@ class TableController {
     public function store($data) {
         header('Content-Type: application/json; charset=utf-8');
 
-        $data['id_etablissement'] = $this->user->id_etablissement;
-        $id = $this->table->create($data);
-        $e  = $this->table->getById($id);
+        $id_etablissement = $this->user->id_etablissement;
+        $id = $this->table->create($data, $id_etablissement);
+        $e  = $this->table->getByIdAndEtablissement($id, $id_etablissement);
 
         // Renvoie toutes les données brutes
         echo json_encode(['success'=>true, 'data'=>$e]);
@@ -65,15 +65,14 @@ class TableController {
         header('Content-Type: application/json; charset=utf-8');
 
         $id_etablissement = $this->user->id_etablissement;
-        $e = $this->table->getByIdAndRestaurant($id, $id_etablissement);
+        $e = $this->table->getByIdAndEtablissement($id, $id_etablissement);
         if (!$e) {
             echo json_encode(['success'=>false,'message'=>'Table introuvable']);
             exit;
         }
 
-        $data['id_etablissement'] = $id_etablissement;
-        $this->table->update($id, $data);
-        $e = $this->table->getByIdAndRestaurant($id, $id_etablissement);
+        $this->table->update($id, $id_etablissement, $data);
+        $e = $this->table->getByIdAndEtablissement($id, $id_etablissement);
 
         // Renvoie toutes les données brutes
         echo json_encode(['success'=>true, 'data'=>$e]);
@@ -87,7 +86,7 @@ class TableController {
         header('Content-Type: application/json; charset=utf-8');
 
         $id_etablissement = $this->user->id_etablissement;
-        $e = $this->table->getByIdAndRestaurant($id, $id_etablissement);
+        $e = $this->table->getByIdAndEtablissement($id, $id_etablissement);
         if (!$e) {
             echo json_encode(['success'=>false,'message'=>'Table introuvable']);
             exit;
@@ -108,7 +107,7 @@ class TableController {
         $id_etablissement = $this->user->id_etablissement;
         $id_utilisateur   = $this->user->id_utilisateur;
 
-        $e = $this->table->getByIdAndRestaurant($id, $id_etablissement);
+        $e = $this->table->getByIdAndEtablissement($id, $id_etablissement);
         if (!$e) {
             echo json_encode(['success'=>false,'message'=>'Table introuvable']);
             exit;
@@ -118,7 +117,7 @@ class TableController {
         $this->table->toggleStatut($id, $id_utilisateur, $id_etablissement);
 
         // Recharger la table pour renvoyer toutes les données
-        $e = $this->table->getByIdAndRestaurant($id, $id_etablissement);
+        $e = $this->table->getByIdAndEtablissement($id, $id_etablissement);
 
         echo json_encode(['success'=>true, 'data'=>$e]);
         exit;

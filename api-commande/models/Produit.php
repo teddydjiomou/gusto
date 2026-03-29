@@ -32,7 +32,7 @@ class Produit extends BaseModel {
     // =========================
     // Récupérer par ID et établissement (sécurisé)
     // =========================
-    public function getByIdAndRestaurant($id, $id_etablissement) {
+    public function getByIdAndEtablissement($id, $id_etablissement) {
         $stmt = $this->personnalSelect(
             "produit",
             "*",
@@ -45,7 +45,7 @@ class Produit extends BaseModel {
     // =========================
     // Créer un produit
     // =========================
-    public function create($data) {
+    public function create($data, $id_etablissement) {
         $this->insert(
             "produit",
             ["id_etablissement", "nom", "image", "id_categorie", "prix", "description"],
@@ -65,20 +65,19 @@ class Produit extends BaseModel {
     // =========================
     // Mettre à jour un produit
     // =========================
-    public function update($id, $data) {
+    public function update($id, $id_etablissement, $data) {
         return $this->set(
             "produit",
-            ["id_etablissement", "nom", "image", "id_categorie", "prix", "description"],
+            ["nom", "image", "id_categorie", "prix", "description"],
             [
-                $data['id_etablissement'],
                 $data['nom'],
                 $data['image'] ?? null,
                 $data['id_categorie'] ?? null,
                 $data['prix'] ?? 0,
                 $data['description'] ?? ''
             ],
-            "WHERE id_produit = ?",
-            [$id]
+            "WHERE id_produit = ? AND id_etablissement = ?",
+            [$id, $id_etablissement]
         );
     }
 

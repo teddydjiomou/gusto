@@ -48,7 +48,7 @@ class ProduitController {
         header('Content-Type: application/json; charset=utf-8');
 
         $id_etablissement = $this->user->id_etablissement;
-        $e = $this->produit->getByIdAndRestaurant($id, $id_etablissement);
+        $e = $this->produit->getByIdAndEtablissement($id, $id_etablissement);
 
         if ($e) {
             $e['image'] = json_decode($e['image'], true); // tableau d'images
@@ -71,10 +71,9 @@ class ProduitController {
             $data['image'] = json_encode($upload);
         }
 
-        $data['id_etablissement'] = $this->user->id_etablissement;
-
-        $id = $this->produit->create($data);
-        $e = $this->produit->getById($id);
+        $id_etablissement = $this->user->id_etablissement;
+        $id = $this->produit->create($data, $id_etablissement);
+        $e  = $this->table->getByIdAndEtablissement($id, $id_etablissement);
         $e['image'] = json_decode($e['image'], true);
 
         echo json_encode(['success'=>true, 'data'=>$e]);
@@ -88,7 +87,7 @@ class ProduitController {
         header('Content-Type: application/json; charset=utf-8');
 
         $id_etablissement = $this->user->id_etablissement;
-        $e = $this->produit->getByIdAndRestaurant($id, $id_etablissement);
+        $e = $this->produit->getByIdAndEtablissement($id, $id_etablissement);
         if (!$e) {
             echo json_encode(['success'=>false,'message'=>'Produit introuvable']);
             exit;
@@ -102,10 +101,8 @@ class ProduitController {
             $data['image'] = $e['image']; // garder l'ancien
         }
 
-        $data['id_etablissement'] = $id_etablissement;
-        $this->produit->update($id, $data);
-
-        $e = $this->produit->getByIdAndRestaurant($id, $id_etablissement);
+        $this->table->update($id, $id_etablissement, $data);
+        $e = $this->produit->getByIdAndEtablissement($id, $id_etablissement);
         $e['image'] = json_decode($e['image'], true);
 
         echo json_encode(['success'=>true, 'data'=>$e]);
@@ -119,7 +116,7 @@ class ProduitController {
         header('Content-Type: application/json; charset=utf-8');
 
         $id_etablissement = $this->user->id_etablissement;
-        $e = $this->produit->getByIdAndRestaurant($id, $id_etablissement);
+        $e = $this->produit->getByIdAndEtablissement($id, $id_etablissement);
         if (!$e) {
             echo json_encode(['success'=>false,'message'=>'Produit introuvable']);
             exit;

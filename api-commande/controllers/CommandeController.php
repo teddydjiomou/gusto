@@ -56,7 +56,7 @@ class CommandeController {
         header('Content-Type: application/json; charset=utf-8');
 
         $id_etablissement = $this->getEtablissementId(false);
-        $e = $this->commande->getByIdAndRestaurant($id, $id_etablissement);
+        $e = $this->commande->getByIdAndEtablissement($id, $id_etablissement);
 
         if ($e) {
             echo json_encode(['success'=>true, 'data'=>$e]);
@@ -71,16 +71,12 @@ class CommandeController {
     // =========================
     public function store($data) {
         header('Content-Type: application/json; charset=utf-8');
-
         $id_etablissement = $this->getEtablissementId(false);
-        $data['id_etablissement'] = $id_etablissement;
-
         // 🔥 Vérifier si la table a un service actif
         $service = $this->commande->isTableActive(
             $data['id_table'],
             $id_etablissement
         );
-
         if (!$service) {
             echo json_encode([
                 'success' => false,
@@ -88,10 +84,9 @@ class CommandeController {
             ]);
             exit;
         }
-
         // ✅ Sinon on crée la commande
-        $id = $this->commande->create($data);
-        $e  = $this->commande->getById($id);
+        $id = $this->commande->create($data, $id_etablissement);
+        $e  = $this->commande->getByIdAndEtablissement($id, $id_etablissement);
 
         echo json_encode([
             'success' => true,
@@ -106,19 +101,15 @@ class CommandeController {
     // =========================
     public function update($id, $data) {
         header('Content-Type: application/json; charset=utf-8');
-
         $id_etablissement = $this->getEtablissementId(true); // token requis
-        $e = $this->commande->getByIdAndRestaurant($id, $id_etablissement);
+        $e = $this->commande->getByIdAndEtablissement($id, $id_etablissement);
 
         if (!$e) {
             echo json_encode(['success'=>false,'message'=>'Commande introuvable']);
             exit;
         }
-
-        $data['id_etablissement'] = $id_etablissement;
-        $this->commande->update($id, $data);
-
-        $e = $this->commande->getByIdAndRestaurant($id, $id_etablissement);
+        $this->commande->update($id, $id_etablissement, $data);
+        $e = $this->commande->getByIdAndEtablissement($id, $id_etablissement);
         echo json_encode(['success'=>true, 'data'=>$e]);
         exit;
     }
@@ -130,7 +121,7 @@ class CommandeController {
         header('Content-Type: application/json; charset=utf-8');
 
         $id_etablissement = $this->getEtablissementId(true); // token requis
-        $e = $this->commande->getByIdAndRestaurant($id, $id_etablissement);
+        $e = $this->commande->getByIdAndEtablissement($id, $id_etablissement);
 
         if (!$e) {
             echo json_encode(['success'=>false,'message'=>'Commande introuvable']);
@@ -149,7 +140,7 @@ class CommandeController {
         header('Content-Type: application/json; charset=utf-8');
 
         $id_etablissement = $this->getEtablissementId(true); // token requis
-        $e = $this->commande->getByIdAndRestaurant($id, $id_etablissement);
+        $e = $this->commande->getByIdAndEtablissement($id, $id_etablissement);
 
         if (!$e) {
             echo json_encode(['success'=>false,'message'=>'Commande introuvable']);
@@ -157,7 +148,7 @@ class CommandeController {
         }
 
         $this->commande->toggleStatut($id, $id_etablissement);
-        $e = $this->commande->getByIdAndRestaurant($id, $id_etablissement);
+        $e = $this->commande->getByIdAndEtablissement($id, $id_etablissement);
 
         echo json_encode(['success'=>true, 'data'=>$e]);
         exit;

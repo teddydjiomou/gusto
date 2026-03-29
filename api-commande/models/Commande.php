@@ -26,7 +26,7 @@ class Commande extends BaseModel {
     }
 
     // Récupérer par ID et restaurant (sécurisé)
-    public function getByIdAndRestaurant($id, $id_etablissement) {
+    public function getByIdAndEtablissement($id, $id_etablissement) {
         $stmt = $this->personnalSelect(
             "commande",
             "*",
@@ -48,7 +48,7 @@ class Commande extends BaseModel {
     }
 
     // Créer
-    public function create($data) {
+    public function create($data, $id_etablissement) {
         $this->insert(
             "commande",
             ['id_table','id_etablissement','commande','montant_total','etat'],
@@ -65,19 +65,18 @@ class Commande extends BaseModel {
     }
 
     // Mettre à jour une table
-    public function update($id, $data) {
+    public function update($id, $id_etablissement, $data) {
         return $this->set(
             "commande",
-            ['id_table','id_etablissement','commande','montant_total','etat'],
+            ['id_table','commande','montant_total','etat'],
             [
                 $data['id_table'],
-                $data['id_etablissement'],
                 $data['commande'],
                 $data['montant_total'],
                 $data['etat'],
             ],
             "WHERE id_commande = ? AND id_etablissement = ?",
-            [$id, $data['id_etablissement']]
+            [$id, $id_etablissement]
         );
     }
 
@@ -92,7 +91,7 @@ class Commande extends BaseModel {
 
     public function toggleStatut($id, $id_etablissement) {
         // Récupérer la commande sécurisée
-        $e = $this->getByIdAndRestaurant($id, $id_etablissement);
+        $e = $this->getByIdAndEtablissement($id, $id_etablissement);
         if (!$e) return false;
 
         // Définir la progression des statuts

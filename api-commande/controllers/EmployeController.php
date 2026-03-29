@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../models/Utilisateur.php';
+require_once __DIR__ . '/../models/Employe.php';
 require_once __DIR__ . '/../core/Middleware.php';
 
 class EmployeController {
@@ -56,10 +56,10 @@ class EmployeController {
     public function store($data) {
         header('Content-Type: application/json; charset=utf-8');
 
-        $data['id_etablissement'] = $this->user->id_etablissement;
+        $id_etablissement = $this->user->id_etablissement;
 
-        $id = $this->model->create($data);
-        $e  = $this->model->getByIdAndEtablissement($id, $data['id_etablissement']);
+        $id = $this->model->create($data, $id_etablissement);
+        $e  = $this->model->getByIdAndEtablissement($id, $id_etablissement);
 
         echo json_encode(['success'=>true,'data'=>$e]);
         exit;
@@ -77,12 +77,7 @@ class EmployeController {
             echo json_encode(['success'=>false,'message'=>'Employé introuvable']);
             exit;
         }
-
-        $data['id_etablissement'] = $id_etablissement;
-        // Mise à jour
-        $this->model->update($id, $data);
-
-        // Relecture
+        $this->model->update($id, $id_etablissement, $data);
         $e = $this->model->getByIdAndEtablissement($id, $id_etablissement);
 
         echo json_encode(['success'=>true,'data'=>$e]);
@@ -105,7 +100,7 @@ class EmployeController {
 
         $this->model->delete($id, $id_etablissement);
 
-        echo json_encode(['success'=>true,'message'=>'Employé supprimée']);
+        echo json_encode(['success'=>true,'message'=>'Employé supprimé']);
         exit;
     }
 

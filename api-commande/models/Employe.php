@@ -28,26 +28,6 @@ class Utilisateur extends BaseModel {
         return $prefix . '-' . $random;
     }
 
-    public function getAllUsers() {
-        $stmt = $this->personnalSelect(
-            "utilisateur",
-            "*",
-            "WHERE role != ?",
-            [0]
-        );
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public function getById($id) {
-        $stmt = $this->personnalSelect(
-            "utilisateur",
-            "*",
-            "WHERE id_utilisateur = ?",
-            [$id]
-        );
-        return $stmt->fetch(PDO::FETCH_ASSOC);
-    }
-
     public function getEmployeByEtablissement($id_etablissement) {
         $stmt = $this->personnalSelect(
             "utilisateur",
@@ -65,7 +45,7 @@ class Utilisateur extends BaseModel {
         $stmt = $this->personnalSelect(
             "utilisateur",
             "*",
-            "WHERE id_categorie = ? AND id_etablissement = ?",
+            "WHERE id_utilisateur = ? AND id_etablissement = ?",
             [$id, $id_etablissement]
         );
         return $stmt->fetch(PDO::FETCH_ASSOC);
@@ -75,7 +55,7 @@ class Utilisateur extends BaseModel {
        CRUD
     ======================= */
 
-    public function create($data) {
+    public function create($data, $id_etablissement) {
 
         // Génération automatique du mot de passe
         $password = $data['password'] ?? $this->generateRestaurantCode($data['nom']);
@@ -142,7 +122,7 @@ class Utilisateur extends BaseModel {
         return $id;
     }
 
-    public function update($id, $data) {
+    public function update($id, $id_etablissement, $data) {
         return $this->set(
             "utilisateur",
             ["nom", "adresse", "email", "telephone", "login", "role"],
@@ -154,51 +134,21 @@ class Utilisateur extends BaseModel {
                 $data['login'],
                 $data['role']
             ],
-            "WHERE id_utilisateur = ?",
-            [$id]
-        );
-    }
-
-    
-    /* =======================
-       AUTH
-    ======================= */
-
-    public function getByLogin($login) {
-        $stmt = $this->personnalSelect(
-            "utilisateur",
-            "*",
-            "WHERE login = ?",
-            [$login]
-        );
-        return $stmt->fetch(PDO::FETCH_ASSOC);
-    }
-
-    /* =======================
-       Update login
-    ======================= */
-
-    public function updateLogin($id, $login, $id_etablissement, $password = null) {
-    if ($password !== null && $password !== '') {
-        return $this->set(
-            "utilisateur",
-            ["login", "password"],
-            [
-                $login,
-                password_hash($password, PASSWORD_DEFAULT)
-            ],
             "WHERE id_utilisateur = ? AND id_etablissement = ?",
             [$id, $id_etablissement]
         );
     }
 
-    return $this->set(
-        "utilisateur",
-        ["login"],
-        [$login],
-        "WHERE id_utilisateur = ? AND id_etablissement = ?",
-        [$id, $id_etablissement]
-    );
-}
+    // =========================
+    // Supprimer  (sécurisé par établissement)
+    // =========================
+    public function delete($id, $id_etablissement){
+        return $this->personalDelete(
+            "utilisateur",
+            "WHERE id_utilisateur = ? AND id_etablissement = ?",
+            [$id, $id_etablissement]
+        );
+    }
+    
 
 }

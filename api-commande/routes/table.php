@@ -5,28 +5,54 @@ header('Content-Type: application/json; charset=utf-8');
 
 $controller = new TableController();
 $method = $_SERVER['REQUEST_METHOD'];
-$headers = getallheaders();
 
 // ========================
 // Vérification du token
 // ========================
+$headers = function_exists('getallheaders') ? getallheaders() : [];
+
 if (!isset($headers['Authorization'])) {
     http_response_code(401);
-    echo json_encode(['success'=>false,'message'=>'Token requis']);
+    echo json_encode([
+        'success' => false,
+        'message' => 'Token requis'
+    ]);
     exit;
+}
+
+// ========================
+// Lire le body JSON (POST, PATCH, DELETE)
+// ========================
+$inputData = [];
+
+if (in_array($method, ['POST', 'PATCH', 'DELETE'])) {
+    $raw = file_get_contents('php://input');
+    $decoded = json_decode($raw, true);
+
+    // Vérifier JSON invalide
+    if ($raw && !$decoded) {
+        http_response_code(400);
+        echo json_encode([
+            'success' => false,
+            'message' => 'JSON invalide'
+        ]);
+        exit;
+    }
+
+    $inputData = $decoded ?? $_POST;
 }
 
 // ========================
 // GET : Liste ou détail
 // ========================
 if ($method === 'GET') {
+    $id = isset($_GET['id']) ? (int) $_GET['id'] : null;
 
-    if (isset($_GET['id'])) {
-        $controller->show($_GET['id']);
+    if ($id) {
+        $controller->show($id);
     } else {
         $controller->index();
     }
-
     exit;
 }
 
@@ -34,11 +60,12 @@ if ($method === 'GET') {
 // POST : Ajouter ou Modifier
 // ========================
 if ($method === 'POST') {
-    $data = $_POST;
-    if (!empty($data['id'])) {
-        $controller->update($data['id'], $data);
+    $id = !empty($inputData['id']) ? (int)$inputData['id'] : null;
+
+    if ($id) {
+        $controller->update($id, $inputData);
     } else {
-        $controller->store($data);
+        $controller->store($inputData);
     }
     exit;
 }
@@ -47,7 +74,12 @@ if ($method === 'POST') {
 // DELETE : Supprimer
 // ========================
 if ($method === 'DELETE') {
-    if (!isset($_GET['id'])) {
+
+    // Support JSON + query param
+    $id = $inputData['id'] ?? $_GET['id'] ?? null;
+
+    if (!$id) {
+        http_response_code(400);
         echo json_encode([
             'success' => false,
             'message' => 'ID requis'
@@ -55,15 +87,27 @@ if ($method === 'DELETE') {
         exit;
     }
 
-    $controller->delete($_GET['id']);
+    $controller->delete((int)$id);
     exit;
 }
 
 // ========================
 // PATCH : changer statut
 // ========================
-if ($method === 'PATCH' && isset($_GET['id'])) {
-    $controller->changeStatus($_GET['id']);
+if ($method === 'PATCH') {
+
+    $id = $inputData['id'] ?? $_GET['id'] ?? null;
+
+    if (!$id) {
+        http_response_code(400);
+        echo json_encode([
+            'success' => false,
+            'message' => 'ID requis pour changer le statut'
+        ]);
+        exit;
+    }
+    // 🔥 on passe maintenant les données
+    $controller->changeStatus((int)$id, $inputData);
     exit;
 }
 
@@ -71,6 +115,9 @@ if ($method === 'PATCH' && isset($_GET['id'])) {
 // Méthodes non autorisées
 // ========================
 http_response_code(405);
-echo json_encode(['success'=>false,'message'=>'Méthode non autorisée']);
+echo json_encode([
+    'success' => false,
+    'message' => 'Méthode non autorisée'
+]);
 exit;
 ?>
