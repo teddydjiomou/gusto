@@ -1,48 +1,53 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Gusto</title>
-     <link href="./web/assets/img/gusto.ico" class="logo icon" rel="icon">
+  <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <title>Gusto</title>
+       <link href="./web/assets/img/gusto.ico" class="logo icon" rel="icon">
 
-    <link rel="stylesheet" href="./web/assets/css/style.css" />
-    <link href="./web/assets/vendor/bootstrap/css/bootstrap.css" rel="stylesheet">
-    <link href="./web/assets/vendor/icofont/icofont.min.css" rel="stylesheet">
-    <link href="./web/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;600&display=swap"
-      rel="stylesheet"
-    />
-</head>
-<body>
-  <header id="header" class="header d-flex align-items-center fixed-top">
-    <div class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
+      <link rel="stylesheet" href="./web/assets/css/style.css" />
+      <link href="./web/assets/vendor/bootstrap/css/bootstrap.css" rel="stylesheet">
+      <link href="./web/assets/vendor/icofont/icofont.min.css" rel="stylesheet">
+      <link href="./web/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+      <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;600&display=swap"
+        rel="stylesheet"/>
+  </head>
 
-      <a href="https://ingenierielogiciel.com" class="logo d-flex align-items-center">
-        <!-- Uncomment the line below if you also wish to use an image logo -->
-        <img src="./web/assets/img/logo.png" alt="">
-        <span>Gusto Galaxy</span>
-      </a>
+  <div id="preloader"></div>
 
-      <nav id="navmenu" class="navmenu">
-        <ul>
-          <li><a href="#accueil" class="active">Accueil</a></li>
-          <li><a href="#presentation">A propos du système</a></li>
-          <li><a href="#contact">Contact</a></li>
-          <li><a href="privacy.php">Politique de confidentialité</a></li>
-          <li><a href="./web/login.php">Connexion</a></li>
-          
-        </ul>
-        <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
-      </nav>
+  <body>
+    <header id="header" class="header d-flex align-items-center fixed-top">
+      <div class="container container-xl position-relative d-flex align-items-center justify-content-between">
 
-    </div>
-  </header>
+        <div>
+          <span class="logo">Gusto</span>
+          <button id="languageToggle" class="align-items-center px-2 py-1 shadow-sm">
+            <i class="bi bi-translate"></i>
+            <span>Langues</span>
+          </button>
+          <div id="languageDropdown" class="language-dropdown absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10" >
+              <div id="google_translate_element" class="p-3"></div>
+          </div>
+        </div>
+
+        <nav id="navmenu" class="navmenu">
+          <ul>
+            <li><a href="#accueil" class="active">Accueil</a></li>
+            <li><a href="#presentation">A propos du système</a></li>
+            <li><a href="#contact">Contact</a></li>
+            <li><a href="privacy.php">Politique de confidentialité</a></li>
+            <li><a href="./web/login.php">Connexion</a></li>
+          </ul>
+          <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+        </nav>
+
+      </div>
+    </header>
     <custom-navbar></custom-navbar>
-
     <main>
         <!-- Hero Section -->
         <section id="accueil" class="hero" style="height: 600px;">
@@ -105,6 +110,59 @@
     <script src="./web/assets/js/feather.min.js"></script>
 
     <script>
+
+        // Toggle du menu déroulant
+        document.getElementById('languageToggle').addEventListener('click', function() {
+            const dropdown = document.getElementById('languageDropdown');
+            const chevron = this.querySelector('.fa-chevron-down');
+            
+            dropdown.classList.toggle('show');
+            chevron.classList.toggle('rotate-180');
+        });
+
+        // Fermer le dropdown quand on clique ailleurs
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('languageDropdown');
+            const toggle = document.getElementById('languageToggle');
+            
+            if (!toggle.contains(event.target) && !dropdown.contains(event.target)) {
+                dropdown.classList.remove('show');
+                toggle.querySelector('.fa-chevron-down').classList.remove('rotate-180');
+            }
+        });
+
+        // Fonction pour initialiser Google Traduction
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                // pageLanguage: 'fr',
+                includedLanguages: 'fr,en,es,de,it,pt,ru,zh-CN,ja,ar',
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+                autoDisplay: false
+            }, 'google_translate_element');
+            
+            // Masquer la barre Google par défaut
+            const googleBar = document.querySelector('.goog-te-banner-frame');
+            if (googleBar) googleBar.style.display = 'none';
+        }
+
+        // Charger le script Google Traduction
+        function loadGoogleTranslateScript() {
+            const script = document.createElement('script');
+            script.src = '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+            document.body.appendChild(script);
+        }
+
+        // Démarrer le chargement
+        loadGoogleTranslateScript();
+
+        /**Preloader*/
+        const preloader = document.querySelector('#preloader');
+        if (preloader) {
+          window.addEventListener('load', () => {
+            preloader.remove();
+          });
+        }
+
       //scrollspy
       let navmenulinks = document.querySelectorAll('.navmenu a');
       function navmenuScrollspy() {
@@ -149,8 +207,6 @@
           e.stopImmediatePropagation();
         });
       });
-
-
     </script>
-</body>
+  </body>
 </html>

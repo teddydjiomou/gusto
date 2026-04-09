@@ -8,7 +8,7 @@ class Commande extends BaseModel {
         $stmt = $this->personnalSelect(
             "commande",
             "*",
-            "WHERE id_etablissement = ?",
+            "WHERE id_etablissement = ? order by id_commande desc",
             [$id_etablissement]
         );
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
