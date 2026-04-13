@@ -40,12 +40,24 @@ class Commande extends BaseModel {
         $stmt = $this->personnalSelect(
             "service",
             "*",
-            "WHERE id_table = ? AND id_etablissement = ? AND date_heure_fermeture IS NULL",
+            "WHERE id_table = ? AND id_etablissement = ? AND date_heure_fermeture IS NULL ORDER BY id_service DESC LIMIT 1",
             [$id_table, $id_etablissement]
         );
 
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+
+    public function isTableOccupe($id_table, $id_etablissement) {
+        $stmt = $this->personnalSelect(
+            "commande",
+            "*",
+            "WHERE id_table = ? AND id_etablissement = ? AND etat != 'Payé' ORDER BY id_commande DESC LIMIT 1",
+            [$id_table, $id_etablissement]
+        );
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
 
     // Créer
     public function create($data, $id_etablissement) {

@@ -76,17 +76,6 @@ class CommandeController {
         header('Content-Type: application/json; charset=utf-8');
 
         $id_etablissement = $this->getEtablissementId();
-
-        $service = $this->commande->isTableActive($data['id_table'], $id_etablissement);
-
-        if (!$service) {
-            echo json_encode([
-                'success' => false,
-                'message' => 'Table service is unavailable'
-            ]);
-            exit;
-        }
-
         $id = $this->commande->create($data, $id_etablissement);
         $e  = $this->commande->getByIdAndEtablissement($id, $id_etablissement);
 
