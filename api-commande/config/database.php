@@ -121,7 +121,7 @@ class Database {
                 "tables_restaurant" => "
                     CREATE TABLE IF NOT EXISTS tables_restaurant (
                         id_table INT AUTO_INCREMENT PRIMARY KEY,
-                        Nom VARCHAR(20) NOT NULL,
+                        nom VARCHAR(20) NOT NULL,
                         id_etablissement INT,
                         statu VARCHAR(10) NOT NULL,
                         FOREIGN KEY (id_etablissement) REFERENCES etablissement(id_etablissement)
@@ -154,6 +154,7 @@ class Database {
                         id_service INT AUTO_INCREMENT PRIMARY KEY,
                         id_table INT,
                         id_utilisateur INT,
+                        code VARCHAR(6) NOT NULL,
                         id_etablissement INT,
                         date_heure_ouverture DATETIME,
                         date_heure_fermeture DATETIME,
@@ -167,6 +168,7 @@ class Database {
                 "commande" => "
                     CREATE TABLE IF NOT EXISTS commande (
                         id_commande INT AUTO_INCREMENT PRIMARY KEY,
+                        id_ticket TEXT,
                         id_etablissement INT,
                         id_table INT,
                         commande TEXT,

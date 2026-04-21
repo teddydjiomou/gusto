@@ -16,7 +16,7 @@ class PrintController {
             $printer->setJustification(Printer::JUSTIFY_CENTER);
             $printer->setTextSize(2, 2);
             $printer->setEmphasis(true);
-            $printer->text("FACTURE\n\n");
+            $printer->text("TICKET\n\n");
 
             $printer->setTextSize(1, 1);
             $printer->setEmphasis(false);

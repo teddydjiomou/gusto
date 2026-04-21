@@ -22,7 +22,7 @@ class ServiceController {
         $id_etablissement = $this->user->id_etablissement;
         $services = $this->service->getServicesByEtablissement($id_etablissement);
 
-        echo json_encode(['success'=>true, 'data'=>$services]);
+        echo json_encode(['success'=>true, 'login' => $this->user->login, 'data'=>$services]);
         exit;
     }
 }

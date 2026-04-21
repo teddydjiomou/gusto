@@ -18,6 +18,24 @@ wss.on('connection', ws => {
             return;
         }
 
+                // 🟢 TABLE OUVERTE
+        if (data.type === 'table_opened' && data.id_etablissement) {
+            const employesRestaurant = etablissement[data.id_etablissement];
+            if (!employesRestaurant) return;
+
+            employesRestaurant.forEach(employe => {
+                if (employe.readyState === WebSocket.OPEN) {
+                    employe.send(JSON.stringify(data));
+                }
+            });
+
+            console.log(
+                `🟢 Table ${data.table} oppened by ${data.login} to restaurant ${data.id_etablissement}`
+            );
+
+            return;
+        }
+
         // 🏷️ Enregistrement du client pour un restaurant
         if (data.type === 'register' && data.id_etablissement) {
             ws.id_etablissement = data.id_etablissement;
@@ -42,7 +60,7 @@ wss.on('connection', ws => {
                 }
             });
 
-            console.log(`📤 Command sent to restaurant ${data.id_etablissement}`);
+            console.log(`📤 ${data.id_ticket} Command sent to restaurant ${data.id_etablissement}`);
             return;
         }
 
@@ -57,7 +75,7 @@ wss.on('connection', ws => {
                 }
             });
 
-            console.log(`📤 Table ${data.table} completed sent to restaurant ${data.id_etablissement}`);
+            console.log(`📤 The client ${data.id_ticket} of the table n° ${data.table} completed sent to restaurant ${data.id_etablissement}`);
             return;
         }
     });

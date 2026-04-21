@@ -42,8 +42,7 @@
     require_once './../api-commande/models/Commande.php';
     $ServiceModel = new Commande();
     $serviceActif = $ServiceModel->isTableActive($id_table, $id_etablissement);
-    $serviceDisponible= $ServiceModel->isTableOccupe($id_table, $id_etablissement);
-    if (!$serviceActif || $serviceDisponible) {
+    if (!$serviceActif) {
         require_once'./forbidden.php';
         exit;
     }
@@ -204,7 +203,7 @@ foreach ($produits as $e) {
       <div class="modal-dialog modal-md" role="document">
         <div class="modal-content">
           <div class="modal-header">
-              <h5 class="modal-title m-0 font-weight-bold" style="font-size: 17px;" id="modalLabel">My commands</h5>
+              <h5 class="modal-title m-0 font-weight-bold" style="font-size: 17px;" id="modalLabel"></h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                   <span aria-hidden="true">×</span>
               </button>
@@ -246,289 +245,278 @@ foreach ($produits as $e) {
     const id_etablissement = "<?= htmlspecialchars($id_etablissement) ?>"
     const id_table = "<?= htmlspecialchars($id_table) ?>"; 
     const devise = "<?= htmlspecialchars($etablissements["devise"]) ?>";
-    var panier = [];
+    let panier = [];
+    let socket = null;
 
-/* CALCUL TOTAL */
-
-function calculerMontantFinal() {
-
-    let total = 0;
-
-    panier.forEach(item => {
-        total += item.total;
-    });
-    parseFloat(total.toFixed(2));
-    $("#montantFinal").text(total.toFixed(2) + " " + devise);
-}
-
-/* UPDATE MODAL */
-
-function mettreAJourModal() {
-
-    var html = "";
-
-    panier.forEach(function(item, index) {
-
-        html += `
-        <tr>
-            <td>${item.libelle}</td>
-            <td>${item.quantite}</td>
-            <td>${item.total.toFixed(2)} ${devise}</td>
-            <td>
-                <button class="btn btn-danger btn-sm supprimer-item"
-                        data-index="${index}"
-                        data-id="${item.id}">
-                    x
-                </button>
-            </td>
-        </tr>
-        `;
+    // ================= INIT =================
+    document.addEventListener("DOMContentLoaded", () => {
+        initFeather();
+        initFilters();
+        initWebSocket();
     });
 
-    $("#tablePanier").html(html);
-
-    calculerMontantFinal();
-
-    if (panier.length > 0) {
-        $("#btn-valider").show();
-    } else {
-        $("#btn-valider").hide();
+    // ================= UI =================
+    function initFeather() {
+        if (window.feather) feather.replace();
     }
-}
 
-/* AJOUT PANIER */
+    // ================= FILTRES =================
+    function initFilters() {
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const dishCards = document.querySelectorAll('.menu-card');
 
-$(document).on('click','.ajouter',function(e){
+        filterButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const filter = button.getAttribute('data-filter');
 
-    e.preventDefault();
+                dishCards.forEach(card => {
+                    if (filter === 'tout' || card.classList.contains(filter)) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
 
-    var bouton = $(this);
-    var id = bouton.data('id');
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+            });
+        });
+    }
 
-    var container = bouton.closest('.menu-card');
+    /* CALCUL TOTAL */
 
-    var nom = container.find("h3").text();
+    function calculerMontantFinal() {
+        let total = panier.reduce((sum, item) => sum + item.total, 0);
+        $("#montantFinal").text(total.toFixed(2) + " " + devise);
+    }
 
-    var prix = container.find(".price").text().replace(" " + devise,"");
+    /* UPDATE MODAL */
 
-    var quantite = container.find('.valeurquantite').val();
+    function mettreAJourModal() {
 
-    var total = prix * quantite;
+        let html = "";
 
-    let index = panier.findIndex(
-        item => item.id === id
-    );
+        panier.forEach(function(item, index) {
 
-    if (index !== -1) {
-
-        panier[index].quantite = quantite;
-        panier[index].total = prix * quantite;
-
-    } else {
-
-        panier.push({
-            id: id,
-            libelle: nom,
-            prix: prix,
-            quantite: quantite,
-            total: total
+            html += `
+            <tr>
+                <td>${item.libelle}</td>
+                <td>${item.quantite}</td>
+                <td>${item.total.toFixed(2)} ${devise}</td>
+                <td>
+                    <button class="btn btn-danger btn-sm supprimer-item"
+                            data-index="${index}"
+                            data-id="${item.id}">
+                        x
+                    </button>
+                </td>
+            </tr>
+            `;
         });
 
+        $("#tablePanier").html(html);
+
+        calculerMontantFinal();
+
+        if (panier.length > 0) {
+            $("#btn-valider").show();
+        } else {
+            $("#btn-valider").hide();
+        }
     }
 
-    if (container.find('.check-panier').length === 0) {
-        container.append('<span class="check-panier">✓</span>');
-    }
+    /* AJOUT AU PANIER */
 
-    mettreAJourModal();
-    let nbElementsDistincts = panier.length;
-    $('.commander .cart-count').show().text(nbElementsDistincts);
+    $(document).on('click','.ajouter',function(e){
+        e.preventDefault();
 
-});
+        let container = $(this).closest('.menu-card');
+        let id = $(this).data('id');
+        let nom = container.find("h3").text();
+        let prix = parseFloat(container.find(".price").text().replace(" " + devise,""));
+        let quantite = parseInt(container.find('.valeurquantite').val());
 
-$(document).on('click', '.supprimer-item', function() {
-    var index = $(this).data('index');
-    var id = $(this).data('id');
+        let index = panier.findIndex(item => item.id === id);
 
-    panier.splice(index, 1);
-
-    var container = $('.ajouter[data-id="'+id+'"]').closest('.menu-card');
-    container.find('.valeurquantite').val(1);  // remettre quantité à 1
-    container.find('.check-panier').remove();   // enlever le check
-
-    mettreAJourModal();
-    let nbElementsDistincts = panier.length;
-    if(nbElementsDistincts === 0){
-        $('.commander .cart-count').hide();   // cacher si vide
-    } else {
-        $('.commander .cart-count').show().text(nbElementsDistincts);
-    }
-});
-
-$(document).on('click','.commander',function(){ 
-    $('.modal-c').modal({ backdrop:'static', keyboard:false }); 
-});
-
-
-$(document).on('click', '.facture', function() { 
-    $.ajax({
-        url: "http://gusto/api-commande/routes/commande.php?id_etablissement=" + id_etablissement,
-        method: "GET",
-        dataType: "json"
-    })
-    .done(function(res) {
-        if (!res.success) {
-            alert("Error: " + res.message);
-            return;
+        if (index !== -1) {
+            panier[index].quantite = quantite;
+            panier[index].total = prix * quantite;
+        } else {
+            panier.push({ id, libelle: nom, prix, quantite, total: +(prix * quantite).toFixed(2) });
         }
 
-        // Vider le tableau avant de remplir
-        $('#tableFacture').empty();
+        if (container.find('.check-panier').length === 0) {
+            container.append('<span class="check-panier">✓</span>');
+        }
 
-        let totalGeneral = 0;
+        mettreAJourModal();
+        let nbElementsDistincts = panier.length;
+        $('.commander .cart-count').show().text(nbElementsDistincts);
+    });
 
-        res.data.forEach(function(item) {
-            if (item.etat=="Payé" || item.id_table != id_table) return
-            // Parse la chaîne JSON de la commande
-            let commandes;
-            try {
-                commandes = JSON.parse(item.commande);
-            } catch (e) {
-                console.error("Erreur JSON.parse:", e);
+    /* SUPPRIMER */
+
+    $(document).on('click', '.supprimer-item', function() {
+        let index = $(this).data('index');
+        let id = $(this).data('id');
+
+        panier.splice(index, 1);
+
+        let container = $('.ajouter[data-id="'+id+'"]').closest('.menu-card');
+        container.find('.valeurquantite').val(1);
+        container.find('.check-panier').remove();
+
+        mettreAJourModal();
+        let nbElementsDistincts = panier.length;
+        if(nbElementsDistincts === 0){
+            $('.commander .cart-count').hide();   // cacher si vide
+        } else {
+            $('.commander .cart-count').show().text(nbElementsDistincts);
+        }
+    });
+
+    /* OUVRIR MODAL */
+
+    $(document).on('click','.commander',function(){ 
+        $('.modal-c').modal({ backdrop:'static', keyboard:false }); 
+    });
+
+
+    $(document).on('click', '.facture', function() { 
+        let id_ticket = localStorage.getItem("id_ticket");
+        $.ajax({
+            url: "http://gusto/api-commande/routes/commande.php?id_etablissement=" + id_etablissement,
+            method: "GET",
+            dataType: "json"
+        })
+        .done(function(res) {
+            if (!res.success) {
+                alert("Error: " + res.message);
                 return;
             }
+            $('#tableFacture').empty();
+            let totalGeneral = 0;
+            res.data.forEach(function(item) {
+            if (item.id_ticket != id_ticket) return;
+
+            let commandes = item.commandes;
 
             commandes.forEach(function(prod) {
-                const nomProduit = prod.libelle;
-                const quantite = prod.quantite;
-                const montantLigne = prod.total;
-                const etat = item.etat;
-
                 let row = `<tr>
-                    <td>${nomProduit}</td>
-                    <td>${quantite}</td>
-                    <td>${montantLigne.toFixed(2)} ${devise}</td>
-                    <td>${etat}</td>
+                    <td>${prod.libelle}</td>
+                    <td>${prod.quantite}</td>
+                    <td>${prod.total.toFixed(2)} ${devise}</td>
+                    <td>${prod.etat}</td>
                 </tr>`;
 
                 $('#tableFacture').append(row);
-                totalGeneral += montantLigne;
+                totalGeneral += prod.total;
             });
         });
-
-        // Mettre à jour le montant total
-       $('#montantTotal').text(totalGeneral.toFixed(2) + " " + devise);
-       
-
-        // Afficher la modal (Bootstrap 5)
-         $('.modal-f').modal({ backdrop:'static', keyboard:false });
-    })
-    .fail(function(xhr, status, error) {
-        alert("An error has occurred: " + error);
+           $('#montantTotal').text(totalGeneral.toFixed(2) + " " + devise);
+           $('.modal-f .modal-title').text(localStorage.getItem("id_ticket") ? localStorage.getItem("id_ticket") : "My commands");
+           $('.modal-f').modal({ backdrop:'static', keyboard:false });
+        })
+        .fail(function(xhr, status, error) {
+            alert("An error has occurred: " + error);
+        });
     });
-});
 
-//Socket
 
-let socket = new WebSocket("ws://192.168.100.238:8080");
+   /* SOCKET */
 
-    socket.onopen = function () {
-        console.log("✅ WebSocket connecté (client)");
-        socket.send(JSON.stringify({
-            type: "register",
-            id_etablissement: id_etablissement
-        }));
-    };
+    function initWebSocket() {
+        if (socket) return; // 🔥 empêche double connexion
 
-    // Gestion des erreurs et fermeture
-    socket.onerror = function (err) {
-        console.error("❌ Error WebSocket", err);
-    };
+        socket = new WebSocket("ws://192.168.1.167:8080");
 
-    socket.onclose = function () {
-        console.warn("⚠️ WebSocket diconnected");
-    };
+        socket.onopen = () => {
+            console.log("✅ WebSocket connected");
+            socket.send(JSON.stringify({
+                type: "register",
+                id_etablissement
+            }));
+        };
+
+        socket.onerror = err => console.error("❌ WS error", err);
+        socket.onclose = () => console.warn("⚠️ WS closed");
+    }
 
     $(document).on('click', '#btn-valider', function () {
 
-        let idTable = $("#id_table").val();
         let totalGeneral = panier.reduce((sum, item) => sum + item.total, 0);
+        let id_ticket = localStorage.getItem("id_ticket");
+
+        if (!id_ticket) {
+            const now = new Date();
+            const pad = n => n.toString().padStart(2, "0");
+           id_ticket = `TCK-${pad(id_table)}-${String(now.getFullYear()).slice(-2)}${pad(now.getMonth()+1)}${pad(now.getDate())}-${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}${pad(now.getMilliseconds())}`;
+
+            localStorage.setItem("id_ticket", id_ticket);
+        }
 
         let payload = {
-            id_table: idTable,
-            id_etablissement: id_etablissement,
+            id_table,
+            id_etablissement,
             commande: panier,
-            montant_total: totalGeneral
+            montant_total: totalGeneral,
+            id_ticket
         };
 
         $.ajax({
             url: "http://gusto/api-commande/routes/commande.php?id_etablissement=" + id_etablissement,
             method: "POST",
-            contentType: "application/json", // <- important !
-            data: JSON.stringify(payload)     // <- tout l'objet en JSON
-            
+            contentType: "application/json",
+            data: JSON.stringify(payload)
         })
-        .done(function(response){
+        .done(res => {
 
-            const res = response;
-
-            // ✅ Vérifier succès
             if (!res.success) {
                 alert("Error: " + res.message);
                 return;
             }
 
-            const id_Commande = res.id_commande;
-
-            // ✅ WebSocket
-            if (socket.readyState === WebSocket.OPEN) {
+            if (socket?.readyState === WebSocket.OPEN) {
                 socket.send(JSON.stringify({
                     type: "new_command",
-                    id_etablissement: id_etablissement,
-                    table: idTable,
+                    id_etablissement,
+                    table: id_table,
                     commande: panier,
                     montant: totalGeneral,
-                    date: new Date().toLocaleString(),
                     etat: "En attente",
-                    id_commande: id_Commande
+                    id_commande: res.id_commande,
+                    id_ticket: id_ticket
                 }));
             }
 
             // RESET
             panier = [];
             $('.commander .cart-count').hide(); 
-            $('.check-panier').remove(); 
-            $('.valeurquantite').val(1); 
+            $('.check-panier').remove();
+            $('.valeurquantite').val(1);
             mettreAJourModal();
             $('.modal-c').modal('hide');
 
             alert("Command sent please wait a moment");
         })
-        .fail(function(){
-            alert("Server error ❌");
-        });
-
+        .fail(() => alert("Server error ❌"));
     });
 
+    // ================= TERMINER =================
 
-    // 🔴 FIN DE COMMANDE (bouton "terminer")
     $(document).on('click', '.terminer', function () {
-
-        let numeroTable = $("#id_table").val();
-
-        if (socket.readyState === WebSocket.OPEN) {
+        let id_ticket = localStorage.getItem("id_ticket");
+        if (socket?.readyState === WebSocket.OPEN) {
             socket.send(JSON.stringify({
                 type: "table_completed",
-                id_etablissement: id_etablissement,
-                table: numeroTable,
-                date: new Date().toLocaleString()
+                id_etablissement,
+                table: id_table,
+                id_ticket: id_ticket
             }));
-            alert('Your command has been processed')
-
-            console.log("📤 Table completed sent :", numeroTable);
-        } else {
-            console.warn("⚠️ WebSocket no connected");
         }
+        localStorage.removeItem("id_ticket");
+
+        alert("✅");
     });
 
 </script>

@@ -43,7 +43,7 @@ class CommandeController {
         header('Content-Type: application/json; charset=utf-8');
 
         $id_etablissement = $this->getEtablissementId();
-        $data = $this->commande->getCommandesByEtablissement($id_etablissement);
+        $data = $this->commande->getByEtablissementGroupedByTicket($id_etablissement);
 
         echo json_encode([
             'success' => true,

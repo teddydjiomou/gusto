@@ -1,5 +1,9 @@
 <?php
 require_once __DIR__ . '/BaseModel.php';
+require_once __DIR__ . '/../vendor/autoload.php';
+
+use Mike42\Escpos\Printer;
+use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
 
 class Table extends BaseModel {
 
@@ -110,6 +114,7 @@ class Table extends BaseModel {
 
         } else {
             // Ouvrir la table
+            $code = substr(bin2hex(random_bytes(3)), 0, 6);
             $this->set(
                 "tables_restaurant",
                 ["statu"],
@@ -121,14 +126,28 @@ class Table extends BaseModel {
             // Créer un nouveau service
             $this->insert(
                 "service",
-                [
-                    "id_table" => $id,
-                    "id_utilisateur" => $id_utilisateur,
-                    "id_etablissement" => $id_etablissement,
-                    "date_heure_ouverture" => date('Y-m-d H:i:s'),
-                    "date_heure_fermeture" => null
-                ]
+                ["id_table", "id_utilisateur", "code", "id_etablissement", "date_heure_ouverture", "date_heure_fermeture"],
+                [$id, $id_utilisateur, $code, $id_etablissement, date('Y-m-d H:i:s'), null]
             );
+            try {
+                $connector = new WindowsPrintConnector("POS-PRINTER"); // ⚠️ nom exact de l'imprimante
+                $printer = new Printer($connector);
+
+                // Mise en forme
+                $printer->setJustification(Printer::JUSTIFY_CENTER);
+                $printer->text("Table : " . $e['nom'] . "\n");
+                $printer->text("------------------------\n");
+
+                $printer->setJustification(Printer::JUSTIFY_LEFT);
+                $printer->text("Code  : $code\n");
+
+                $printer->cut();
+                $printer->close();
+
+            } catch (Exception $e) {
+                // ⚠️ Important: ne pas bloquer ton app si l'imprimante échoue
+                error_log("Erreur impression: " . $e->getMessage());
+            }
         }
 
         return true;
