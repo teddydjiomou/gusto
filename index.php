@@ -4,7 +4,7 @@
       <meta charset="UTF-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1" />
       <title>Gusto</title>
-       <link href="./web/assets/img/gusto.ico" class="logo icon" rel="icon">
+       <link href="./web/assets/img/gusto.png" class="logo icon" rel="icon">
 
       <link rel="stylesheet" href="./web/assets/css/style.css" />
       <link href="./web/assets/vendor/bootstrap/css/bootstrap.css" rel="stylesheet">
@@ -80,21 +80,21 @@
             <ul>
               <li>Accèder au menu digitale en scannant le Qrcode de la table</li><br>
               <li>Commander à distance</li><br>
-              <li>signaler pour reclamer sa facture</li>   
+              <li>signaler pour reclamer sa facture</li><br>   
             </ul>
             <h3>Le serveur disposant d'une tablette</h3>
             <ul>
-              <li>Ouvre et ferme le service d'une table</li><br>
-              <li>Selectionne le menu pour le client qui n'a pas de téléphone</li><br>
-              <li>Visualise l'historique commandes</li><br>
-              <li>Interagir avec le système pour informer du statu de la commande</li>
+              <li>Ouvrir et fermer le service d'une table</li><br>
+              <li>Selectionner le menu pour le client qui n'a pas de téléphone</li><br>
+              <li>Visualiser l'historique commandes</li><br>
+              <li>Interagir avec le système pour informer du statu de la commande</li><br>
+              <li>Imprimer les factures</li><br>
             </ul>  
             <h3>Le Gérant disposant d'un ordinateur</h3>
             <ul>
-              <li>Gestion des tables, produits, employé etc...</li><br>
-              <li>Visiualise l'historique des commandes</li><br>
-              <li>Contrôle globale des trafics en temps réel</li><br>
-              <li>Imprime les factures</li><br>
+              <li>Gerer des tables, produits, employé etc...</li><br>
+              <li>Visiualiser l'historique des commandes</li><br>
+              <li>Contrôler les trafics en temps réel</li><br>
             </ul>
         </section>
 

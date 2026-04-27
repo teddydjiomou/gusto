@@ -82,12 +82,22 @@ if ($method === 'POST') {
 // DELETE : token obligatoire
 // ========================
 if ($method === 'DELETE') {
+
     if (!$token) {
         http_response_code(401);
         echo json_encode(['success'=>false,'message'=>'Token required']);
         exit;
     }
 
+    $id_ticket = isset($_GET['id_ticket']) ?? null;
+
+    // 👉 CAS 1 : suppression groupe
+    if ($id_ticket) {
+        $controller->deleteTicket($id_ticket);
+        exit;
+    }
+
+    // 👉 CAS 2 : suppression simple
     $id = isset($_GET['id']) ? (int) $_GET['id'] : null;
 
     if (!$id) {

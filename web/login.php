@@ -9,7 +9,7 @@
   <meta content="" name="keywords">
 
   <!-- Favicons -->
-  <link href="./assets/img/gusto.ico" rel="icon">
+  <link href="./assets/img/gusto.png" rel="icon">
 
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,600,600i,700,700i,900" rel="stylesheet">
@@ -29,7 +29,7 @@
         <div class="col-lg-6" data-aos="fade-up" data-aos-delay="300">
           <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>" method="post" role="form" class="php-form text-center" id='connecter'>
             <div class="erreur"></div>
-            <img src="./assets/img/gusto.ico" style="width: 80px;">
+            <img src="./assets/img/gusto.png" style="width: 80px;">
             <hr>
             <div class="form-row">
               <div class="col-lg-12 form-group">
@@ -53,51 +53,50 @@
   <script src="./assets/vendor/jquery/jquery.min.js"></script>
   <script src="./assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
   <script src="./assets/vendor/noBack/noBack.js"></script>
-<script>
- $('#connecter').on('submit', function(e) {
-    e.preventDefault();
-    $('button.loading').addClass('show-loader').prop('disabled', true);
+  <script>
+    $('#connecter').on('submit', function(e) {
+        e.preventDefault();
+        $('button.loading').addClass('show-loader').prop('disabled', true);
 
-    var postdata = {
-        login: $('input[name="login"]').val(),
-        password: $('input[name="password"]').val()
-    };
+        var postdata = {
+            login: $('input[name="login"]').val(),
+            password: $('input[name="password"]').val()
+        };
 
-    $.ajax({
-        type: 'POST',
-        url: '/api-commande/routes/auth.php',
-        data: JSON.stringify(postdata),
-        contentType: "application/json",
-        dataType: "json",
-        success: function(result) {
-            $('button.loading').removeClass('show-loader').prop('disabled', false);
+        $.ajax({
+            type: 'POST',
+            url: '/api-commande/routes/auth.php',
+            data: JSON.stringify(postdata),
+            contentType: "application/json",
+            dataType: "json",
+            success: function(result) {
+                $('button.loading').removeClass('show-loader').prop('disabled', false);
 
-            if(result.success && result.token && result.role == 0) {
-                // Stocker le token et redirection après 1s
-                localStorage.setItem('token', result.token);
-                $('.erreur').html('<div class="alert alert-block alert-success"><i class="icofont-check" style="margin-right: 10px; font-weight: bold;"></i>Vous êtes connecté</div>').delay(500).hide(function(){ 
-                  window.location.href = './dashboard.php';
-                })  
+                if(result.success && result.token && result.role == 0) {
+                    // Stocker le token et redirection après 1s
+                    localStorage.setItem('token', result.token);
+                    $('.erreur').html('<div class="alert alert-block alert-success"><i class="icofont-check" style="margin-right: 10px; font-weight: bold;"></i>Vous êtes connecté</div>').delay(500).hide(function(){ 
+                      window.location.href = './dashboard.php';
+                    })  
+                }
+                else{
+                  $('.erreur').hide().html('<div class="alert alert-block alert-danger"><i class="icofont-close" style="margin-right: 10px; font-weight: bold;"></i>Information incorrect </div>').slideDown(500);
+                }
+            },
+            error: function(xhr, status, error) {
+                $('button.loading').removeClass('show-loader').prop('disabled', false);
+                // On peut afficher un message générique d'erreur serveur
+                $('.erreur').hide().html(
+                    '<div class="alert alert-block alert-danger">' +
+                    '<i class="icofont-close" style="margin-right: 10px; font-weight: bold;"></i>' +
+                    'Erreur serveur : ' + error +
+                    '</div>'
+                ).slideDown();
             }
-            else{
-              $('.erreur').hide().html('<div class="alert alert-block alert-danger"><i class="icofont-close" style="margin-right: 10px; font-weight: bold;"></i>Information incorrect </div>').slideDown(500);
-            }
-        },
-        error: function(xhr, status, error) {
-            $('button.loading').removeClass('show-loader').prop('disabled', false);
-            // On peut afficher un message générique d'erreur serveur
-            $('.erreur').hide().html(
-                '<div class="alert alert-block alert-danger">' +
-                '<i class="icofont-close" style="margin-right: 10px; font-weight: bold;"></i>' +
-                'Erreur serveur : ' + error +
-                '</div>'
-            ).slideDown();
-        }
+        });
     });
-});
 
-</script>
-
+  </script>
 
 </body>
 

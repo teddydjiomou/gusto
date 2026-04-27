@@ -27,6 +27,7 @@ class Commande extends BaseModel {
                     'id_ticket' => $ticket,
                     'id_table' => $row['id_table'],
                     'id_etablissement' => $row['id_etablissement'],
+                    'devise' => $row['devise'],
                     'montant_total' => 0,
                     'date_enreg' => $row['date_enreg'],
                     'commandes' => []
@@ -111,13 +112,14 @@ class Commande extends BaseModel {
     public function create($data, $id_etablissement) {
         $this->insert(
             "commande",
-            ["id_ticket",'id_table','id_etablissement','commande','montant_total','date_enreg','etat'],
+            ["id_ticket",'id_table','id_etablissement','commande','montant_total','devise','date_enreg','etat'],
             [   
                 $data['id_ticket'],
                 $data['id_table'],
                 $id_etablissement,
                 json_encode($data['commande']),
                 $data['montant_total'],
+                $data['devise'],
                 date("Y-m-d H:i:s", time() + 3600),
                 "En attente"
             ]
@@ -142,23 +144,102 @@ class Commande extends BaseModel {
         );
     }
 
-    // Supprimer une table en sécurisant par restaurant
+    // delete
+
+    public function deleteByTicket($id_ticket, $id_etablissement) {
+        return $this->personalDelete(
+            "commande",
+            "WHERE id_ticket = ? AND id_etablissement = ?",
+            [$id_ticket, $id_etablissement]
+        );
+    } 
+
+
     public function delete($id, $id_etablissement){
         return $this->personalDelete(
             "commande",
-            "WHERE id_commande = ? AND id_etablissement = ?",
-            [$id, $id_etablissement]
+            "WHERE id_commande = ? AND id_etablissement = ? AND etat IN (?, ?)",
+            [$id, $id_etablissement, 'Servi', 'Payé']
         );
     }
 
-    public function getByServiceRange($id_etablissement, $debut, $fin){
-        return $this->personnalSelect(
+   public function getByServiceRange($id_etablissement, $debut, $fin){
+
+        $stmt = $this->personnalSelect(
             "commande",
             "*",
-            "WHERE id_etablissement = ?
-             AND date_enreg BETWEEN ? AND ?",
-            [$id_etablissement, $debut, $fin]
-        )->fetchAll(PDO::FETCH_ASSOC);
+            "WHERE id_etablissement = ?",
+            [$id_etablissement]
+        );
+
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $grouped = [];
+
+        foreach ($rows as $row) {
+
+            $ticket = $row['id_ticket'];
+            $dateTicket = $row['date_enreg'];
+
+            // Initialisation du ticket
+            if (!isset($grouped[$ticket])) {
+                $grouped[$ticket] = [
+                    'id_ticket' => $ticket,
+                    'id_table' => $row['id_table'],
+                    'id_etablissement' => $row['id_etablissement'],
+                    'montant_total' => 0,
+                    'date_enreg' => $dateTicket,
+                    'commandes' => []
+                ];
+            }
+
+            // garder la date la plus récente du ticket
+            if (strtotime($dateTicket) > strtotime($grouped[$ticket]['date_enreg'])) {
+                $grouped[$ticket]['date_enreg'] = $dateTicket;
+            }
+
+            // commandes JSON
+            $items = json_decode($row['commande'], true) ?? [];
+
+            foreach ($items as $item) {
+
+                $prix = (float)($item['prix'] ?? 0);
+                $quantite = (int)($item['quantite'] ?? 0);
+                $total = round((float)($item['total'] ?? ($prix * $quantite)), 2);
+
+                $grouped[$ticket]['commandes'][] = [
+                    'id' => $item['id'] ?? null,
+                    'libelle' => $item['libelle'] ?? '',
+                    'prix' => $prix,
+                    'quantite' => $quantite,
+                    'total' => $total,
+                    'etat' => $row['etat']
+                ];
+
+                $grouped[$ticket]['montant_total'] += $total;
+            }
+
+            $grouped[$ticket]['montant_total'] =
+                round($grouped[$ticket]['montant_total'], 2);
+        }
+
+        // 🧠 FILTRE SUR LES TICKETS (IMPORTANT)
+        foreach ($grouped as $key => $ticket) {
+
+            if (
+                $ticket['date_enreg'] < $debut ||
+                $ticket['date_enreg'] > $fin
+            ) {
+                unset($grouped[$key]);
+            }
+        }
+
+        // tri du plus récent au plus ancien
+        usort($grouped, function ($a, $b) {
+            return strtotime($b['date_enreg']) - strtotime($a['date_enreg']);
+        });
+
+        return array_values($grouped);
     }
 
     public function toggleStatut($id, $id_etablissement) {

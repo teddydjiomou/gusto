@@ -5,7 +5,7 @@
 </head>
 	<body style="text-align: center;">
 		<div>
-		    <img src="./assets/img/Forbidden.png" style="max-width: 100%; height: 100%;">	 
+		    <img src="./assets/img/Forbidden.png" style="max-width: 500px;">	 
 	   </div>
 	</body>
 </html>

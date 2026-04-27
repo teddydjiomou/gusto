@@ -31,8 +31,40 @@ class CommandeController {
 
         echo json_encode([
             'success' => false,
-            'message' => 'Establishment ID required'
+            'message' => 'Etablishment ID required'
         ]);
+        exit;
+    }
+
+    public function code_verfiy() {
+
+        header('Content-Type: application/json; charset=utf-8');
+
+        $id_etablissement = $this->getEtablissementId();
+         $id_table = $_GET['id_table'] ?? null;
+
+          if (!$id_table) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Table ID required'
+            ]);
+            exit;
+        }
+
+        $data = $this->commande->isTableActive($id_table, $id_etablissement);
+
+        if ($data) {
+            echo json_encode([
+                'success' => true,
+                'data' => $data
+            ]);
+        } else {
+            echo json_encode([
+                'success' => false,
+                'message' => 'no avalaible service'
+            ]);
+        }
+
         exit;
     }
 
@@ -121,6 +153,30 @@ class CommandeController {
     // =========================
     // SUPPRIMER UNE COMMANDE
     // =========================
+
+    public function deleteTicket($id_ticket) {
+
+        header('Content-Type: application/json; charset=utf-8');
+
+        $id_etablissement = $this->getEtablissementId();
+
+        $deleted = $this->commande->deleteByTicket($id_ticket, $id_etablissement);
+
+        if ($deleted) {
+            echo json_encode([
+                'success' => true,
+                'message' => 'Ticket cancelled'
+            ]);
+        } else {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Delete failed'
+            ]);
+        }
+
+        exit;
+    }
+
     public function delete($id) {
         header('Content-Type: application/json; charset=utf-8');
 
@@ -138,12 +194,19 @@ class CommandeController {
             exit;
         }
 
-        $this->commande->delete($id, $id_etablissement);
+        $deleted = $this->commande->delete($id, $id_etablissement);
 
-        echo json_encode([
-            'success' => true,
-            'message' => 'Order cancelled'
-        ]);
+        if ($deleted) {
+            echo json_encode([
+                'success' => true,
+                'message' => 'Order cancelled'
+            ]);
+        } else {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Delete failed'
+            ]);
+        }
         exit;
     }
 

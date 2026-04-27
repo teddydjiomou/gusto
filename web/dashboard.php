@@ -9,7 +9,7 @@
     <meta name="author" content="">
 
     <title>Gusto</title>
-    <link href="./assets/img/gusto.ico" class="logo icon" rel="icon">
+    <link href="./assets/img/gusto.png" class="logo icon" rel="icon">
 
     <!-- Custom fonts for this template-->
     <link href="./assets/vendor/fontawesome-free-5.7.2-web/css/all.min.css" rel="stylesheet">

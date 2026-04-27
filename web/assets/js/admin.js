@@ -483,4 +483,6 @@ $(document).on('click', '.edit-contrat', async function() {
         alert("Erreur serveur : " + err.message);
     }
 });
+
+
    
