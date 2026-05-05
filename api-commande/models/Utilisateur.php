@@ -65,7 +65,7 @@ class Utilisateur extends BaseModel {
         $stmt = $this->personnalSelect(
             "utilisateur",
             "*",
-            "WHERE id_categorie = ? AND id_etablissement = ?",
+            "WHERE id_utilisateur = ? AND id_etablissement = ?",
             [$id, $id_etablissement]
         );
         return $stmt->fetch(PDO::FETCH_ASSOC);

@@ -5,7 +5,12 @@ class Etablissement extends BaseModel {
 
     // Récupérer tous les établissements
     public function getAllEtablissements() {
-        $stmt = $this->getAll("etablissement");
+       $stmt = $this->personnalSelect(
+            "etablissement",
+            "*",
+            "WHERE id_etablissement != ?",
+            [1]
+        );
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 

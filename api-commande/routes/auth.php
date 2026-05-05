@@ -1,6 +1,5 @@
 <?php
 require_once __DIR__ . '/../core/Middleware.php';
-require_once __DIR__ . '/../core/cors.php';
 require_once __DIR__ . '/../models/Utilisateur.php';
 require_once __DIR__ . '/../core/Auth.php';
 
@@ -25,7 +24,7 @@ if (!$login || !$password) {
 
 $userModel = new Utilisateur();
 
-$userModel->checkAndExpireContrats();
+//$userModel->checkAndExpireContrats();
 
 $user = $userModel->getByLogin($login);
 
