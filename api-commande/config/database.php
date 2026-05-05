@@ -1,66 +1,39 @@
 <?php
 class Database {
-    private static $servers = [
-        [
-            'host' => 'localhost',
-            'dbname' => 'etablissement',
-            'user' => 'root',
-            'password' => ''
-        ],
-        // [
-        //     'host' => '192.168.1.11',
-        //     'dbname' => 'etablissement',
-        //     'user' => 'root',
-        //     'password' => ''
-        // ]
-    ];
+    private $host = "w1kr9ijlozl9l79i.chr7pe7iynqr.eu-west-1.rds.amazonaws.com";
+    private $dbname = "qrwvoqbllzh8wzao"; // ⚠️ à demander si tu ne l’as pas
+    private $user = "mpmgeoxc8ty1h18g";
+    private $password = "we52fmkrt240ksi";
 
-    protected $pdo = null;
-    private $initialized = false; // flag pour éviter réinitialisation
+    protected $pdo;
 
     public function __construct() {
         $this->connect();
     }
 
-    public function connect() {
-        foreach (self::$servers as $srv) {
-            try {
-                $this->pdo = new PDO(
-                    "mysql:host={$srv['host']};dbname={$srv['dbname']};charset=utf8mb4",
-                    $srv['user'],
-                    $srv['password'],
-                    [PDO::ATTR_PERSISTENT => true]
-                );
-                $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                error_log("Connecté à la DB sur {$srv['host']}");
-                break;
-            } catch (PDOException $e) {
-                error_log("Impossible de se connecter à {$srv['host']}: " . $e->getMessage());
-            }
-        }
+    private function connect() {
+        try {
+            $this->pdo = new PDO(
+                "mysql:host={$this->host};dbname={$this->dbname};charset=utf8mb4",
+                $this->user,
+                $this->password
+            );
 
-        if (!$this->pdo) {
-            die("Tous les serveurs de base de données sont indisponibles !");
-        }
+            $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        // ✅ Initialisation uniquement si pas déjà fait
-        $lockFile = __DIR__ . '/db_initialized.lock';
-        if (!$this->initialized && !file_exists($lockFile)) {
-            $this->initDatabase();
-            file_put_contents($lockFile, date('c')); // créer le lock
-            $this->initialized = true;
-        }
 
-        return $this->pdo;
+            $this->initTables();
+
+        } catch (PDOException $e) {
+            die("Erreur connexion : " . $e->getMessage());
+        }
     }
 
-    private function initDatabase() {
+    private function initTables() {
         try {
-            $this->pdo->exec("CREATE DATABASE IF NOT EXISTS etablissement CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
-            $this->pdo->exec("USE etablissement");
 
-            // → Tables ici (copier ton tableau $tables actuel)
-            $tables = [
+            $sqls = [
+
                 "etablissement" => "
                     CREATE TABLE IF NOT EXISTS etablissement (
                         id_etablissement INT AUTO_INCREMENT PRIMARY KEY,
@@ -174,43 +147,48 @@ class Database {
                         FOREIGN KEY (id_etablissement) REFERENCES etablissement(id_etablissement)
                         ON DELETE CASCADE ON UPDATE CASCADE
                     )"
+
             ];
 
-            foreach ($tables as $sql) {
+            foreach ($sqls as $sql) {
                 $this->pdo->exec($sql);
             }
 
-            // Création de l'admin si aucun utilisateur
+            // Vérifier si admin existe
             $stmt = $this->pdo->query("SELECT COUNT(*) FROM utilisateur");
-            if ($stmt->fetchColumn() == 0) {
+            $count = $stmt->fetchColumn();
+
+            if ($count == 0) {
                 $stmt = $this->pdo->prepare("
                     INSERT INTO utilisateur 
                     (nom, adresse, email, telephone, login, password, id_etablissement, code, date_validite, statu, role, date_enreg) 
                     VALUES (:nom, :adresse, :email, :telephone, :login, :password, :id_etablissement, :code, :date_validite, :statu, :role, :date_enreg)
                 ");
+
                 $stmt->execute([
-                    ':nom' => 'Djiomou Vivien',
-                    ':adresse' => 'Yaoundé-Cameroun',
+                    ':nom' => 'Admin',
+                    ':adresse' => 'Cameroun',
                     ':email' => 'admin@gmail.com',
-                    ':telephone' => '680468901',
+                    ':telephone' => '000000000',
                     ':login' => 'admin',
-                    ':id_etablissement' => 0,
-                    'code' => 0,
-                    'date_validite' => null,
-                    'statu' => 'En attente',
                     ':password' => password_hash("admin", PASSWORD_DEFAULT),
+                    ':id_etablissement' => 0,
+                    ':code' => '0000',
+                    ':date_validite' => null,
+                    ':statu' => 'Actif',
                     ':role' => 0,
                     ':date_enreg' => date("Y-m-d")
                 ]);
+
             }
 
         } catch (PDOException $e) {
-            die("Erreur initialisation DB : " . $e->getMessage());
+            die("Erreur tables : " . $e->getMessage());
         }
     }
 
-    public function disconnect() {
-        $this->pdo = null;
+    public function getConnection() {
+        return $this->pdo;
     }
 }
-?>
+?>'',
