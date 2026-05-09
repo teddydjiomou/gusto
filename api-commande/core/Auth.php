@@ -14,7 +14,9 @@ class Auth {
             "data" => [
                 "id"    => $user['id_utilisateur'],
                 "login" => $user['login'],
-                "id_etablissement" => $user['id_etablissement']
+                "id_etablissement" => $user['id_etablissement'],
+                "logo" => $user['logo'] ?? '',
+                "nom"  => $user['nom'] ?? ''
             ]
         ];
 

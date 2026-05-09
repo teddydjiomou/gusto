@@ -13,10 +13,7 @@ $password = $data['password'] ?? '';
 if (!$login || !$password) {
     echo json_encode([
         'success' => false,
-        'html' => '<div class="alert alert-block alert-danger">
-                    <i class="icofont-close" style="margin-right: 10px; font-weight: bold;"></i>
-                    Missing field
-                   </div>'
+        'message' => 'Missing field'
     ]);
     exit;
 }
@@ -24,7 +21,7 @@ if (!$login || !$password) {
 
 $userModel = new Utilisateur();
 
-//$userModel->checkAndExpireContrats();
+$userModel->checkAndExpireContrats();
 
 $user = $userModel->getByLogin($login);
 
@@ -40,6 +37,9 @@ if (!$user || !password_verify($password, $user['password'])) {
     ]);
 
 } else {
+    $etablissement = $userModel->getEtablissementById($user['id_etablissement']);
+    $user['logo'] = $etablissement['logo'] ?? '';
+    $user['nom']  = $etablissement['nom'] ?? '';
     $token = Auth::generateToken($user);
     echo json_encode([
         'success' => true,

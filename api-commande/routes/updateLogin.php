@@ -13,8 +13,20 @@ if (!$user) {
     exit;
 }
 
-$login    = $_POST['login'] ?? null;
-$password = $_POST['password'] ?? null;
+// 🔥 IMPORTANT : lire une seule fois
+$raw = file_get_contents("php://input");
+$data = json_decode($raw, true);
+
+if (!$data) {
+    echo json_encode([
+        'success' => false,
+        'message' => 'Invalid JSON or empty body'
+    ]);
+    exit;
+}
+
+$login    = $data['login'] ?? null;
+$password = $data['password'] ?? null;
 
 if (!$login) {
     echo json_encode(['success' => false, 'message' => 'Login required']);
@@ -25,19 +37,23 @@ $model = new Utilisateur();
 
 $userId = $user->id;
 
-// Mise à jour
+// update
 $model->updateLogin($userId, $login, $user->id_etablissement, $password);
 
-// ✅ correction token
+// nouveau token
+$etablissement = $model->getEtablissementById($user->id_etablissement) ?? [];
+
 $newToken = Auth::generateToken([
     'id_utilisateur' => $userId,
     'login' => $login,
-    'id_etablissement' => $user->id_etablissement ?? null
+    'id_etablissement' => $user->id_etablissement ?? null,
+    'logo' => $etablissement['logo'] ?? '',
+    'nom'  => $etablissement['nom'] ?? ''
 ]);
 
 echo json_encode([
     'success' => true,
     'message' => 'Updated information',
-    'token'   => $newToken
+    'token' => $newToken
 ]);
 exit;

@@ -15,7 +15,7 @@
     <link href="./assets/vendor/fontawesome-free-5.7.2-web/css/all.min.css" rel="stylesheet">
     <link href="./assets/vendor/admin-2/sb-admin-2.min.css" rel="stylesheet">
     <link href="./assets/vendor/icofont/icofont.min.css" rel="stylesheet">
-    <link href="./assets/vendor/dataTables/datatables.bootstrap4.min.css" rel="stylesheet">
+    <link href="./assets/vendor/datatables/datatables.bootstrap4.min.css" rel="stylesheet">
     <link href="./assets/vendor/virtual-select/virtual-select.min.css" rel="stylesheet">
     <link href="./assets/vendor/build/intlTelInput.css" rel="stylesheet">
     <link href="./assets/css/style.css" rel="stylesheet">
@@ -453,8 +453,8 @@
     <script src="./assets/vendor/jquery/jquery.min.js"></script>
     <script src="./assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="./assets/vendor/admin-2/sb-admin-2.min.js"></script>
-    <script src="./assets/vendor/datatables/jquery.dataTables.min.js"></script>
-    <script src="./assets/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+    <script src="./assets/vendor/datatables/jquery.datatables.min.js"></script>
+    <script src="./assets/vendor/datatables/datatables.bootstrap4.min.js"></script>
     <script src="./assets/vendor/datatables/datatables-demo.js"></script>
     <script src="./assets/vendor/custom-file-input/custom-file-input.js"></script>
     <script src="./assets/vendor/build/intlTelInput.js"></script>

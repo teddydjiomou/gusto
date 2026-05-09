@@ -193,6 +193,18 @@ class Utilisateur extends BaseModel {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
+    public function getEtablissementById($id_etablissement) {
+
+        $stmt = $this->personnalSelect(
+            "etablissement",
+            "*",
+            "WHERE id_etablissement = ?",
+            [$id_etablissement]
+        );
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
     /* =======================
        Update login
     ======================= */

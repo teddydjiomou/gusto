@@ -13,14 +13,20 @@ class Middleware {
         $secret = $config['JWT_SECRET'];
         $algo   = $config['JWT_ALGO'];
 
-        // Récupérer le header Authorization
-        $headers = apache_request_headers();
-        if (!isset($headers['Authorization'])) {
+        // ✅ FIX IMPORTANT
+        $headers = getallheaders();
+        if (!$headers) $headers = [];
+
+        $authHeader =
+            $headers['Authorization']
+            ?? $headers['authorization']
+            ?? null;
+
+        if (!$authHeader) {
             Response::error("Token required", 401);
             exit;
         }
 
-        $authHeader = $headers['Authorization'];
         if (!preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
             Response::error("Invalid token format", 401);
             exit;
@@ -30,7 +36,7 @@ class Middleware {
 
         try {
             $decoded = JWT::decode($token, new Key($secret, $algo));
-            return $decoded->data; // contient id_etablissement, email, etc.
+            return $decoded->data;
         } catch (Exception $e) {
             Response::error("Invalid token: " . $e->getMessage(), 401);
             exit;
