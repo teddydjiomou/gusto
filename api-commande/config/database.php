@@ -40,7 +40,7 @@ class Database {
         }
 
         if (!$this->pdo) {
-            die("Tous les serveurs de base de données sont indisponibles !");
+            die("Serveur de base de donnée indisponible !");
         }
 
         // ✅ Initialisation uniquement si pas déjà fait

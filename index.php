@@ -1,119 +1,743 @@
 <!DOCTYPE html>
 <html lang="fr">
   <head>
-      <meta charset="UTF-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1" />
-      <title>Gusto</title>
-       <link href="./web/assets/img/gusto.png" class="logo icon" rel="icon">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gusto</title>
+    <link href="./web/assets/img/gusto.png" class="logo icon" rel="icon">
+    <link href="./web/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="./web/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="./web/assets/vendor/aos/aos.css" rel="stylesheet">
 
-      <link rel="stylesheet" href="./web/assets/css/style.css" />
-      <link href="./web/assets/vendor/bootstrap/css/bootstrap.css" rel="stylesheet">
-      <link href="./web/assets/vendor/icofont/icofont.min.css" rel="stylesheet">
-      <link href="./web/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
-      <link rel="preconnect" href="https://fonts.googleapis.com" />
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-      <link
-        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;600&display=swap"
-        rel="stylesheet"/>
+    <style>
+
+      :root { 
+        --background-color: #0f172a;
+        --degrad-color: #cbd5e1;
+        --design-color: #f97316;
+      }
+
+      body{
+        font-family:'Poppins',sans-serif;
+        background: var(--background-color);
+        color:white;
+        overflow-x:hidden;
+      }
+
+      a{
+        text-decoration:none;
+      }
+
+      /* NAVBAR */
+
+      .navbar{
+        background:rgba(15,23,42,0.75);
+        backdrop-filter:blur(10px);
+        padding:18px 0;
+        transition:.3s;
+      }
+
+      .navbar-brand{
+        font-size:32px;
+        font-weight:700;
+        color: var(--design-color) !important;
+      }
+
+      .nav-link{
+        color:white !important;
+        margin-left:20px;
+        font-weight:500;
+        transition:.3s;
+      }
+
+      .nav-link:hover{
+        color: var(--design-color) !important;
+      }
+
+      .btn-nav{
+        background: var(--design-color);
+        color:white;
+        padding:10px 22px;
+        border-radius:12px;
+        transition:.3s;
+        font-weight:600;
+      }
+
+      .btn-nav:hover{
+        background:#ea580c;
+        color:white;
+      }
+
+      /* HERO */
+
+      .hero{
+        min-height:100vh;
+        display:flex;
+        align-items:center;
+        position:relative;
+        background:linear-gradient(rgba(15,23,42,.85),rgba(15,23,42,.9)),url('./web/assets/img/photo1.jpg');
+        background-size:cover;
+        background-position:center;
+        overflow:hidden;
+        padding-top:120px;
+      }
+
+      .hero h1{
+        font-size:60px;
+        font-weight:700;
+        line-height:1.2;
+      }
+
+      .hero h1 span{
+        color: var(--design-color);
+      }
+
+      .hero p{
+        margin:25px 0;
+        color: var(--degrad-color);
+        font-size:18px;
+        line-height:1.8;
+      }
+
+      .hero-buttons{
+        display:flex;
+        gap:20px;
+        flex-wrap:wrap;
+      }
+
+      .btn-main{
+        background: var(--design-color);
+        color:white;
+        padding:16px 35px;
+        border-radius:14px;
+        font-weight:600;
+        transition:.3s;
+        display:inline-block;
+      }
+
+      .btn-main:hover{
+        background:#ea580c;
+        transform:translateY(-3px);
+        color:white;
+      }
+
+      .btn-outline-custom{
+        border:1px solid var(--design-color);
+        color:white;
+        padding:16px 35px;
+        border-radius:14px;
+        font-weight:600;
+        transition:.3s;
+      }
+
+      .btn-outline-custom:hover{
+        background: var(--design-color);
+        color:white;
+      }
+
+      /* SECTION TITLE */
+
+      .section-title{
+        text-align:center;
+        margin-bottom:70px;
+      }
+
+      .section-title span{
+        color: var(--design-color);
+        font-weight:600;
+        text-transform:uppercase;
+        letter-spacing:2px;
+      }
+
+      .section-title h2{
+        font-size:45px;
+        font-weight:700;
+        margin-top:10px;
+      }
+
+      /* FEATURES */
+
+      .features{
+        padding:120px 0;
+      }
+
+      .feature-card{
+        background:#1e293b;
+        border-radius:25px;
+        padding:45px 35px;
+        transition:.4s;
+        height:100%;
+        border:1px solid rgba(255,255,255,.05);
+      }
+
+      .feature-card:hover{
+        transform:translateY(-12px);
+        background:#273549;
+      }
+
+      .feature-icon{
+        width:80px;
+        height:80px;
+        background: var(--design-color);
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        border-radius:20px;
+        margin-bottom:30px;
+        font-size:35px;
+      }
+
+      .feature-card h3{
+        font-size:24px;
+        margin-bottom:20px;
+        font-weight:600;
+      }
+
+      .feature-card p{
+        color: var(--degrad-color);
+        line-height:1.8;
+      }
+
+      /* HOW IT WORKS */
+
+      .how{
+        padding:120px 0;
+        background:#111c31;
+      }
+
+      .step-box{
+        text-align:center;
+        padding:30px;
+      }
+
+      .step-number{
+        width:70px;
+        height:70px;
+        background: var(--design-color);
+        border-radius:50%;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        margin:auto;
+        font-size:28px;
+        font-weight:700;
+        margin-bottom:25px;
+      }
+
+      /* CTA */
+
+      .cta{
+        padding:120px 0;
+        text-align:center;
+        background:
+        linear-gradient(rgba(15,23,42,.8),
+        rgba(15,23,42,.8)),
+        url('./web/assets/img/photo2.jpg');
+
+        background-size:cover;
+        background-position:center;
+      }
+
+      .cta h2{
+        font-size:55px;
+        font-weight:700;
+        margin-bottom:30px;
+      }
+
+      .cta p{
+        color: var(--degrad-color);
+        font-size:18px;
+        margin-bottom:40px;
+      }
+
+      /* FOOTER */
+
+      footer{
+        background:#0b1220;
+        padding:50px 0;
+        text-align:center;
+      }
+
+      .socials a{
+        width:50px;
+        height:50px;
+        display:inline-flex;
+        align-items:center;
+        justify-content:center;
+        background:#1e293b;
+        border-radius:50%;
+        margin:0 10px;
+        color:white;
+        transition:.3s;
+        font-size:20px;
+      }
+
+      .socials a:hover{
+        background: var(--design-color);
+        transform:translateY(-5px);
+      }
+
+      footer p{
+        margin-top:30px;
+        color:#94a3b8;
+      }
+
+      /* MOBILE */
+
+      @media(max-width:992px){
+        .navbar-collapse{
+          background:#1e293b;
+          padding:20px;
+          border-radius:20px;
+          margin-top:15px;
+        }
+
+        .nav-link{
+          margin:15px 0;
+        }
+
+      }
+
+      .navbar-toggler:focus{
+          box-shadow:none;
+      }
+      .navbar-toggler i{
+          color:white;
+      }
+
+      #languageToggle{
+        background-color: white; 
+        border-radius: 8px;
+      }
+
+      .language-dropdown {
+          transition: all 0.3s ease;
+          opacity: 0;
+          visibility: hidden;
+          transform: translateY(10px);
+          position: absolute;
+          z-index: 2;
+      }
+      .language-dropdown.show {
+          opacity: 1;
+          visibility: visible;
+          transform: translateY(0);
+      }
+      #google_translate_element select {
+          background-image: none !important;
+          -webkit-appearance: none !important;
+          -moz-appearance: none !important;
+          appearance: none !important;
+      }
+
+      /* Preloader */
+      #preloader {
+        position: fixed;
+        inset: 0;
+        z-index: 999999;
+        background: #212529;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: opacity 0.6s ease-out;
+      }
+
+      #preloader::before {
+        content: "";
+        width: 60px;
+        height: 60px;
+        border: 6px solid var(--design-color);
+        border-top-color: transparent;
+        border-bottom-color: transparent;
+        border-radius: 50%;
+        animation: animate-preloader 1s linear infinite;
+      }
+
+      @keyframes animate-preloader {
+        0% {
+          transform: rotate(0deg);
+        }
+
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      @keyframes animate-preloader {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+
+    </style>
   </head>
 
   <div id="preloader"></div>
 
   <body>
-    <header id="header" class="header d-flex align-items-center fixed-top">
-      <div class="container container-xl position-relative d-flex align-items-center justify-content-between">
 
-        <div>
-          <span class="logo">Gusto</span>
+  <!-- NAVBAR -->
+
+  <nav class="navbar navbar-expand-lg fixed-top">
+    <div class="container">
+
+      <div>
+        <span class="navbar-brand">Gusto</span>
           <button id="languageToggle" class="align-items-center px-2 py-1 shadow-sm">
-            <i class="bi bi-translate"></i>
-            <span>Langues</span>
+          <i class="bi bi-translate"></i>
+          <span>Langues</span>
           </button>
           <div id="languageDropdown" class="language-dropdown absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10" >
-              <div id="google_translate_element" class="p-3"></div>
+            <div id="google_translate_element" class="p-3"></div>
           </div>
-        </div>
+      </div>
+      
 
-        <nav id="navmenu" class="navmenu">
-          <ul>
-            <li><a href="#accueil" class="active">Accueil</a></li>
-            <li><a href="#presentation">A propos du système</a></li>
-            <li><a href="#contact">Contact</a></li>
-            <li><a href="privacy.php">Politique de confidentialité</a></li>
-            <li><a href="./web/login.php">Connexion</a></li>
-          </ul>
-          <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
-        </nav>
+      <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu"aria-controls="navMenu"aria-expanded="false"aria-label="Toggle navigation"><i class="bi bi-list text-white fs-1"></i></button>
+
+      <div class="collapse navbar-collapse" id="navMenu">
+
+        <ul class="navbar-nav ms-auto align-items-lg-center">
+
+          <li class="nav-item">
+            <a class="nav-link" href="#home">Accueil</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="#features">Fonctionnalités</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="#how">Comment ça marche</a>
+          </li>
+
+          <li class="nav-item ms-lg-3 mt-3 mt-lg-0">
+            <a href="https://wa.me/237680468901" class="btn-nav">
+              Contactez-nous
+            </a>
+          </li>
+
+        </ul>
 
       </div>
-    </header>
-    <custom-navbar></custom-navbar>
-    <main>
-        <!-- Hero Section -->
-        <section id="accueil" class="hero" style="height: 600px;">
-            <div class="hero-content container">
-               <h1>Plateforme de digitalisation de gestion des commandes</h1>
-                <p>Transformez votre restaurant en hight-tech en digitalisant vos commandes*.</p>
-               <a href="#presentation"><button>En savoir plus</button></a>
+
+    </div>
+  </nav>
+
+  <!-- HERO -->
+
+  <section class="hero" id="home">
+
+    <div class="container">
+
+      <div class="align-items-center mt-5">
+
+        <div data-aos="fade-up">
+
+          <h1>
+            Le futur de la gestion de commandes avec
+            <span>Gusto</span>
+          </h1>
+
+          <p>
+            Digitalisez vos commandes et améliorez l’expérience client grâce à une plateforme moderne, rapide et intelligente.
+          </p>
+
+          <div class="hero-buttons">
+
+            <a href="#features" class="btn-main">
+              Découvrir la plateforme
+            </a>
+
+            <a href="https://wa.me/237680468901" class="btn-outline-custom">
+              Contactez-nous
+            </a>
+
+          </div>
+
+        </div>
+
+        <div class="col-lg-6" data-aos="fade-left">
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- FEATURES -->
+
+  <section class="features" id="features">
+
+    <div class="container">
+
+      <div class="section-title" data-aos="fade-up">
+
+        <span>Fonctionnalités</span>
+
+        <h2>Une solution complète pour la gestion des commandes</h2>
+
+      </div>
+
+      <div class="row g-4">
+
+        <div class="col-lg-4" data-aos="fade-up">
+
+          <div class="feature-card">
+
+            <div class="feature-icon">
+              <i class="bi bi-qr-code"></i>
             </div>
-            <svg class="hero-waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28 " preserveAspectRatio="none">
-              <defs>
-                <path id="wave-path" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z"></path>
-              </defs>
-              <g class="wave1">
-                <use xlink:href="#wave-path" x="50" y="3"></use>
-              </g>
-              <g class="wave2">
-                <use xlink:href="#wave-path" x="50" y="0"></use>
-              </g>
-              <g class="wave3">
-                <use xlink:href="#wave-path" x="50" y="9"></use>
-              </g>
-            </svg>
-        </section>
 
-        <section id="presentation" class="menu-section">
-            <h2>Présentation du système</h2>
-            <div>Gusto est une plateforme digitale conçue pour simplifier la gestion des commandes dans un etablissement (restaurant, snack...). Grâce à ce systeme bien definit, la gestion devient fluide, securisé et intelligente, tout en permettant une prise de décision rapide grâce à des informations claires et accessibles en temps réel.</div>.
-          
-              <h2>Fonctionnalités principales</h2>
-              <h3>Le client disposant d'un smartphone</h3>
-              <ul>
-                <li>Accèder au menu digitale en scannant le Qrcode de la table</li><br>
-                <li>Commander à distance</li><br>
-                <li>signaler pour reclamer sa facture</li><br>   
-              </ul>
-              <h3>Le serveur disposant d'une tablette</h3>
-              <ul>
-                <li>Ouvrir et fermer le service d'une table</li><br>
-                <li>Selectionner le menu pour le client qui n'a pas de téléphone</li><br>
-                <li>Visualiser l'historique commandes</li><br>
-                <li>Interagir avec le système pour informer du statu de la commande</li><br>
-                <li>Imprimer les factures</li><br>
-              </ul>  
-              <h3>Le Gérant disposant d'un ordinateur</h3>
-              <ul>
-                <li>Gerer des tables, produits, employé etc...</li><br>
-                <li>Visiualiser l'historique des commandes</li><br>
-                <li>Contrôler les trafics en temps réel</li><br>
-              </ul>
-            
-        </section>
+            <h3>Commande QR Code</h3>
 
-        <!-- Call to Action -->
-        <section id="contact" class="cta-section">
-          <h2>Prêt à simplifier votre gestion de commandes ?</h2>
-            <a href="https://wa.me/680468901"><button>Contactez nous au 680468901</button></a>
-        </section>
-    </main>
+            <p>
+              Les clients scannent le QR code de la table et
+              commandent directement depuis leur téléphone, et ont la possibilité de 
+              reclamer leur facture  via la plateforme
+            </p>
 
-    <script src="./web/assets/vendor/jquery/jquery.min.js"></script>
-    <script src="./web/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="./web/assets/js/feather.min.js"></script>
+          </div>
 
-    <script>
+        </div>
 
-        // Toggle du menu déroulant
+        <div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
+
+          <div class="feature-card">
+
+            <div class="feature-icon">
+              <i class="bi bi-tablet"></i>
+            </div>
+
+            <h3>Gestion sur tablette</h3>
+
+            <p>
+              Les serveurs gèrent les commandes et interagissent avec le système en temps réel (Ouverture et fermeture du service d'une table, gestion des statu de la commande etc...).
+            </p>
+
+          </div>
+
+        </div>
+
+        <div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
+
+          <div class="feature-card">
+
+            <div class="feature-icon">
+              <i class="bi bi-bar-chart"></i>
+            </div>
+
+            <h3>Statistiques intelligentes</h3>
+
+            <p>
+              Analysez vos ventes, produits populaires
+              et performances du restaurant.
+            </p>
+
+          </div>
+
+        </div>
+
+        <div class="col-lg-4" data-aos="fade-up">
+
+          <div class="feature-card">
+
+            <div class="feature-icon">
+              <i class="bi bi-receipt"></i>
+            </div>
+
+            <h3>Facturation automatique</h3>
+
+            <p>
+              Impression rapide des tickets.
+            </p>
+
+          </div>
+
+        </div>
+
+        <div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
+
+          <div class="feature-card">
+
+            <div class="feature-icon">
+              <i class="bi bi-clock-history"></i>
+            </div>
+
+            <h3>Historique complet</h3>
+
+            <p>
+              Retrouvez toutes les commandes
+              en quelques secondes.
+            </p>
+
+          </div>
+
+        </div>
+
+        <div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
+
+          <div class="feature-card">
+
+            <div class="feature-icon">
+              <i class="bi bi-shield-check"></i>
+            </div>
+
+            <h3>Système sécurisé</h3>
+
+            <p>
+              Gestion fiable et sécurisée des données
+              et des opérations du restaurant.
+            </p>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- HOW IT WORKS -->
+
+  <section class="how" id="how">
+
+    <div class="container">
+
+      <div class="section-title" data-aos="fade-up">
+
+        <span>Simple & Rapide</span>
+
+        <h2>Comment fonctionne Gusto ?</h2>
+
+      </div>
+
+      <div class="row">
+
+        <div class="col-lg-4" data-aos="fade-up">
+
+          <div class="step-box">
+
+            <div class="step-number">1</div>
+
+            <h3>Le client scanne</h3>
+
+            <p>
+              Le client scanne le QR code installé sur la table.
+            </p>
+
+          </div>
+
+        </div>
+
+        <div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
+
+          <div class="step-box">
+
+            <div class="step-number">2</div>
+
+            <h3>Commande instantanée</h3>
+
+            <p>
+              Il choisit son menu et passe sa commande directement.
+            </p>
+
+          </div>
+
+        </div>
+
+        <div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
+
+          <div class="step-box">
+
+            <div class="step-number">3</div>
+
+            <h3>Service ultra rapide</h3>
+
+            <p>
+              Le serveur reçoit la commande en temps réel.
+            </p>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- CTA -->
+
+  <section class="cta">
+
+    <div class="container" data-aos="zoom-in">
+
+      <h2>
+        Faites passer votre restaurant au niveau supérieur
+      </h2>
+
+      <p>
+        Impressionnez vos clients avec une expérience moderne,
+        rapide et totalement digitale.
+      </p>
+
+      <a href="https://wa.me/237680468901" class="btn-main">
+        Commander votre système maintenant
+      </a>
+
+    </div>
+
+  </section>
+
+  <!-- FOOTER -->
+
+  <footer>
+
+    <div class="container">
+
+      <h2 class="mb-4">
+        Gusto
+      </h2>
+
+      <div class="socials">
+
+        <a href="#">
+          <i class="bi bi-facebook"></i>
+        </a>
+
+        <a href="#">
+          <i class="bi bi-instagram"></i>
+        </a>
+
+        <a href="#">
+          <i class="bi bi-whatsapp"></i>
+        </a>
+
+      </div>
+
+      <p>
+        © 2026 Gusto — Tous droits réservés
+      </p>
+
+    </div>
+
+  </footer>
+
+  <!-- JS -->
+  <script src="./web/assets/vendor/jquery/jquery.min.js"></script>
+  <script src="./web/assets/vendor/bootstrap/js/bootstrap.min.js"></script>
+  <script src="./web/assets/vendor/aos/aos.js"></script>
+
+  <script>
+
+    // Toggle du menu déroulant
         document.getElementById('languageToggle').addEventListener('click', function() {
             const dropdown = document.getElementById('languageDropdown');
             const chevron = this.querySelector('.fa-chevron-down');
@@ -157,7 +781,7 @@
         // Démarrer le chargement
         loadGoogleTranslateScript();
 
-        /**Preloader*/
+        //preload
         const preloader = document.querySelector('#preloader');
         if (preloader) {
           window.addEventListener('load', () => {
@@ -165,50 +789,12 @@
           });
         }
 
-      //scrollspy
-      let navmenulinks = document.querySelectorAll('.navmenu a');
-      function navmenuScrollspy() {
-        navmenulinks.forEach(navmenulink => {
-          if (!navmenulink.hash) return;
-          let section = document.querySelector(navmenulink.hash);
-          if (!section) return;
-          let position = window.scrollY + 200;
-          if (position >= section.offsetTop && position <= (section.offsetTop + section.offsetHeight)) {
-            document.querySelectorAll('.navmenu a.active').forEach(link => link.classList.remove('active'));
-            navmenulink.classList.add('active');
-          } else {
-            navmenulink.classList.remove('active');
-          }
-        })
-      }
-      window.addEventListener('load', navmenuScrollspy);
-      document.addEventListener('scroll', navmenuScrollspy);
-
-      //navbar
-
-      const mobileNavToggleBtn = document.querySelector('.mobile-nav-toggle');
-      function mobileNavToogle() {
-        document.querySelector('body').classList.toggle('mobile-nav-active');
-        mobileNavToggleBtn.classList.toggle('bi-list');
-        mobileNavToggleBtn.classList.toggle('bi-x');
-      }
-      mobileNavToggleBtn.addEventListener('click', mobileNavToogle);
-      document.querySelectorAll('#navmenu a').forEach(navmenu => {
-        navmenu.addEventListener('click', () => {
-          if (document.querySelector('.mobile-nav-active')) {
-            mobileNavToogle();
-          }
+        AOS.init({
+          duration:1000,
+          once:true
         });
 
-      });
-      document.querySelectorAll('.navmenu .toggle-dropdown').forEach(navmenu => {
-        navmenu.addEventListener('click', function(e) {
-          e.preventDefault();
-          this.parentNode.classList.toggle('active');
-          this.parentNode.nextElementSibling.classList.toggle('dropdown-active');
-          e.stopImmediatePropagation();
-        });
-      });
-    </script>
+  </script>
+
   </body>
 </html>
