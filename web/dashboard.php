@@ -18,8 +18,456 @@
     <link href="./assets/vendor/datatables/datatables.bootstrap4.min.css" rel="stylesheet">
     <link href="./assets/vendor/virtual-select/virtual-select.min.css" rel="stylesheet">
     <link href="./assets/vendor/build/intlTelInput.css" rel="stylesheet">
-    <link href="./assets/css/style.css" rel="stylesheet">
+
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <style>
+      /* =========================
+   STYLE GUSTO MODERNE
+========================= */
+
+:root{
+  --design-color:#ff922b;
+  --card-color:#111c31;
+  --accent-color:#ff7a00;
+  --white-color:#ffffff;
+  --default-color:#6b7280;
+}
+
+#utilisateur, #appareil, #licence{
+  display: none;
+}
+
+.navbar-mainbg{
+  background: var(--card-color);
+  border-radius: 0 30px 30px 0;
+  box-shadow: 0 10px 40px rgba(0,0,0,.08);
+  min-height: 100vh;
+  padding-top: 10px;
+}
+
+#navbarSupportedContent{
+  overflow:hidden;
+  position:relative;
+}
+
+#navbarSupportedContent ul{
+  padding:0;
+  margin:0;
+}
+
+
+#navbarSupportedContent ul li a i{
+    margin-right: 10px;
+}
+
+
+#navbarSupportedContent ul li a{
+    color: var(--white-color);
+    text-decoration: none;
+    font-size: 17px;
+    display: block;
+    padding: 20px 20px;
+    transition-duration:0.6s;
+    transition-timing-function: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    position: relative;
+}
+
+#navbarSupportedContent ul li a:hover{
+  color:var(--design-color);
+  transform:translateX(4px);
+}
+
+#navbarSupportedContent>ul>li.active>a{
+  background-color: transparent;
+  color:white;
+  box-shadow:0 10px 25px rgba(255,122,0,.25);
+}
+
+#navbarSupportedContent a:not(:only-child):after {
+    content: "\f105";
+    position: absolute;
+    right: 20px;
+    top: 10px;
+    font-size: 14px;
+    display: inline-block;
+    padding-right: 3px;
+    vertical-align: middle;
+    font-weight: 900;
+    transition: 0.5s;
+}
+
+#navbarSupportedContent .active>a:not(:only-child):after {
+    transform: rotate(90deg);
+}
+
+.hori-selector{
+    display:inline-block;
+    position:absolute;
+    height: 100%;
+    top: 0px;
+    left: 0px;
+    transition-duration:0.6s;
+    transition-timing-function: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    background:linear-gradient(135deg,#ff7a00,#ff922b);
+    border-top-left-radius: 15px;
+    border-bottom-left-radius: 15px;
+}
+
+
+.sidebar-dark .sidebar-brand{
+  color:var(--white-color);
+}
+
+.sidebar-brand-text{
+  font-weight:800;
+  font-size:20px;
+}
+
+
+.sidebar-divider{
+  border: none;
+  background: var(--white-color);
+  margin: 14px 20px;
+  display: block;
+  opacity: 1;
+}
+
+.topbar{
+  background:var(--card-color);
+  border-radius:20px;
+  margin:20px;
+  box-shadow:0 10px 30px rgba(0,0,0,.05);
+  padding:10px 15px;
+}
+
+.topbar #sidebarToggleTop{
+  color:var(--accent-color);
+}
+
+.topbar #sidebarToggleTop:hover{
+  background:#fff4eb;
+  color:var(--accent-color);
+}
+
+/* =========================
+   CONTENT
+========================= */
+
+.container-fluid{
+  padding:20px;
+}
+
+/* =========================
+   BUTTONS
+========================= */
+
+.btn-user,
+.btn-ets,
+.btn-app{
+  background:linear-gradient(135deg,#ff7a00,#ff922b);
+  border:none;
+  color:white;
+  border-radius:14px;
+  padding:12px 24px;
+  font-size:14px;
+  font-weight:700;
+  transition:.3s ease;
+  box-shadow:0 10px 20px rgba(255,122,0,.18);
+}
+
+.btn-user:hover,
+.btn-ets:hover,
+.btn-app:hover{
+  transform:translateY(-2px);
+  box-shadow:0 15px 25px rgba(255,122,0,.25);
+}
+
+/* =========================
+   CARDS
+========================= */
+
+.card{
+  border:none;
+  border-radius:24px;
+  overflow:hidden;
+  background:var(--white-color);
+  box-shadow:0 15px 40px rgba(0,0,0,.06);
+}
+
+.card-header{
+  background:transparent;
+  border-bottom:1px solid #f1f5f9;
+  padding:22px;
+}
+
+.card-header h6{
+  color:#111827;
+  font-size:16px;
+  font-weight:800;
+  margin:0;
+}
+
+.card-body{
+  padding:25px;
+}
+
+/* =========================
+   TABLE
+========================= */
+
+.table{
+  border-collapse:separate;
+  border-spacing:0 10px;
+}
+
+.table thead th{
+  background:linear-gradient(135deg,#ff7a00,#ff922b);
+  color:white;
+  border:none;
+  padding:15px;
+  font-size:14px;
+  font-weight:700;
+}
+
+.table thead th:first-child{
+  border-radius:14px 0 0 14px;
+}
+
+.table thead th:last-child{
+  border-radius:0 14px 14px 0;
+}
+
+.table tbody tr{
+  background:white;
+  box-shadow:0 5px 15px rgba(0,0,0,.04);
+}
+
+.table tbody td{
+  padding:16px;
+  border-top:none !important;
+  vertical-align:middle;
+}
+
+/* =========================
+   PAGINATION
+========================= */
+
+.page-item.active .page-link{
+  background:var(--accent-color);
+  border-color:var(--accent-color);
+  border-radius:10px;
+}
+
+.page-link{
+  border:none;
+  margin:0 4px;
+  border-radius:10px;
+  color:#374151;
+}
+
+#prev-page, #next-page {
+  background: var(--accent-color);
+  color: #fff;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 0.7rem 2rem;
+}
+
+/* =========================
+   MODALS
+========================= */
+
+.modal-content{
+  border:none;
+  border-radius:28px;
+  overflow:hidden;
+  box-shadow:0 25px 60px rgba(0,0,0,.15);
+}
+
+.modal-header{
+  border:none;
+  padding:25px 30px 10px;
+}
+
+.modal-title{
+  font-weight:800;
+  color:#111827;
+}
+
+.modal-body{
+  padding:20px 30px 35px;
+}
+
+/* =========================
+   FORMS
+========================= */
+
+.modal .php-form input[type=text],
+.modal .php-form input[type=date],
+.modal .php-form input[type=number],
+.modal .php-form input[type=email],
+.modal .php-form input[type=url],
+.modal .php-form input[type=tel],
+.modal .php-form textarea,
+.modal .php-form input[type=password],
+select{
+  width:100%;
+  border:1px solid #e5e7eb;
+  border-radius:16px;
+  font-size:14px;
+  margin:10px 0;
+  transition:.3s;
+  background:#f9fafb;
+
+}
+
+.select{
+  height: 90%;
+}
+
+.modal .php-form textarea{
+  min-height:120px;
+  resize:none;
+}
+
+.modal .php-form input:focus,
+.modal .php-form textarea:focus,
+select:focus{
+  border-color:var(--accent-color);
+  background:white;
+  box-shadow:0 0 0 4px rgba(255,122,0,.12);
+  outline:none;
+}
+
+/* =========================
+   SUBMIT BUTTON
+========================= */
+
+.modal .php-form button[type=submit]{
+  background:linear-gradient(135deg,#ff7a00,#ff922b);
+  color:white;
+  border:none;
+  border-radius:50px;
+  padding:13px 35px;
+  font-weight:700;
+  transition:.3s ease;
+  margin-top:15px;
+  box-shadow:0 10px 25px rgba(255,122,0,.2);
+}
+
+.modal .php-form button[type=submit]:hover{
+  transform:translateY(-3px);
+}
+
+/* =========================
+   LOGO
+========================= */
+
+#logo{
+  height:100px;
+  width:100px;
+  border-radius:24px;
+  border:3px solid #fff;
+  box-shadow:0 10px 25px rgba(0,0,0,.1);
+  object-fit:cover;
+}
+
+/* =========================
+   IMAGE BUTTON
+========================= */
+
+.btn-img{
+  background:linear-gradient(135deg,#ff7a00,#ff922b);
+  color:white;
+  border:none;
+  border-radius:12px;
+  padding:8px 10px;
+  font-size:12px;
+  font-weight:700;
+  cursor:pointer;
+  transition:.3s;
+}
+
+#imgInp, #imgLogo{
+  display: none;
+}
+
+.btn-img:hover{
+  transform:translateY(-2px);
+}
+
+/* =========================
+   STATUS COLORS
+========================= */
+
+.statu-attente{
+  color:#9ca3af;
+  font-weight:700;
+}
+
+.statu-valide{
+  color:#22c55e;
+  font-weight:700;
+}
+
+.statu-expire{
+  color:#ef4444;
+  font-weight:700;
+}
+
+/* =========================
+   LOADER
+========================= */
+
+button.loading::after{
+  content:"";
+  display:inline-block;
+  border-radius:50%;
+  width:22px;
+  height:22px;
+  margin:0 10px -5px 0;
+  float:left;
+  border:3px solid rgba(255,255,255,.4);
+  border-top-color:white;
+  animation:animate-loading 1s linear infinite;
+  display:none;
+}
+
+button.loading.show-loader::after{
+  display:block;
+}
+
+@keyframes animate-loading{
+  to{
+    transform:rotate(360deg);
+  }
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media(max-width:768px){
+
+  .navbar-mainbg{
+    border-radius:0;
+  }
+
+  .topbar{
+    margin:10px;
+  }
+
+  .card{
+    border-radius:18px;
+  }
+
+  .table-responsive{
+    overflow-x:auto;
+  }
+
+}
+    </style>
   </head>
 
   <body>
@@ -41,11 +489,11 @@
             </span>
 
             <!-- Divider -->
-            <hr class="sidebar-divider my-0">
+            <hr class="sidebar-divider">
 
             <!-- Heading -->
-            <div class="sidebar-heading">
-                <!-- nom de l'entreprise -->
+            <div class="sidebar-heading text-white text-center" style="font-size: 25px;">
+                GUSTO
             </div>
 
             <!-- Divider -->
@@ -76,7 +524,7 @@
                 </li>
 
             <!-- Divider -->
-            <hr class="sidebar-divider d-md-block">
+            <hr class="sidebar-divider">
 
             <span class="sidebar-brand d-flex align-items-center justify-content-center">
                 <div class="sidebar-brand-icon">
@@ -96,7 +544,7 @@
         <div id="content">
 
           <!-- Topbar -->
-          <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+          <nav class="navbar navbar-expand navbar-light topbar mb-4 static-top shadow">
         
             <div id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
               <i class="fa fa-bars"></i>
@@ -282,7 +730,7 @@
                   <input type="text" name="pays" class="form-control" placeholder="pays" required>
                 </div>
                 <div class="col-lg-6 mb-4">
-                  <select name="devise" class="bg-white w-100 h-100"  required>
+                  <select name="devise" class="select w-100"  required>
                     <option value="" disabled selected>&nbsp;&nbsp;&nbsp;Choisir la monnaie</option>
                     <option value="FCFA">&nbsp;&nbsp;&nbsp;FCFA</option>
                     <option value="€">&nbsp;&nbsp;&nbsp;€</option>
@@ -347,14 +795,14 @@
                   <input type="text" name="login" class="form-control" placeholder="Entrez le login de l'utilisateur" required>
                 </div>
                 <div class="col-lg-6 mb-4">
-                  <select name="role" class="bg-white w-100 h-100"  required>
+                  <select name="role" class="select w-100"  required>
                     <option value="" disabled selected>&nbsp;&nbsp;&nbsp;Choisir le rôle</option>
                     <option value="0">&nbsp;&nbsp;&nbsp;Admin</option>
                     <option value="1">&nbsp;&nbsp;&nbsp;Gérant</option>
                   </select>
                 </div>
                 <div class="col-lg-6 mb-4">
-                  <select name="id_etablissement" class="bg-white  w-100 h-100 selectEtablissement" required>
+                  <select name="id_etablissement" class="select  w-100 selectEtablissement" required>
                     <option value="" disabled selected>&nbsp;&nbsp;&nbsp;Choisir l'etablissement géré</option>
                   </select>
                 </div>
@@ -401,7 +849,7 @@
                   <input type="date" class="form-control" name="date_fin_support">
                </div>
                 <div class="col-lg-12 mb-4">
-                  <select name="id_etablissement" class="bg-white  w-100 h-100 selectEtablissement" required>
+                  <select name="id_etablissement" class="select  w-100 selectEtablissement" required>
                     <option value="" disabled selected>&nbsp;&nbsp;&nbsp;Choisir l'etablissement destinataire</option>
                   </select>
                 </div>
@@ -430,7 +878,7 @@
             <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>" method="post" role="form" id='contrat' class="php-form">
               <div class="row">
                 <div class="col-lg-12 mb-4">
-                  <select name="id_etablissement" class="bg-white  w-100 h-100 selectEtablissement" required>
+                  <select name="id_etablissement" class="select  w-100 selectEtablissement" required>
                     <option value="" disabled selected>&nbsp;&nbsp;&nbsp;Choisir l'etablissement destinataire</option>
                   </select>
                 </div>

@@ -713,23 +713,12 @@ a:hover{
     color: #fcd34d;
 }
 
-/*authentification*/
 
 #main{
   margin-top: 10%;
 }
 
-.contact .php-form {
-  box-shadow: 0 0 30px rgba(214, 215, 216, 0.6);
-  padding: 30px;
-}
-
-.contact .php-form input[type=text],
-.contact .php-form input[type=email],
-.contact .php-form input[type=password],
-.contact .php-form textarea,
 select,
-.newsletter input[type=email],
 .modal .php-form input[type=text],
 .modal .php-form input[type=date],
 .modal .php-form input[type=number],
@@ -739,7 +728,7 @@ select,
 .modal .php-form textarea,
 .modal .php-form input[type=password] {
   font-size: 14px;
-  margin: 10px;
+  margin: 10px auto;
   box-shadow: none;
   border-radius: 0;
 }
@@ -748,12 +737,6 @@ select, input[type=number]{
   border: 1px solid #d1d3e2;
 }
 
-
-.contact .php-form input[type=text]:focus,
-.contact .php-form input[type=email]:focus,
-.contact .php-form input[type=password]:focus,
-.contact .php-form textarea:focus,
-.newsletter input[type=email]:focus,
 .modal .php-form input[type=text]:focus,
 .modal .php-form input[type=email]:focus,
 .modal .php-form input[type=url]:focus,
@@ -763,10 +746,6 @@ select, input[type=number]{
   border-color: var(--accent-color);
 }
 
-.contact .php-form input[type=text]::placeholder,
-.contact .php-form input[type=email]::placeholder,
-.contact .php-form input[type=password]::placeholder,
-.contact .php-form textarea::placeholder,
 .modal .php-form input[type=text]::placeholder,
 .modal .php-form input[type=email]::placeholder,
 .modal .php-form input[type=url]::placeholder,
@@ -776,9 +755,12 @@ select, input[type=number]{
   color: color-mix(in srgb, var(--default-color), transparent 70%);
 }
 
-.contact .php-form button[type=submit],
-.modal .php-form button[type=submit],
-.link{
+.bg-white{
+  height: 90%;
+}
+
+
+.modal .php-form button[type=submit]{
   color: var(--background-color);
   background: var(--accent-color);
   border: 0;
@@ -788,7 +770,6 @@ select, input[type=number]{
   border-radius: 50px;
 }
 
-.contact .php-form button[type=submit]:hover;
 .modal .php-form button[type=submit]:hover {
   background: color-mix(in srgb, var(--accent-color), transparent 25%);
 }

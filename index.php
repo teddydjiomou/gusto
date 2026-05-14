@@ -381,7 +381,6 @@
 
   <nav class="navbar navbar-expand-lg fixed-top">
     <div class="container">
-
       <div>
         <span class="navbar-brand">Gusto</span>
           <button id="languageToggle" class="align-items-center px-2 py-1 shadow-sm">
@@ -393,7 +392,6 @@
           </div>
       </div>
       
-
       <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu"aria-controls="navMenu"aria-expanded="false"aria-label="Toggle navigation"><i class="bi bi-list text-white fs-1"></i></button>
 
       <div class="collapse navbar-collapse" id="navMenu">
@@ -419,9 +417,7 @@
           </li>
 
         </ul>
-
       </div>
-
     </div>
   </nav>
 
@@ -492,12 +488,11 @@
               <i class="bi bi-qr-code"></i>
             </div>
 
-            <h3>Commande QR Code</h3>
+            <h3>Système QR Code</h3>
 
             <p>
               Les clients scannent le QR code de la table et
-              commandent directement depuis leur téléphone, et ont la possibilité de 
-              reclamer leur facture  via la plateforme
+              commandent directement depuis leur téléphone.
             </p>
 
           </div>
@@ -515,7 +510,7 @@
             <h3>Gestion sur tablette</h3>
 
             <p>
-              Les serveurs gèrent les commandes et interagissent avec le système en temps réel (Ouverture et fermeture du service d'une table, gestion des statu de la commande etc...).
+              Les serveurs gèrent les commandes et interagissent avec le système en temps réel (Ouverture et fermeture du service d'une table, gestion des statu de la commande).
             </p>
 
           </div>
@@ -533,12 +528,29 @@
             <h3>Statistiques intelligentes</h3>
 
             <p>
-              Analysez vos ventes, produits populaires
-              et performances du restaurant.
+              Analysez vos ventes, ainsi que les performances du restaurant.
             </p>
 
           </div>
 
+        </div>
+
+        <div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
+
+          <div class="feature-card">
+
+            <div class="feature-icon">
+              <i class="bi bi-bell"></i>
+            </div>
+
+            <h3>Alerte</h3>
+
+            <p>
+              Le client, pour reclamer sa facture, envoi une notification au serveur en clic sur la plateforme
+            </p>
+
+          </div>
+          
         </div>
 
         <div class="col-lg-4" data-aos="fade-up">
@@ -570,7 +582,7 @@
             <h3>Historique complet</h3>
 
             <p>
-              Retrouvez toutes les commandes
+              Retrouvez les commandes
               en quelques secondes.
             </p>
 
@@ -625,7 +637,7 @@
 
             <div class="step-number">1</div>
 
-            <h3>Le client scanne</h3>
+            <h3>Scanne du QR Code</h3>
 
             <p>
               Le client scanne le QR code installé sur la table.
@@ -712,11 +724,11 @@
           <i class="bi bi-facebook"></i>
         </a>
 
-        <a href="#">
-          <i class="bi bi-instagram"></i>
+        <a href="tel://+237680468901">
+          <i class="bi bi-phone"></i>
         </a>
 
-        <a href="#">
+        <a href="https://wa.me/+237680468901">
           <i class="bi bi-whatsapp"></i>
         </a>
 

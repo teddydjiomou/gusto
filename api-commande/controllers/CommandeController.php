@@ -85,6 +85,22 @@ class CommandeController {
     }
 
     // =========================
+    // STAT DES Commandes
+    // =========================
+    public function stat() {
+        header('Content-Type: application/json; charset=utf-8');
+
+        $id_etablissement = $this->getEtablissementId();
+        $data = $this->commande->getstatByEtablissement($id_etablissement);
+
+        echo json_encode([
+            'success' => true,
+            'data' => $data
+        ]);
+        exit;
+    }
+
+    // =========================
     // AFFICHER UNE COMMANDE
     // =========================
     public function show($id) {
@@ -125,9 +141,7 @@ class CommandeController {
     public function update($id, $data) {
         header('Content-Type: application/json; charset=utf-8');
 
-        // 🔐 Auth obligatoire
-        $user = Middleware::checkAuth();
-        $id_etablissement = $user->id_etablissement; // ✅ CORRECTION
+        $id_etablissement = $this->getEtablissementId(); 
 
         $e = $this->commande->getByIdAndEtablissement($id, $id_etablissement);
 
@@ -180,9 +194,7 @@ class CommandeController {
     public function delete($id) {
         header('Content-Type: application/json; charset=utf-8');
 
-        // 🔐 Auth obligatoire
-        $user = Middleware::checkAuth();
-        $id_etablissement = $user->id_etablissement;
+        $id_etablissement = $this->getEtablissementId();
 
         $e = $this->commande->getByIdAndEtablissement($id, $id_etablissement);
 
@@ -232,9 +244,7 @@ class CommandeController {
     public function changeStatus($id) {
         header('Content-Type: application/json; charset=utf-8');
 
-        // 🔐 Auth obligatoire
-        $user = Middleware::checkAuth();
-        $id_etablissement = $user->id_etablissement;
+        $id_etablissement = $this->getEtablissementId()t;
 
         $e = $this->commande->getByIdAndEtablissement($id, $id_etablissement);
 

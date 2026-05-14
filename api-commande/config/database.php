@@ -8,7 +8,7 @@ class Database {
             'password' => 'we52fmkrt24k0ksi'
         ],
         // [
-        //     'host' => '192.168.1.11',
+        //     'host' => 'localhost',
         //     'dbname' => 'etablissement',
         //     'user' => 'root',
         //     'password' => ''

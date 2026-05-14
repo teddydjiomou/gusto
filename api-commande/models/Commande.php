@@ -74,6 +74,24 @@ class Commande extends BaseModel {
         return array_values($grouped);
     }
 
+    public function getstatByEtablissement($id_etablissement)
+    {
+        return $this->db->personnalSelect(
+            'commande',
+            '
+            YEAR(date_enreg) AS annee,
+            MONTH(date_enreg) AS mois,
+            SUM(montant_total) AS total
+            ',
+            '
+            WHERE id_etablissement = ?
+            GROUP BY YEAR(date_enreg), MONTH(date_enreg)
+            ORDER BY annee ASC, mois ASC
+            ',
+            [$id_etablissement]
+        );
+    }
+
     // Récupérer par ID
     public function getById($id) {
         $stmt = $this->personnalSelect(

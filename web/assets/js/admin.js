@@ -103,28 +103,44 @@ $('.userLogin').on('click', function() {
 
 $('#userLoginForm').on('submit', function(e){
     e.preventDefault();
+
     const form = this;
     const submitBtn = $(form).find('button[type="submit"]');
+
     submitBtn.addClass('show-loader').prop('disabled', true);
+
+    const payload = {
+        login: $(form).find('[name="login"]').val(),
+        password: $(form).find('[name="password"]').val()
+    };
 
     $.ajax({
         url: '/api-commande/routes/updateLogin.php',
         type: 'POST',
         headers: {
-            'Authorization': 'Bearer ' + token // token actuel
+            'Authorization': 'Bearer ' + token,
+            'Content-Type': 'application/json'
         },
-        data: $(this).serialize(),
+        data: JSON.stringify(payload),
+
         success: function(res){
+
             submitBtn.removeClass('show-loader').prop('disabled', false);
+
             if(res.success){
+
                 localStorage.setItem('token', res.token);
-                document.getElementById('userLogin').textContent = parseJwt(res.token).data.login;
+
+                document.getElementById('userLogin').textContent =
+                    parseJwt(res.token).data.login;
 
                 $('.modal-login').modal('hide');
+
             } else {
                 alert(res.message);
             }
         },
+
         error: function(){
             submitBtn.removeClass('show-loader').prop('disabled', false);
             alert('Erreur serveur');

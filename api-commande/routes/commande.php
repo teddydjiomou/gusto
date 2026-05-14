@@ -48,23 +48,12 @@ if ($method === 'GET') {
 if ($method === 'POST') {
     $id = !empty($inputData['id']) ? (int)$inputData['id'] : null;
 
-    // 🔥 CAS 1 : FILTRE AUTOMATIQUE (année → aujourd’hui)
-    if (!empty($inputData['debut']) && !empty($inputData['fin'])) {
-
-        $debut = $inputData['debut'];
-        $fin   = $inputData['fin'];
-
-        $controller->getByServiceRange($debut, $fin);
-        exit;
-    }
-
-    // 👉 CAS 2 : CRÉATION
+    // 👉 CAS 1 : CRÉATION
     if (!$id) {
         $controller->store($inputData);
         exit;
     }
 
-    // 👉 CAS 3 : UPDATE
     if (!$token) {
         http_response_code(401);
         echo json_encode([
@@ -74,6 +63,17 @@ if ($method === 'POST') {
         exit;
     }
 
+    // 🔥 CAS 3 : FILTRE AUTOMATIQUE (année → aujourd’hui)
+    if (!empty($inputData['debut']) && !empty($inputData['fin'])) {
+
+        $debut = $inputData['debut'];
+        $fin   = $inputData['fin'];
+
+        $controller->getByServiceRange($debut, $fin);
+        exit;
+    }
+    
+    // 👉 CAS 3 : UPDATE
     $controller->update($id, $inputData);
     exit;
 }
