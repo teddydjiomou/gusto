@@ -468,6 +468,35 @@
       .iti__country-name{
         color: grey;
       }
+
+      /* LOADER */
+
+      button.loading::after {
+        content: "";
+        display: inline-block;
+        border-radius: 50%;
+        width: 22px;
+        height: 22px;
+        margin: 0 10px -5px 0;
+        float: left;
+        border: 3px solid rgba(255,255,255,.4);
+        border-top-color: white;
+        animation: animate-loading 1s linear infinite;
+        display: none;
+        z-index: 2;
+      }
+
+      button.loading.show-loader::after {
+        display: block;
+      }
+
+      /* ANIMATION */
+
+      @keyframes animate-loading {
+        to {
+          transform: rotate(360deg);
+        }
+      }
     </style>
   </head>
 
@@ -843,31 +872,24 @@
 
 <!-- CHAT ASSISTANT -->
 <div id="assistantBox">
-
   <div class="assistant-header">
     <div>
       <strong>Gusto Assistant</strong><br>
       <small>Support en ligne</small>
     </div>
-
     <button id="closeAssistant">
       <i class="bi bi-x-lg"></i>
     </button>
   </div>
 
   <div class="assistant-body">
-
     <form id="assistantForm">
-
       <input type="text" name="nom" class="form-control mb-3" placeholder="Votre nom" required>
-
       <input 
         type="tel" name="telephone" id="phone" class="form-control mb-3" value="+237 " placeholder="Votre téléphone (whatsapp)" required>
-
       <textarea 
         name="message" class="form-control mb-3" rows="4" placeholder="Votre message..." required></textarea>
-
-      <button type="submit" class="btn-send">
+      <button type="submit" class="btn-send loading">
         Envoyer
       </button>
 
@@ -944,52 +966,38 @@
           once:true
         });
 
-
         // OUVRIR LE BOT
         $('#assistantToggle').on('click', function(){
-
           $('#assistantBox').slideDown(700);
-
         });
 
         // FERMER LE BOT
         $('#closeAssistant').on('click', function(){
-
           $('#assistantBox').slideUp(700);
-
         });
 
         // ENVOYER MESSAGE
         $('#assistantForm').on('submit', function(e){
-
           e.preventDefault();
-
+          $('button.loading').addClass('show-loader').prop('disabled', true);
           $.ajax({
-
             url:'./api-commande/routes/send_message.php',
-
             type:'POST',
-
             data: $(this).serialize(),
-
-            success:function(){
-
-              alert('Message envoyé avec succès');
-
-              $('#assistantForm')[0].reset();
-
-              $('#assistantBox').slideUp(700);
-
+            success:function(response){
+              $('button.loading').removeClass('show-loader').prop('disabled', false);
+              setTimeout(() => {
+                alert('Message envoyé avec succès');
+                $('textarea[name="message"]').val('');
+              }, 100);
             },
-
             error:function(){
-
-              alert('Erreur lors de l’envoi');
-
+              $('button.loading').removeClass('show-loader').prop('disabled', false);
+              setTimeout(() => {
+                alert('Erreur lors de l’envoi');
+              }, 100);
             }
-
           });
-
         });
 
         var input = document.querySelector("#phone");

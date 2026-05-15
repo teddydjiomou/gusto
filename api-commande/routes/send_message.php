@@ -1,12 +1,20 @@
 <?php
 
-$nom = $_POST['nom'];
-$telephone = $_POST['telephone'];
-$message = $_POST['message'];
+require __DIR__ . '/../../vendor/autoload.php';
 
-$token = "8683356289:AAGcp6rSJrpLRbZBDp__tsYmeY_6DkWOAsk";
+use Dotenv\Dotenv;
 
-$chat_id = "-1003977719477";
+// Charger .env
+$dotenv = Dotenv::createImmutable(__DIR__ . '/../../');
+$dotenv->load();
+
+$nom = $_POST['nom'] ?? '';
+$telephone = $_POST['telephone'] ?? '';
+$message = $_POST['message'] ?? '';
+
+$token = $_ENV['TELEGRAM_TOKEN'];
+
+$chat_id = $_ENV['ID'];
 
 $text = "
 📩 Nouveau message Gusto

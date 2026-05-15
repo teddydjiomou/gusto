@@ -1,0 +1,24 @@
+# 🔒 Variables d'environnement
+.env
+*.env
+
+# 📦 Dépendances Composer
+/vendor/
+
+# 🧪 Logs
+*.log
+
+# 💻 Système
+.DS_Store
+Thumbs.db
+
+# 🧰 IDE
+.vscode/
+.idea/
+
+# 🔥 fichiers temporaires
+*.cache
+
+# backups
+*.bak
+*.sql
