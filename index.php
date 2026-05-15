@@ -7,9 +7,10 @@
     <link href="./web/assets/img/gusto.png" class="logo icon" rel="icon">
     <link href="./web/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="./web/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="./web/assets/vendor/build/intlTelInput.css" rel="stylesheet">
+    <link href="./web/assets/vendor/aos/aos.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="./web/assets/vendor/aos/aos.css" rel="stylesheet">
 
     <style>
 
@@ -121,6 +122,17 @@
         background:#ea580c;
         transform:translateY(-3px);
         color:white;
+      }
+
+      .btn-send{
+        background: var(--design-color);
+        color:white;
+        padding:9px 25px;
+        border-radius:14px;
+        border: none;
+        font-weight:600;
+        transition:.3s;
+        display:inline-block;
       }
 
       .btn-outline-custom{
@@ -261,8 +273,6 @@
       }
 
       .socials a{
-        width:50px;
-        height:50px;
         display:inline-flex;
         align-items:center;
         justify-content:center;
@@ -275,7 +285,6 @@
       }
 
       .socials a:hover{
-        background: var(--design-color);
         transform:translateY(-5px);
       }
 
@@ -370,6 +379,95 @@
         100% { transform: rotate(360deg); }
       }
 
+      /* =========================
+      ASSISTANT
+      ========================= */
+
+      #assistantToggle{
+        position:fixed;
+        right:25px;
+        bottom:25px;
+        width:70px;
+        height:70px;
+        border:none;
+        border-radius:50%;
+        background:var(--design-color);
+        color:white;
+        font-size:28px;
+        z-index:9999;
+        box-shadow:0 10px 30px rgba(0,0,0,.3);
+        transition:.3s;
+      }
+
+      #assistantToggle:hover{
+        transform:scale(1.08);
+        background:#ea580c;
+      }
+
+      #assistantBox{
+        position:fixed;
+        right:25px;
+        bottom:110px;
+        width:370px;
+        background: #0f172a;
+        border-radius:25px;
+        overflow:hidden;
+        z-index:9999;
+        display:none;
+        box-shadow:0 20px 60px rgba(0,0,0,.35);
+      }
+
+      .assistant-header{
+        background:var(--design-color);
+        padding:20px;
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        color:white;
+      }
+
+      .assistant-header button{
+        background:none;
+        border:none;
+        color:white;
+        font-size:20px;
+      }
+
+      .assistant-body{
+        padding:25px;
+      }
+
+      .assistant-body input,
+      .assistant-body textarea{
+        background:transparent;
+        border: 1px solid grey;
+        color:white;
+        border-radius:10px;
+        padding:14px;
+        margin-top: 18px;
+      }
+
+      .assistant-body input::placeholder,
+      .assistant-body textarea::placeholder{
+        color:white;
+        font-size: 14px;
+      }
+
+      .assistant-body input:focus,
+      .assistant-body textarea:focus{
+        background:transparent;
+        border: 1px solid grey;
+        color:white;
+        box-shadow:none;
+      }
+
+      .assistant-body textarea{
+        resize:none;
+      }
+
+      .iti__country-name{
+        color: grey;
+      }
     </style>
   </head>
 
@@ -411,9 +509,7 @@
           </li>
 
           <li class="nav-item ms-lg-3 mt-3 mt-lg-0">
-            <a href="https://wa.me/237680468901" class="btn-nav">
-              Contactez-nous
-            </a>
+            <a href="#contact" class="btn-nav">Contactez-nous</a>
           </li>
 
         </ul>
@@ -446,7 +542,7 @@
               Découvrir la plateforme
             </a>
 
-            <a href="https://wa.me/237680468901" class="btn-outline-custom">
+            <a href="#contact" class="btn-outline-custom">
               Contactez-nous
             </a>
 
@@ -700,7 +796,7 @@
         rapide et totalement digitale.
       </p>
 
-      <a href="https://wa.me/237680468901" class="btn-main">
+      <a href="#contact" class="btn-main">
         Commander votre système maintenant
       </a>
 
@@ -710,7 +806,7 @@
 
   <!-- FOOTER -->
 
-  <footer>
+  <footer id="contact">
 
     <div class="container">
 
@@ -720,16 +816,16 @@
 
       <div class="socials">
 
-        <a href="#">
-          <i class="bi bi-facebook"></i>
-        </a>
-
-        <a href="tel://+237680468901">
-          <i class="bi bi-phone"></i>
-        </a>
-
         <a href="https://wa.me/+237680468901">
-          <i class="bi bi-whatsapp"></i>
+          <i class="bi bi-whatsapp"> +237 6 80 46 89 01</i>
+        </a>
+
+        <a href="https://wa.me/+237693503891">
+          <i class="bi bi-whatsapp"> +237 6 93 50 38 91</i>
+        </a>
+
+        <a href="https://wa.me/+393288084393">
+          <i class="bi bi-whatsapp"> +39 328 808 4393</i>
         </a>
 
       </div>
@@ -740,12 +836,54 @@
 
     </div>
 
+    <!-- BOUTON ASSISTANT -->
+<button id="assistantToggle">
+  <i class="bi bi-chat-dots-fill"></i>
+</button>
+
+<!-- CHAT ASSISTANT -->
+<div id="assistantBox">
+
+  <div class="assistant-header">
+    <div>
+      <strong>Gusto Assistant</strong><br>
+      <small>Support en ligne</small>
+    </div>
+
+    <button id="closeAssistant">
+      <i class="bi bi-x-lg"></i>
+    </button>
+  </div>
+
+  <div class="assistant-body">
+
+    <form id="assistantForm">
+
+      <input type="text" name="nom" class="form-control mb-3" placeholder="Votre nom" required>
+
+      <input 
+        type="tel" name="telephone" id="phone" class="form-control mb-3" value="+237 " placeholder="Votre téléphone (whatsapp)" required>
+
+      <textarea 
+        name="message" class="form-control mb-3" rows="4" placeholder="Votre message..." required></textarea>
+
+      <button type="submit" class="btn-send">
+        Envoyer
+      </button>
+
+    </form>
+
+  </div>
+
+</div>
+
   </footer>
 
   <!-- JS -->
   <script src="./web/assets/vendor/jquery/jquery.min.js"></script>
   <script src="./web/assets/vendor/bootstrap/js/bootstrap.min.js"></script>
   <script src="./web/assets/vendor/aos/aos.js"></script>
+  <script src="./web/assets/vendor/build/intlTelInput.js"></script>
 
   <script>
 
@@ -804,6 +942,59 @@
         AOS.init({
           duration:1000,
           once:true
+        });
+
+
+        // OUVRIR LE BOT
+        $('#assistantToggle').on('click', function(){
+
+          $('#assistantBox').slideDown(700);
+
+        });
+
+        // FERMER LE BOT
+        $('#closeAssistant').on('click', function(){
+
+          $('#assistantBox').slideUp(700);
+
+        });
+
+        // ENVOYER MESSAGE
+        $('#assistantForm').on('submit', function(e){
+
+          e.preventDefault();
+
+          $.ajax({
+
+            url:'./api-commande/routes/send_message.php',
+
+            type:'POST',
+
+            data: $(this).serialize(),
+
+            success:function(){
+
+              alert('Message envoyé avec succès');
+
+              $('#assistantForm')[0].reset();
+
+              $('#assistantBox').slideUp(700);
+
+            },
+
+            error:function(){
+
+              alert('Erreur lors de l’envoi');
+
+            }
+
+          });
+
+        });
+
+        var input = document.querySelector("#phone");
+        const iti =window.intlTelInput(input, {
+          utilsScript: "./web/assets/vendor/build/utils.js",
         });
 
   </script>
