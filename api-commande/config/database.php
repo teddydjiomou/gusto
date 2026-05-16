@@ -1,19 +1,10 @@
 <?php
+require __DIR__ . '/../../vendor/autoload.php';
+
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../../');
+$dotenv->load();
 class Database {
-    private static $servers = [
-        [
-            'host' => 'w1kr9ijlozl9l79i.chr7pe7iynqr.eu-west-1.rds.amazonaws.com',
-            'dbname' => 'qrwvoqbllzh8wzao',
-            'user' => 'mpmgeoxc8ty1h18g',
-            'password' => 'we52fmkrt24k0ksi'
-        ],
-        // [
-        //     'host' => 'localhost',
-        //     'dbname' => 'etablissement',
-        //     'user' => 'root',
-        //     'password' => ''
-        // ]
-    ];
+    private static $servers = [];
 
     protected $pdo = null;
     private $initialized = false; // flag pour éviter réinitialisation
@@ -23,6 +14,22 @@ class Database {
     }
 
     public function connect() {
+
+        self::$servers = [
+            [
+                'host' => $_ENV['JAWSDB_HOST'],
+                'dbname' => $_ENV['JAWSDB_DATABASE'],
+                'user' => $_ENV['JAWSDB_USERNAME'],
+                'password' => $_ENV['JAWSDB_PASSWORD']
+            ],
+            // [
+            //     'host' => 'localhost',
+            //     'dbname' => 'etablissement',
+            //     'user' => 'root',
+            //     'password' => ''
+            // ]
+        ];
+    
         foreach (self::$servers as $srv) {
             try {
                 $this->pdo = new PDO(
