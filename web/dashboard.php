@@ -524,7 +524,7 @@ button.loading.show-loader::after{
                 </li>
 
             <!-- Divider -->
-            <hr class="sidebar-divider">
+            <hr class="sidebar-divider mt-3">
 
             <span class="sidebar-brand d-flex align-items-center justify-content-center">
                 <div class="sidebar-brand-icon">
@@ -544,7 +544,7 @@ button.loading.show-loader::after{
         <div id="content">
 
           <!-- Topbar -->
-          <nav class="navbar navbar-expand navbar-light topbar mb-4 static-top shadow">
+          <nav class="navbar navbar-expand navbar-light topbar static-top shadow">
         
             <div id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
               <i class="fa fa-bars"></i>
