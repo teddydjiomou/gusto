@@ -25,5 +25,6 @@ class ServiceController {
         echo json_encode(['success'=>true, 'data'=>$services]);
         exit;
     }
+
 }
 ?>

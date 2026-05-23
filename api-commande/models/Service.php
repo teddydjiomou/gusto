@@ -7,13 +7,49 @@ class Service extends BaseModel {
     // Tous les services d’un établissement
     // =========================
     public function getServicesByEtablissement($id_etablissement){
+
+        // 1. récupérer services
         $stmt = $this->personnalSelect(
             "service",
             "*",
             "WHERE id_etablissement = ?",
             [$id_etablissement]
         );
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $services = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        if (empty($services)) {
+            return [];
+        }
+
+        // 2. récupérer ids utilisateurs
+        $ids = array_unique(array_column($services, 'id_utilisateur'));
+
+        $placeholders = implode(',', array_fill(0, count($ids), '?'));
+
+        // 3. récupérer utilisateurs en 1 requête
+        $usersStmt = $this->personnalSelect(
+            "utilisateur",
+            "id_utilisateur, login",
+            "WHERE id_utilisateur IN ($placeholders)",
+            $ids
+        );
+
+        $users = $usersStmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // 4. map id => login
+        $map = [];
+        foreach ($users as $u) {
+            $map[$u['id_utilisateur']] = $u['login'];
+        }
+
+        // 5. enrichir services
+        foreach ($services as $key => $service) {
+            $services[$key]['login'] =
+                $map[$service['id_utilisateur']] ?? null;
+        }
+
+        return $services;
     }
 
 }
