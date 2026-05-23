@@ -105,7 +105,7 @@ class TableController {
         header('Content-Type: application/json; charset=utf-8');
 
         $id_etablissement = $this->user->id_etablissement;
-        $id_utilisateur   = $this->user->id_utilisateur;
+        $id_utilisateur   = $this->user->id;
 
         $e = $this->table->getByIdAndEtablissement($id, $id_etablissement);
         if (!$e) {

@@ -246,7 +246,7 @@
             /* CALCUL TOTAL */
 
             function calculerMontantFinal() {
-                let total = panier.reduce((sum, item) => sum + item.total, 0);
+                let total = panier.reduce((sum, item) => sum + Number(item.total), 0);
                 $("#montantFinal").text(total.toFixed(2) + " " + devise);
             }
 
@@ -302,7 +302,7 @@
                     panier[index].quantite = quantite;
                     panier[index].total = prix * quantite;
                 } else {
-                    panier.push({ id, libelle: nom, prix, quantite, total: +(prix * quantite).toFixed(2) });
+                    panier.push({ id, libelle: nom, prix, quantite, total: prix * quantite});
                 }
 
                 if (container.find('.check-panier').length === 0) {
@@ -500,21 +500,21 @@
             });
 
             // Filtrage par catégorie
-            const filterButtons = document.querySelectorAll('.filter-btn');
-            filterButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    const category = button.getAttribute('data-filter');
+            // const filterButtons = document.querySelectorAll('.filter-btn');
+            // filterButtons.forEach(button => {
+            //     button.addEventListener('click', () => {
+            //         const category = button.getAttribute('data-filter');
 
-                    dishCards.forEach(card => {
-                        const cardCategory = card.getAttribute('data-category');
-                        card.style.display = (category === 'tout' || cardCategory === category) ? 'block' : 'none';
-                    });
+            //         dishCards.forEach(card => {
+            //             const cardCategory = card.getAttribute('data-category');
+            //             card.style.display = (category === 'tout' || cardCategory === category) ? 'block' : 'none';
+            //         });
 
-                    // Changement de style actif
-                    filterButtons.forEach(btn => btn.classList.remove('active'));
-                    button.classList.add('active');
-                });
-            });
+            //         // Changement de style actif
+            //         filterButtons.forEach(btn => btn.classList.remove('active'));
+            //         button.classList.add('active');
+            //     });
+            // });
 
             document.addEventListener('DOMContentLoaded', function() {
                 // Feather icons
