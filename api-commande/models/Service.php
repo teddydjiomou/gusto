@@ -52,5 +52,40 @@ class Service extends BaseModel {
         return $services;
     }
 
+    public function getByIdAndEtablissement($id, $id_etablissement) {
+
+        // récupérer le service
+        $stmt = $this->personnalSelect(
+            "service",
+            "*",
+            "WHERE id_table = ? AND id_etablissement = ? ORDER BY id_service DESC LIMIT 1",
+            [$id, $id_etablissement]
+        );
+
+        $service = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        // si aucun service
+        if (!$service) {
+            return null;
+        }
+
+        // récupérer utilisateur
+        $userStmt = $this->personnalSelect(
+            "utilisateur",
+            "login",
+            "WHERE id_utilisateur = ?",
+            [$service['id_utilisateur']]
+        );
+
+        $user = $userStmt->fetch(PDO::FETCH_ASSOC);
+
+        // ajouter login
+        $service['login'] = $user['login'] ?? null;
+
+        return $service;
+    }
+
+
+
 }
 ?>

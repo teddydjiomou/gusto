@@ -26,5 +26,19 @@ class ServiceController {
         exit;
     }
 
+    public function show($id) {
+        header('Content-Type: application/json; charset=utf-8');
+
+        $id_etablissement = $this->user->id_etablissement;
+        $e = $this->service->getByIdAndEtablissement($id, $id_etablissement);
+
+        if ($e) {
+            echo json_encode(['success'=>true, 'data'=>$e]);
+        } else {
+            echo json_encode(['success'=>false, 'message'=>'Service not found']);
+        }
+        exit;
+    }
+
 }
 ?>

@@ -24,7 +24,13 @@ if (!isset($headers['authorization'])) {
 // GET
 // ========================
 if ($method === 'GET') {
-    $controller->index();
+    $id = isset($_GET['id_table']) ? (int) $_GET['id_table'] : null;
+
+    if ($id) {
+        $controller->show($id);
+    } else {
+        $controller->index();
+    }
     exit;
 }
 
