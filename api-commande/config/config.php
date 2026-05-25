@@ -6,9 +6,9 @@ $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../../');
 $dotenv->load();
 
 return [
-    'JWT_SECRET' => $_ENV['JWT_SECRET'],
-    'JWT_ALGO'   => $_ENV['JWT_ALGO'],
-    'JWT_EXPIRE' => $_ENV['JWT_EXPIRE']
+    'JWT_SECRET' => $_ENV['JWT_SECRET'] ?? getenv('JWT_SECRET'),
+    'JWT_ALGO'   => $_ENV['JWT_ALGO'] ?? getenv('JWT_ALGO'),
+    'JWT_EXPIRE' => $_ENV['JWT_EXPIRE'] ?? getenv('JWT_EXPIRE')
 ];
 
 
