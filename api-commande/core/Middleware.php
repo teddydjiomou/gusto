@@ -18,7 +18,10 @@ class Middleware {
         if (!$headers) $headers = [];
 
         $authHeader =
-            $headers['authorization']
+            $headers['Authorization']
+            ?? $headers['authorization']
+            ?? $_SERVER['HTTP_AUTHORIZATION']
+            ?? $_SERVER['REDIRECT_HTTP_AUTHORIZATION']
             ?? null;
 
         if (!$authHeader) {

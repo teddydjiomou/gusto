@@ -24,12 +24,14 @@ class Database {
                 'user' => getenv('JAWSDB_USERNAME'),
                 'password' => getenv('JAWSDB_PASSWORD')
             ],
-            // [
-            //     'host' => 'localhost',
-            //     'dbname' => 'etablissement',
-            //     'user' => 'root',
-            //     'password' => ''
-            // ]
+             [
+                //ce qui marche en local
+                
+                // 'host' => $_ENV['JAWSDB_HOST'],
+                // 'dbname' => $_ENV['JAWSDB_DATABASE'],
+                // 'user' => $_ENV['JAWSDB_USERNAME'],
+                // 'password' => $_ENV['JAWSDB_PASSWORD']
+             ]
         ];
     
         foreach (self::$servers as $srv) {

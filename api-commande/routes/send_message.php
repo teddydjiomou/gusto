@@ -15,6 +15,12 @@ $token = getenv('TELEGRAM_TOKEN');
 
 $chat_id = getenv('ID');
 
+//ce qui marche en local
+
+// $token = $_ENV['TELEGRAM_TOKEN'];
+
+// $chat_id = $_ENV['ID'];
+
 $text = "
 📩 Nouveau message Gusto
 
