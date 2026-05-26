@@ -2,19 +2,18 @@
 
 require __DIR__ . '/../../vendor/autoload.php';
 
-use Dotenv\Dotenv;
-
-// Charger .env
-$dotenv = Dotenv::createImmutable(__DIR__ . '/../../');
-$dotenv->safeLoad();
+if (file_exists(__DIR__ . '/../../.env')) {
+    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../../');
+    $dotenv->load();
+}
 
 $nom = $_POST['nom'] ?? '';
 $telephone = $_POST['telephone'] ?? '';
 $message = $_POST['message'] ?? '';
 
-$token = $_ENV['TELEGRAM_TOKEN'];
+$token = getenv('TELEGRAM_TOKEN');
 
-$chat_id = $_ENV['ID'];
+$chat_id = getenv('ID');
 
 $text = "
 📩 Nouveau message Gusto

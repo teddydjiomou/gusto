@@ -1,8 +1,10 @@
 <?php
 require __DIR__ . '/../../vendor/autoload.php';
 
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../../');
-$dotenv->safeLoad();
+if (file_exists(__DIR__ . '/../../.env')) {
+    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../../');
+    $dotenv->load();
+}
 class Database {
     private static $servers = [];
 
@@ -17,10 +19,10 @@ class Database {
 
         self::$servers = [
             [
-                'host' => $_ENV['JAWSDB_HOST'],
-                'dbname' => $_ENV['JAWSDB_DATABASE'],
-                'user' => $_ENV['JAWSDB_USERNAME'],
-                'password' => $_ENV['JAWSDB_PASSWORD']
+                'host' => getenv('JAWSDB_HOST'),
+                'dbname' => getenv('JAWSDB_DATABASE'),
+                'user' => getenv('JAWSDB_USERNAME'),
+                'password' => getenv('JAWSDB_PASSWORD')
             ],
             // [
             //     'host' => 'localhost',
