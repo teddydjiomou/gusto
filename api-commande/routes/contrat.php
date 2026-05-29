@@ -11,7 +11,7 @@ $method = $_SERVER['REQUEST_METHOD'];
 // ========================
 $headers = function_exists('getallheaders') ? getallheaders() : [];
 
-if (!isset($headers['authorization'])) {
+if (!isset($headers['Authorization'])) {
     http_response_code(401);
     echo json_encode([
         'success' => false,

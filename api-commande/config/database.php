@@ -19,18 +19,19 @@ class Database {
 
         self::$servers = [
             [
+                // 'host' => $_ENV['JAWSDB_HOST'],
+                // 'dbname' => $_ENV['JAWSDB_DATABASE'],
+                // 'user' => $_ENV['JAWSDB_USERNAME'],
+                // 'password' => $_ENV['JAWSDB_PASSWORD']
                 'host' => getenv('JAWSDB_HOST'),
                 'dbname' => getenv('JAWSDB_DATABASE'),
                 'user' => getenv('JAWSDB_USERNAME'),
                 'password' => getenv('JAWSDB_PASSWORD')
             ],
              [
-                //ce qui marche en local
+               // autre connexion
                 
-                // 'host' => $_ENV['JAWSDB_HOST'],
-                // 'dbname' => $_ENV['JAWSDB_DATABASE'],
-                // 'user' => $_ENV['JAWSDB_USERNAME'],
-                // 'password' => $_ENV['JAWSDB_PASSWORD']
+                
              ]
         ];
     

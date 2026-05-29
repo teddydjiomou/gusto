@@ -388,7 +388,7 @@
             function initWebSocket() {
                 if (socket) return; // 🔥 empêche double connexion
 
-                socket = new WebSocket("ws://172.30.108.90:8080");
+                socket = new WebSocket("wss://gusto-api-48f214a89058.herokuapp.com");
 
                 socket.onopen = () => {
                     console.log("✅ WebSocket connected");

@@ -118,7 +118,7 @@ $('#userLoginForm').on('submit', function(e){
         url: '/api-commande/routes/updateLogin.php',
         type: 'POST',
         headers: {
-            'authorization': 'Bearer ' + token,
+            'Authorization': 'Bearer ' + token,
             'Content-Type': 'application/json'
         },
         data: JSON.stringify(payload),
@@ -174,7 +174,7 @@ $('#ets').on('submit', async function(e) {
         formData.set('country', country);
         const response = await fetch('/api-commande/routes/etablissement.php', {
             method: 'POST',
-            headers: { 'authorization': 'Bearer ' + token },
+            headers: { 'Authorization': 'Bearer ' + token },
             body: formData
         });
         const result = await response.json();
@@ -211,7 +211,7 @@ $(document).on('click', '.edit-ets', async function() {
     editingRow = ets.row($(this).closest('tr'));
     try {
         const response = await fetch(`/api-commande/routes/etablissement.php?id=${etabId}`, {
-            headers: { 'authorization': 'Bearer ' + token }
+            headers: { 'Authorization': 'Bearer ' + token }
         });
         const result = await response.json();
         if(result.success) {
@@ -259,7 +259,7 @@ $('#user').on('submit', async function(e) {
     try {
         const response = await fetch('/api-commande/routes/utilisateur.php', {
             method: 'POST',
-            headers: { 'authorization': 'Bearer ' + token },
+            headers: { 'Authorization': 'Bearer ' + token },
             body: formData
         });
         const result = await response.json();
@@ -292,7 +292,7 @@ $(document).on('click', '.edit-user', async function() {
     editingRow = user.row($(this).closest('tr'));
     try {
         const response = await fetch(`/api-commande/routes/utilisateur.php?id=${userId}`, {
-            headers: { 'authorization': 'Bearer ' + token }
+            headers: { 'Authorization': 'Bearer ' + token }
         });
         const result = await response.json();
         if(result.success) {
@@ -330,7 +330,7 @@ $('#dispositif').on('submit', async function(e) {
     try {
         const response = await fetch('/api-commande/routes/appareil.php', {
             method: 'POST',
-            headers: { 'authorization': 'Bearer ' + token },
+            headers: { 'Authorization': 'Bearer ' + token },
             body: formData
         });
         const result = await response.json();
@@ -363,7 +363,7 @@ $(document).on('click', '.edit-app', async function() {
     editingRow = app.row($(this).closest('tr'));
     try {
         const response = await fetch(`/api-commande/routes/appareil.php?id=${appId}`, {
-            headers: { 'authorization': 'Bearer ' + token }
+            headers: { 'Authorization': 'Bearer ' + token }
         });
         const result = await response.json();
         if(result.success) {
@@ -402,7 +402,7 @@ $(document).on('click', '.drop-app', async function () {
             {
                 method: 'DELETE',
                 headers: {
-                    'authorization': 'Bearer ' + token
+                    'Authorization': 'Bearer ' + token
                 }
             }
         );
@@ -436,7 +436,7 @@ $('#contrat').on('submit', async function(e) {
     try {
         const response = await fetch('/api-commande/routes/contrat.php', {
             method: 'POST',
-            headers: { 'authorization': 'Bearer ' + token },
+            headers: { 'Authorization': 'Bearer ' + token },
             body: formData
         });
         const result = await response.json();
@@ -469,7 +469,7 @@ $(document).on('click', '.edit-contrat', async function() {
     editingRow = licence.row($(this).closest('tr'));
     try {
         const response = await fetch(`/api-commande/routes/contrat.php?id=${licenceId}`, {
-            headers: { 'authorization': 'Bearer ' + token }
+            headers: { 'Authorization': 'Bearer ' + token }
         });
         const result = await response.json();
         if(result.success) {

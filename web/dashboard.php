@@ -940,7 +940,7 @@ button.loading.show-loader::after{
 
         const headers = {
             'Content-Type': 'application/json',
-            'authorization': 'Bearer ' + token
+            'Authorization': 'Bearer ' + token
         };
 
         if (token) {

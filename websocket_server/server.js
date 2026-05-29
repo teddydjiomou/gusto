@@ -1,95 +1,115 @@
 const WebSocket = require('ws');
+const http = require('http');
 
-const wss = new WebSocket.Server({ port: 8080, host: '0.0.0.0' });
+const server = http.createServer();
+const wss = new WebSocket.Server({ server });
 
-// Stockage des clients par restaurant
-// { id_etablissement: Set<WebSocket> }
 const etablissement = {};
 
-wss.on('connection', ws => {
+wss.on('connection', (ws) => {
     console.log('✅ Client connected');
 
-    ws.on('message', message => {
+    ws.id_etablissement = null;
+
+    ws.on('message', (message) => {
         let data;
+
         try {
             data = JSON.parse(message.toString());
         } catch (e) {
-            console.log('❌  Invalid message');
+            console.log('❌ Invalid JSON');
             return;
         }
 
-                // 🟢 TABLE OUVERTE
-        if (data.type === 'table_opened' && data.id_etablissement) {
-            const employesRestaurant = etablissement[data.id_etablissement];
-            if (!employesRestaurant) return;
+        const { type } = data;
 
-            employesRestaurant.forEach(employe => {
-                if (employe.readyState === WebSocket.OPEN) {
-                    employe.send(JSON.stringify(data));
-                }
-            });
+        // ==========================
+        // 🏷️ REGISTER
+        // ==========================
+        if (type === 'register') {
+            const id = data.id_etablissement;
 
-            console.log(
-                `🟢 Table ${data.table} oppened by ${data.login} to restaurant ${data.id_etablissement}`
-            );
-
-            return;
-        }
-
-        // 🏷️ Enregistrement du client pour un restaurant
-        if (data.type === 'register' && data.id_etablissement) {
-            ws.id_etablissement = data.id_etablissement;
-
-            if (!etablissement[data.id_etablissement]) {
-                etablissement[data.id_etablissement] = new Set();
+            if (!id) {
+                console.log('⚠️ Missing id_etablissement');
+                return;
             }
 
-            etablissement[data.id_etablissement].add(ws);
-            console.log(`🏷️ Client register for restaurant ${data.id_etablissement}`);
+            ws.id_etablissement = id;
+
+            if (!etablissement[id]) {
+                etablissement[id] = new Set();
+            }
+
+            etablissement[id].add(ws);
+
+            console.log(`🏷️ Registered: ${id}`);
             return;
         }
 
-        // 📦 Nouvelle commande
-        if (data.type === 'new_command' && data.id_etablissement) {
-            const clientsRestaurant = etablissement[data.id_etablissement];
-            if (!clientsRestaurant) return;
-
-            clientsRestaurant.forEach(client => {
-                if (client.readyState === WebSocket.OPEN) {
-                    client.send(JSON.stringify(data));
-                }
-            });
-
-            console.log(`📤 ${data.id_ticket} Command sent to restaurant ${data.id_etablissement}`);
+        // ❌ BLOQUER si pas register
+        if (!ws.id_etablissement) {
+            console.log('⚠️ Not registered');
             return;
         }
 
-        // ✅ 🧾 TABLE TERMINÉE (AJOUT)
-        if (data.type === 'table_completed' && data.id_etablissement) {
-            const clientsRestaurant = etablissement[data.id_etablissement];
-            if (!clientsRestaurant) return;
+        const broadcast = (payload) => {
+            const clients = etablissement[ws.id_etablissement];
+            if (!clients) return;
 
-            clientsRestaurant.forEach(client => {
+            const msg = JSON.stringify(payload);
+
+            clients.forEach((client) => {
                 if (client.readyState === WebSocket.OPEN) {
-                    client.send(JSON.stringify(data));
+                    client.send(msg);
                 }
             });
+        };
 
-            console.log(`📤 The client ${data.id_ticket} of the table n° ${data.table} completed sent to restaurant ${data.id_etablissement}`);
+        // ==========================
+        // EVENTS
+        // ==========================
+        if (type === 'table_opened') {
+            broadcast(data);
+            console.log(`🟢 Table opened`);
+            return;
+        }
+
+        if (type === 'new_command') {
+            broadcast(data);
+            console.log(`📤 Command`);
+            return;
+        }
+
+        if (type === 'command_status_changed') {
+            broadcast(data);
+            console.log(`🔄 Status changed`);
+            return;
+        }
+
+        if (type === 'table_completed') {
+            broadcast(data);
+            console.log(`🧾 Table completed`);
             return;
         }
     });
 
     ws.on('close', () => {
-        if (ws.id_etablissement && etablissement[ws.id_etablissement]) {
-            etablissement[ws.id_etablissement].delete(ws);
-            if (etablissement[ws.id_etablissement].size === 0) {
-                delete etablissement[ws.id_etablissement];
+        const id = ws.id_etablissement;
+
+        if (id && etablissement[id]) {
+            etablissement[id].delete(ws);
+
+            if (etablissement[id].size === 0) {
+                delete etablissement[id];
             }
         }
-        console.log('⚠️ Client diconnected');
+
+        console.log('⚠️ Client disconnected');
     });
 });
 
-console.log('🚀 WebSocket server started sur ws://0.0.0.0:8080');
+const PORT = process.env.PORT || 8080;
 
+server.listen(PORT, () => {
+    console.log(`🚀 WebSocket running on ${PORT}`);
+});
