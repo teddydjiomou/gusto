@@ -16,13 +16,9 @@ class CommandeController {
     // =========================
     private function getEtablissementId() {
 
-        // 🔐 Si token → utiliser JWT
-        $headers = getallheaders();
-
-        if (isset($headers['authorization'])) {
-            $user = Middleware::checkAuth();
-            return $user->id_etablissement; // ✅ CORRECTION
-        }
+        $user = Middleware::checkAuth();
+        return $user->id_etablissement; // ✅ CORRECTION
+        
 
         // 🌍 Sinon → client
         if (isset($_GET['id_etablissement'])) {
