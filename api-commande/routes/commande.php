@@ -3,7 +3,6 @@ require_once __DIR__ . '/../controllers/CommandeController.php';
 require_once __DIR__ . '/../core/Middleware.php';
 
 header('Content-Type: application/json; charset=utf-8');
-$token = Middleware::checkAuth();
 
 $controller = new CommandeController();
 $method = $_SERVER['REQUEST_METHOD'];
@@ -51,15 +50,8 @@ if ($method === 'POST') {
         exit;
     }
 
-    if (!$token) {
-        http_response_code(401);
-        echo json_encode([
-            'success'=>false,
-            'message'=>'Token required'
-        ]);
-        exit;
-    }
-
+    $token = Middleware::checkAuth();
+    
     // 🔥 CAS 3 : FILTRE AUTOMATIQUE (année → aujourd’hui)
     if (!empty($inputData['debut']) && !empty($inputData['fin'])) {
 
@@ -81,14 +73,7 @@ if ($method === 'POST') {
 
 if ($method === 'DELETE') {
 
-    if (!$token) {
-        http_response_code(401);
-        echo json_encode([
-            'success' => false,
-            'message' => 'Token required'
-        ]);
-        exit;
-    }
+    $token = Middleware::checkAuth();
 
     $id_ticket = $_GET['id_ticket'] ?? null;
     $id_item = $_GET['id_item'] ?? null;
@@ -119,14 +104,7 @@ if ($method === 'DELETE') {
 // ========================
 if ($method === 'PATCH') {
 
-    if (!$token) {
-        http_response_code(401);
-        echo json_encode([
-            'success' => false,
-            'message' => 'Token required'
-        ]);
-        exit;
-    }
+    $token = Middleware::checkAuth();
 
     $id_ticket = $_GET['id_ticket'] ?? null;
 
