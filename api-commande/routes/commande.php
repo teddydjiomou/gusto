@@ -51,14 +51,6 @@ if ($method === 'POST') {
         exit;
     }
 
-    if (!$token) {
-        http_response_code(401);
-        echo json_encode([
-            'success'=>false,
-            'message'=>'Token required'
-        ]);
-        exit;
-    }
 
     // 🔥 CAS 3 : FILTRE AUTOMATIQUE (année → aujourd’hui)
     if (!empty($inputData['debut']) && !empty($inputData['fin'])) {
@@ -80,15 +72,6 @@ if ($method === 'POST') {
 // ========================
 
 if ($method === 'DELETE') {
-
-    if (!$token) {
-        http_response_code(401);
-        echo json_encode([
-            'success' => false,
-            'message' => 'Token required'
-        ]);
-        exit;
-    }
 
     $id_ticket = $_GET['id_ticket'] ?? null;
     $id_item = $_GET['id_item'] ?? null;
@@ -118,15 +101,6 @@ if ($method === 'DELETE') {
 // PATCH : changer statut (token obligatoire)
 // ========================
 if ($method === 'PATCH') {
-
-    if (!$token) {
-        http_response_code(401);
-        echo json_encode([
-            'success' => false,
-            'message' => 'Token required'
-        ]);
-        exit;
-    }
 
     $id_ticket = $_GET['id_ticket'] ?? null;
 
