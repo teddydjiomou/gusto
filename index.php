@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Gusto</title>
-    <link href="./web/assets/img/Gusto.png" class="logo icon" type="image/png" rel="icon">
+    <link href="/web/assets/img/gusto.png" class="logo icon" rel="icon">
     <link href="./web/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="./web/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
     <link href="./web/assets/vendor/build/intlTelInput.css" rel="stylesheet">
