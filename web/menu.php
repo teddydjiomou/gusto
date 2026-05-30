@@ -345,7 +345,7 @@
             $(document).on('click', '.facture', function() { 
                 let id_ticket = localStorage.getItem("id_ticket");
                 $.ajax({
-                    url: "http://gusto/api-commande/routes/commande.php?id_etablissement=" + id_etablissement,
+                    url: "/api-commande/routes/commande.php?id_etablissement=" + id_etablissement,
                     method: "GET",
                     dataType: "json"
                 })
@@ -425,7 +425,7 @@
                 };
 
                 $.ajax({
-                    url: "http://gusto/api-commande/routes/commande.php?id_etablissement=" + id_etablissement,
+                    url: "/api-commande/routes/commande.php?id_etablissement=" + id_etablissement,
                     method: "POST",
                     contentType: "application/json",
                     data: JSON.stringify(payload)
