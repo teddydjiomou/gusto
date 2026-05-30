@@ -9,7 +9,7 @@
   <meta content="" name="keywords">
 
   <!-- Favicons -->
-  <link href="./assets/img/gusto.png" type="image/png" rel="icon">
+  <link href="./assets/img/Gusto.png" type="image/png" rel="icon">
 
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,600,600i,700,700i,900" rel="stylesheet">
@@ -139,7 +139,7 @@
         <div class="col-lg-6" data-aos="fade-up" data-aos-delay="300" data-aos="fade-up">
           <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>" method="post" role="form" class="php-form text-center" id='connecter'>
             <div class="erreur"></div>
-            <img src="./assets/img/gusto.png" style="width: 120px;">
+            <img src="./assets/img/Gusto.png" style="width: 120px;">
             <hr>
             <div class="form-row mt-4">
               <div class="col-lg-12 form-group">

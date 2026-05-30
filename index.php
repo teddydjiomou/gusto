@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Gusto</title>
-    <link href="./web/assets/img/gusto.png" class="logo icon" type="image/png" rel="icon">
+    <link href="./web/assets/img/Gusto.png" class="logo icon" type="image/png" rel="icon">
     <link href="./web/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="./web/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
     <link href="./web/assets/vendor/build/intlTelInput.css" rel="stylesheet">
@@ -644,8 +644,7 @@
             <h3>Système QR Code</h3>
 
             <p>
-              Les clients scannent le QR code de la table et
-              commandent directement depuis leur téléphone.
+              Les clients scannent le QR code de la table et passent leurs commandes directement depuis leur téléphone.
             </p>
 
           </div>
@@ -663,7 +662,7 @@
             <h3>Gestion sur tablette</h3>
 
             <p>
-              Les serveurs gèrent les commandes et interagissent avec le système en temps réel (Ouverture et fermeture du service d'une table, gestion des statu de la commande).
+              Les serveurs gèrent les commandes et interagissent avec le système en temps réel, notamment l’ouverture et la fermeture des tables ainsi que la mise à jour des statuts des commandes...
             </p>
 
           </div>
@@ -681,7 +680,7 @@
             <h3>Statistiques intelligentes</h3>
 
             <p>
-              Analysez vos ventes, ainsi que les performances du restaurant.
+              Analyse des ventes et suivi des performances globales du restaurant.
             </p>
 
           </div>
@@ -699,7 +698,7 @@
             <h3>Alerte</h3>
 
             <p>
-              Le client, pour reclamer sa facture, envoi une notification au serveur en clic sur la plateforme
+             Le client peut demander l’addition en envoyant une notification au serveur via un simple clic sur la plateforme.
             </p>
 
           </div>
@@ -790,7 +789,7 @@
 
             <div class="step-number">1</div>
 
-            <h3>Scanne du QR Code</h3>
+            <h3>Scan du QR Code</h3>
 
             <p>
               Le client scanne le QR code installé sur la table.
@@ -822,10 +821,10 @@
 
             <div class="step-number">3</div>
 
-            <h3>Service ultra rapide</h3>
+            <h3>Service ultra rapide et securiser</h3>
 
             <p>
-              Le serveur reçoit la commande en temps réel.
+              Le serveur reçoit la commande en temps réel pour traitement.
             </p>
 
           </div>
