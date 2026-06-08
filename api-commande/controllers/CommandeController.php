@@ -120,7 +120,7 @@ class CommandeController {
         header('Content-Type: application/json; charset=utf-8');
 
         $id_etablissement = $this->getEtablissementId();
-        $service = $this->commande->isTableActive($data['id_table'],$id_etablissement);
+        $service = $this->commande->isTableActive($id_table, $id_etablissement);
             if (!$service) {
             http_response_code(400);
 
