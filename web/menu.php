@@ -410,7 +410,7 @@
                 if (!id_ticket) {
                     const now = new Date();
                     const pad = n => n.toString().padStart(2, "0");
-                   id_ticket = `TC${pad(id_table)}-${String(now.getFullYear()).slice(-2)}${pad(now.getMonth()+1)}${pad(now.getDate())}-${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}${pad(now.getMilliseconds())}`;
+                   id_ticket = `TC-${String(now.getFullYear()).slice(-2)}${pad(now.getMonth()+1)}${pad(now.getDate())}-${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}${pad(now.getMilliseconds())}`;
 
                     localStorage.setItem("id_ticket", id_ticket);
                 }
