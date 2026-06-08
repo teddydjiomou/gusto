@@ -122,7 +122,7 @@ class CommandeController {
         $id_etablissement = $this->getEtablissementId();
 
         // Vérification table ouverte
-        $table = $this->commande->ShowTableActive(
+        $table = $this->commande->tableActive(
             $data['nom'],
             $id_etablissement
         );
@@ -136,6 +136,7 @@ class CommandeController {
             ]);
             exit;
         }
+        $data['id_table'] = $table['id_table'];
 
         // Insertion seulement si service actif
         $id = $this->commande->create($data, $id_etablissement);

@@ -125,11 +125,11 @@ class Commande extends BaseModel {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function ShowTableActive($nom, $id_etablissement) {
+    public function tableActive($nom, $id_etablissement) {
         $stmt = $this->personnalSelect(
             "tables_restaurant",
             "*",
-            "WHERE nom = ? AND id_etablissement = ? AND statu = 'Ouvert'",
+            "WHERE nom = ? AND id_etablissement = ? AND statu = 'Ouvert' ORDER BY id_service DESC LIMIT 1",
             [$nom, $id_etablissement]
         );
 
