@@ -129,7 +129,7 @@ class Commande extends BaseModel {
         $stmt = $this->personnalSelect(
             "tables_restaurant",
             "*",
-            "WHERE nom = ? AND id_etablissement = ? AND statu = 'Ouvert' ORDER BY id_service DESC LIMIT 1",
+            "WHERE nom = ? AND id_etablissement = ? AND statu = 'Ouvert' ORDER BY id_table DESC LIMIT 1",
             [$nom, $id_etablissement]
         );
 
