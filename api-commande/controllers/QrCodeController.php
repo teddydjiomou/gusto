@@ -8,12 +8,11 @@ if (!class_exists('QRcode')) {
 
 class QrCodeController {
 
-    private $user;
     private $model;
 
     public function __construct() {
         // 🔐 Auth obligatoire (employé)
-        $this->user = Middleware::checkAuth();
+        $user = Middleware::checkAuth();
         $this->model = new QrCode();
 
         // Nettoyage warnings

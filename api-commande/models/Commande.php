@@ -76,7 +76,7 @@ class Commande extends BaseModel {
 
     public function getstatByEtablissement($id_etablissement)
     {
-        return $this->db->personnalSelect(
+        $stmt = $this->personnalSelect(
             'commande',
             '
             YEAR(date_enreg) AS annee,
@@ -90,6 +90,8 @@ class Commande extends BaseModel {
             ',
             [$id_etablissement]
         );
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     // Récupérer par ID
