@@ -26,6 +26,6 @@ class QrCode extends BaseModel {
 
         $code = rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
 
-        return "http://gusto/web/index.php?code=" . $code;
+        return "http://gusto/web/check.php?code=" . $code;
     }
 }
