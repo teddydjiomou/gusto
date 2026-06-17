@@ -311,15 +311,17 @@
                                     window.location.href = './gerant.php';
                                 });
 
-                        } else {
+                        } 
+                        else {
+
+                            $('.erreur').hide().html("<div class='custom-alert error-alert'><i class='icofont-close' style='margin-right: 10px; font-weight: bold;'></i>Information incorrect</div>").slideDown(500);
+                        }
+                        else {
 
                             if (result.statu === "Expiré") {
 
                                 $('.erreur') .hide().html("<div class='custom-alert error-alert'><i class='icofont-close' style='margin-right: 10px; font-weight: bold;'></i>Votre abonnement a expiré veuillez contacter l'administrateur</div>").slideDown(500);
 
-                            } else {
-
-                            $('.erreur').hide().html("<div class='custom-alert error-alert'><i class='icofont-close' style='margin-right: 10px; font-weight: bold;'></i>Information incorrect</div>").slideDown(500);
                             }
                         }
                         
