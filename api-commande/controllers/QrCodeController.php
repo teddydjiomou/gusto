@@ -14,80 +14,75 @@ class QrCodeController {
         $this->model = new QrCode();
     }
 
-    public function generate($id) {
+    public function generate($id)
+{
+    // 🔥 BLOQUE TOUTE SORTIE PHP
+    error_reporting(0);
+    ini_set('display_errors', 0);
 
-        error_reporting(E_ALL);
-        ini_set('display_errors', 1);
+    while (ob_get_level()) {
+        ob_end_clean();
+    }
 
-        // ========================
-        // AUTH JWT FIX
-        // ========================
-        $user = Middleware::checkAuth();
+    // ========================
+    // AUTH
+    // ========================
+    $user = Middleware::checkAuth();
 
-        if (!$user) {
-            http_response_code(401);
-            echo json_encode(["error" => "Unauthorized"]);
-            return;
-        }
-
-        $id_etablissement = $user->id_etablissement ?? null;
-
-        if (!$id_etablissement) {
-            http_response_code(400);
-            echo json_encode(["error" => "Missing establishment"]);
-            return;
-        }
-
-        // ========================
-        // VALIDATION ID
-        // ========================
-        if (!ctype_digit((string)$id)) {
-            http_response_code(400);
-            echo json_encode([
-                "success" => false,
-                "message" => "Invalid table ID"
-            ]);
-            return;
-        }
-
-        // ========================
-        // GET TABLE
-        // ========================
-        $tableData = $this->model->getByIdAndEtablissement($id, $id_etablissement);
-
-        if (!$tableData) {
-            http_response_code(404);
-            echo json_encode([
-                "success" => false,
-                "message" => "Table not found"
-            ]);
-            return;
-        }
-
-        $id_table = $tableData['id_table'];
-        $nom_table = $tableData['nom'];
-
-        // ========================
-        // GENERATE URL
-        // ========================
-        $url = $this->model->generateQrUrl($id_etablissement, $id_table);
-
-        if (!$url) {
-            http_response_code(500);
-            echo json_encode(["error" => "QR URL generation failed"]);
-            return;
-        }
-
-        // ========================
-        // QR OUTPUT
-        // ========================
-        $filename = "qrcode_table_" . preg_replace('/[^a-zA-Z0-9_-]/', '_', $nom_table) . ".png";
-
-        header('Content-Type: image/png');
-        header('Content-Disposition: attachment; filename="' . $filename . '"');
-        header('Cache-Control: no-cache, no-store, must-revalidate');
-
-        QRcode::png($url, null, QR_ECLEVEL_H, 8);
+    if (!$user) {
+        http_response_code(401);
+        header('Content-Type: application/json');
+        echo json_encode(["error" => "Unauthorized"]);
         exit;
     }
+
+    $id_etablissement = $user->id_etablissement ?? null;
+
+    if (!$id_etablissement) {
+        http_response_code(400);
+        header('Content-Type: application/json');
+        echo json_encode(["error" => "Missing establishment"]);
+        exit;
+    }
+
+    // ========================
+    // VALIDATION
+    // ========================
+    if (!ctype_digit((string)$id)) {
+        http_response_code(400);
+        header('Content-Type: application/json');
+        echo json_encode(["error" => "Invalid ID"]);
+        exit;
+    }
+
+    // ========================
+    // GET DATA
+    // ========================
+    $tableData = $this->model->getByIdAndEtablissement($id, $id_etablissement);
+
+    if (!$tableData) {
+        http_response_code(404);
+        header('Content-Type: application/json');
+        echo json_encode(["error" => "Table not found"]);
+        exit;
+    }
+
+    $id_table = $tableData['id_table'];
+
+    // ========================
+    // GENERATE URL
+    // ========================
+    $url = $this->model->generateQrUrl($id_etablissement, $id_table);
+
+    // ========================
+    // OUTPUT QR
+    // ========================
+    header('Content-Type: image/png');
+    header('Content-Disposition: attachment; filename="qrcode.png"');
+    header('Cache-Control: no-store, no-cache, must-revalidate');
+
+    QRcode::png($url, null, QR_ECLEVEL_H, 8);
+
+    exit;
+}
 }
