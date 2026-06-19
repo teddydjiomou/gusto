@@ -27,5 +27,6 @@ class QrCode extends BaseModel {
         $code = rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
 
         return "https://gusto-api-48f214a89058.herokuapp.com/web/check.php?code=" . $code;
+        
     }
 }

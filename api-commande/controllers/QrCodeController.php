@@ -1,4 +1,6 @@
 <?php
+
+require_once __DIR__ . '/../models/Service.php';
 require_once __DIR__ . '/../models/QrCode.php';
 require_once __DIR__ . '/../core/Middleware.php';
 
@@ -8,45 +10,42 @@ if (!class_exists('QRcode')) {
 
 class QrCodeController {
 
-    private $model;
+    private $serviceModel;
+    private $qrModel;
     private $user;
 
     public function __construct() {
-        // 🔐 Auth obligatoire (employé)
         $this->user = Middleware::checkAuth();
-        $this->model = new QrCode();
+        $this->serviceModel = new Service();
+        $this->qrModel = new QrCode();
 
-        // Nettoyage warnings
         error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING);
     }
 
-    public function generate($id) {
+    public function generate($id)
+    {
         try {
 
-            if (!$this->user || !isset($this->user->id_etablissement)) {
-                http_response_code(401);
-                echo "Unauthorized";
-                exit;
-            }
-
             $id_etablissement = $this->user->id_etablissement;
+
             if (!$id || !ctype_digit((string)$id)) {
                 http_response_code(400);
                 echo "Invalid ID";
                 exit;
             }
 
-            $tableData = $this->model->getByIdAndEtablissement($id, $id_etablissement);
+            // 🔥 RECUPERATION SERVICE
+            $service = $this->serviceModel->getLastByTable($id, $id_etablissement);
 
-            if (!$tableData) {
+            if (!$service) {
                 http_response_code(404);
-                echo "Not found";
+                echo "Service not found";
                 exit;
             }
 
-            $url = $this->model->generateQrUrl(
+            $url = $this->qrModel->generateQrUrl(
                 $id_etablissement,
-                $tableData['id_table']
+                $service['id_table']
             );
 
             while (ob_get_level()) {
