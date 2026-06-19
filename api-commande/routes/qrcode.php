@@ -1,17 +1,22 @@
-<?php
 
+<?php
 require_once __DIR__ . '/../controllers/QrCodeController.php';
 require_once __DIR__ . '/../core/Middleware.php';
+
+$user = Middleware::checkAuth();
 
 $controller = new QrCodeController();
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
-    $id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
+    $id = isset($_GET['id']) ? (int) $_GET['id'] : null;
 
     if (!$id) {
         http_response_code(400);
-        echo "ID required";
+        echo json_encode([
+            'success' => false,
+            'message' => 'ID required'
+        ]);
         exit;
     }
 
@@ -20,4 +25,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 }
 
 http_response_code(405);
-echo "Method not allowed";
+echo json_encode([
+    'success' => false,
+    'message' => ' Unauthorised method'
+]);
+exit;
+?>
