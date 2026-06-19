@@ -132,7 +132,7 @@
             <div class="section-header">
                 <h2>Gestion des Tables</h2>
 
-                <button class="btn-primary">
+                <button class="btn-primary btn-table">
                     <i class="fa-solid fa-plus"></i> Ajouter
                 </button>
             </div>
@@ -157,7 +157,7 @@
             <div class="section-header">
                 <h2>Produits</h2>
 
-                <button class="btn-primary">
+                <button class="btn-primary btn-produit">
                     <i class="fa-solid fa-plus"></i> Ajouter Produit
                 </button>
             </div>
@@ -184,7 +184,7 @@
             <div class="section-header">
                 <h2>Employés</h2>
 
-                <button class="btn-primary">
+                <button class="btn-primary btn-user">
                     <i class="fa-solid fa-plus"></i> Ajouter Employé
                 </button>
             </div>
@@ -236,8 +236,34 @@
                       <input type="text" name="login" class="form-control" id="modalLoginField">
                     </div>
                     <div class="col-lg-12">
-                      <input type="password" name="password" class="form-control password">
+                      <input type="password" name="password" placeholder="Entrer le mot de passe" class="form-control password">
                     </div>
+                    <div class="col-md-12 text-center">
+                      <button class="loading" type="submit"></button>
+                    </div>
+                  </div>
+                </form>  
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal fade modal-table" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-md" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title m-0 font-weight-bold" id="modalLabel"></h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">×</span>
+                  </button>
+              </div>
+              <div class="modal-body">
+                <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>" method="post" role="form" id='table' class="php-form">
+                  <div class="row">
+                    <div class="col-lg-12">
+                      <input type="text" name="nom" placeholder="Entrer le nom de la table" class="form-control">
+                    </div>
+                    <input type="hidden" name="id">
                     <div class="col-md-12 text-center">
                       <button class="loading" type="submit"></button>
                     </div>

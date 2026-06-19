@@ -336,37 +336,6 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-let tables = $('.info-table').DataTable({
-    pageLength: 5,
-    language:{
-        paginate:{
-            previous:"<i class='fas fa-angle-left'></i>",
-            next:"<i class='fas fa-angle-right'></i>"
-        }
-    }
-});
-
-let produits = $('.info-produit').DataTable({
-    pageLength: 5,
-    language:{
-        paginate:{
-            previous:"<i class='fas fa-angle-left'></i>",
-            next:"<i class='fas fa-angle-right'></i>"
-        }
-    }
-});
-
-let users = $('.info-user').DataTable({
-    pageLength: 5,
-    language:{
-        paginate:{
-            previous:"<i class='fas fa-angle-left'></i>",
-            next:"<i class='fas fa-angle-right'></i>"
-        }
-    }
-});
-
-
 function parseJwt(token) {
     try {
         // Extraire la partie "payload" du token (la deuxième section après les points)
@@ -429,6 +398,31 @@ $('#profileBtn').on('click', function() {
     $('.modal-login').modal({backdrop:'static', keyboard:false});
 });
 
+$('.btn-table').on('click', function() {
+    $('#table')[0].reset();
+    $('#table input[name="id"]').val('');
+    $('.modal-table .modal-title').text("Ajouter une table");
+    $('.modal-table button[type=submit]').text("Ajouter");
+    $('.modal-table').modal({backdrop: 'static', keyboard: false});
+});
+
+$('.btn-produit').on('click', function() {
+    $('#produit')[0].reset();
+    $('#image').attr('src', '');
+    $('#produit input[name="id"]').val('');
+    $('.modal-produit .modal-title').text("Ajouter un produit");
+    $('.modal-produit button[type=submit]').text("Ajouter");
+    $('.modal-produit').modal({backdrop: 'static', keyboard: false});
+});
+
+$('.btn-user').on('click', function() {
+    $('#user')[0].reset();
+    $('#user input[name="id"]').val('');
+    $('.modal-user .modal-title').text("Ajouter un employé");
+    $('.modal-user button[type=submit]').text("Ajouter");
+    $('.modal-user').modal({backdrop: 'static', keyboard: false});
+});
+
 
 $('#userLoginForm').on('submit', function(e){
     e.preventDefault();
@@ -474,4 +468,96 @@ $('#userLoginForm').on('submit', function(e){
             alert('Erreur serveur');
         }
     });
+});
+
+let editingRow;
+let tables = $('.info-table').DataTable({
+    pageLength: 5,
+    language:{
+        paginate:{
+            previous:"<i class='fas fa-angle-left'></i>",
+            next:"<i class='fas fa-angle-right'></i>"
+        }
+    }
+});
+let produits = $('.info-produit').DataTable({
+    pageLength: 5,
+    language:{
+        paginate:{
+            previous:"<i class='fas fa-angle-left'></i>",
+            next:"<i class='fas fa-angle-right'></i>"
+        }
+    }
+});
+let users = $('.info-user').DataTable({
+    pageLength: 5,
+    language:{
+        paginate:{
+            previous:"<i class='fas fa-angle-left'></i>",
+            next:"<i class='fas fa-angle-right'></i>"
+        }
+    }
+});
+
+$('#table').on('submit', async function(e) {
+    e.preventDefault();
+    const form = this;
+    const formData = new FormData(form);
+    const isEdit = formData.get('id') ? true : false;
+    const submitBtn = $(form).find('button[type="submit"]');
+    submitBtn.addClass('show-loader').prop('disabled', true);
+    try {
+        const response = await fetch('/api-commande/routes/table.php', {
+            method: 'POST',
+            headers: { 'Authorization': 'Bearer ' + token },
+            body: formData
+        });
+        const result = await response.json();
+        submitBtn.prop('disabled', false).text(isEdit ? "Modifier" : "Ajouter");
+        if(result.success) {
+            submitBtn.removeClass('show-loader').prop('disabled', false);
+            $('.modal-table').modal('hide');
+            form.reset();
+
+            if(isEdit && editingRow) {
+                // ⚡ Mettre à jour uniquement la ligne modifiée
+                editingRow.data(result.data).draw(false);
+                editingRow = null; // reset la référence
+            } else {
+                tables.row.add(result.data).draw(false);
+            }
+        } else {
+            alert(result.message || "Erreur lors de l'enregistrement");
+        }
+    } catch(err) {
+        console.error(err);
+        submitBtn.prop('disabled', false).text(isEdit ? "Modifier" : "Ajouter");
+        alert("Erreur serveur : " + err.message);
+    }
+});
+
+// Bouton Edit
+
+$(document).on('click', '.edit-table', async function() {
+    const etabId = $(this).data('id');
+    editingRow = tables.row($(this).closest('tr'));
+    try {
+        const response = await fetch(`/api-commande/routes/table.php?id=${etabId}`, {
+            headers: { 'Authorization': 'Bearer ' + token }
+        });
+        const result = await response.json();
+        if(result.success) {
+            const e = result.data;
+            $('#table input[name="id"]').val(etabId);
+            $('#table input[name="nom"]').val(e.nom);
+            $('.modal-table .modal-title').text("Modifier la table");
+            $('.modal-table button[type=submit]').text("Modifier");
+            $('.modal-table').modal({backdrop:'static', keyboard:false});
+        } else {
+            alert(result.message);
+        }
+    } catch(err) {
+        console.error(err);
+        alert("Erreur serveur : " + err.message);
+    }
 });
