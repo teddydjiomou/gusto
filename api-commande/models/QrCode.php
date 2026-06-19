@@ -13,9 +13,9 @@ class QrCode extends BaseModel {
 
     public function __construct()
     {
-        $this->secret = getenv('SECRET_KEY');
+        $this->secret = getenv('secret_key');
         //ce qui marche en local
-        //$this->secret = $_ENV['SECRET_KEY'];
+        //$this->secret = $_ENV['secret_key'];
     }
 
     public function generateQrUrl($id_etablissement, $id_table)
