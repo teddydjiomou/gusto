@@ -542,7 +542,7 @@ $(document).on('click', '.view-service', async function() {
     const idTable = $(this).data('id');
     editingRow = tables.row($(this).closest('tr'));
     try {
-        const response = await fetch(`/api-commande/routes/service.php?id=${idTable}`, {
+        const response = await fetch(`/api-commande/routes/service.php?id_table=${idTable}`, {
             headers: { 'Authorization': 'Bearer ' + token }
         });
         const result = await response.json();

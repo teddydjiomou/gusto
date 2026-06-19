@@ -9,10 +9,11 @@ if (!class_exists('QRcode')) {
 class QrCodeController {
 
     private $model;
+    private $user;
 
     public function __construct() {
         // 🔐 Auth obligatoire (employé)
-        $user = Middleware::checkAuth();
+        $this->user = Middleware::checkAuth();
         $this->model = new QrCode();
 
         // Nettoyage warnings
@@ -24,7 +25,7 @@ class QrCodeController {
         // =========================
         // Récupération user
         // =========================
-        return $user->id_etablissement;
+        $id_etablissement = $this->user->id_etablissement;
 
         if (!$id || !ctype_digit((string)$id)) {
             http_response_code(400);
