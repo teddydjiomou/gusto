@@ -576,7 +576,7 @@ $(document).on('click', '.edit-table', async function() {
         const result = await response.json();
         if(result.success) {
             const e = result.data;
-            $('#table input[name="id"]').val(etabId);
+            $('#table input[name="id"]').val(tableId);
             $('#table input[name="nom"]').val(e.nom);
             $('.modal-table .modal-title').text("Modifier la table");
             $('.modal-table button[type=submit]').text("Modifier");
