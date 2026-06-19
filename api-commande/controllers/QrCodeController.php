@@ -72,6 +72,23 @@ class QrCodeController {
             $tableData['id_table']
         );
 
+        if (empty($url)) {
+            http_response_code(500);
+            header('Content-Type: application/json');
+            echo json_encode(["error" => "QR URL generation failed"]);
+            exit;
+        }
+
+        // ========================
+        // CHECK QR LIB
+        // ========================
+        if (!class_exists('QRcode')) {
+            http_response_code(500);
+            header('Content-Type: application/json');
+            echo json_encode(["error" => "QR library not loaded"]);
+            exit;
+        }
+
         // 🔥 CLEAN AGAIN BEFORE IMAGE
         while (ob_get_level() > 0) {
             ob_end_clean();
