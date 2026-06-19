@@ -16,8 +16,8 @@ class QrCodeController {
 
     public function generate($id) {
 
-        error_reporting(0);
-        ini_set('display_errors', 0);
+        error_reporting(E_ALL);
+        ini_set('display_errors', 1);
 
         // ========================
         // AUTH JWT FIX
@@ -86,7 +86,7 @@ class QrCodeController {
         header('Content-Type: image/png');
         header('Content-Disposition: attachment; filename="' . $filename . '"');
         header('Cache-Control: no-cache, no-store, must-revalidate');
-
+ 
         QRcode::png($url, null, QR_ECLEVEL_H, 8);
         exit;
     }
