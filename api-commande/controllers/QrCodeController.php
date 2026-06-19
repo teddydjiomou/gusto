@@ -19,6 +19,8 @@ class QrCodeController {
         error_reporting(E_ALL);
         ini_set('display_errors', 1);
 
+        ob_start();
+
         // ========================
         // AUTH JWT FIX
         // ========================
@@ -83,11 +85,18 @@ class QrCodeController {
         // ========================
         $filename = "qrcode_table_" . preg_replace('/[^a-zA-Z0-9_-]/', '_', $nom_table) . ".png";
 
+        if (ob_get_length()) {
+            ob_clean();
+        }
+
         header('Content-Type: image/png');
         header('Content-Disposition: attachment; filename="' . $filename . '"');
         header('Cache-Control: no-cache, no-store, must-revalidate');
  
         QRcode::png($url, null, QR_ECLEVEL_H, 8);
+
+        // END BUFFER
+        ob_end_flush();
         exit;
     }
 }
