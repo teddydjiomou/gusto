@@ -633,13 +633,16 @@ $(document).on('click', '.qr', async function () {
             }
         });
         if (!response.ok) {
-            throw new Error('Erreur lors de la génération du QR code');
+            const errorText = await response.text();
+            throw new Error(errorText || 'Erreur génération QR');
         }
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
+
         const a = document.createElement('a');
         a.href = url;
         a.download = `qrcode_table_${id}.png`;
+
         document.body.appendChild(a);
         a.click();
 
@@ -650,7 +653,6 @@ $(document).on('click', '.qr', async function () {
         console.error(err);
         alert("Erreur serveur : " + err.message);
     }
-
 });
 
 
