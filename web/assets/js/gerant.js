@@ -139,17 +139,17 @@ document.addEventListener("DOMContentLoaded", async function () {
                         ${isOpen ? "Ouvert" : "Fermé"}
                     </span>`,
                     `
+                    <button class="icon-btn view view-service" data-id="${table.id_table}">
+                        <i class="fa-solid fa-eye"></i>
+                    </button>
                     <button class="icon-btn edit-table" data-id="${table.id_table}">
                         <i class="fa-solid fa-pen"></i>
-                    </button>
-                    <button class="icon-btn danger drop-table" data-id="${table.id_table}">
-                        <i class="fa-solid fa-trash"></i>
                     </button>
                     <button class="icon-btn qr" data-id="${table.id_table}">
                         <i class="fa-solid fa-qrcode"></i>
                     </button>
-                    <button class="icon-btn view view-service" data-id="${table.id_table}">
-                        <i class="fa-solid fa-eye"></i>
+                    <button class="icon-btn danger delete-table" data-id="${table.id_table}">
+                        <i class="fa-solid fa-trash"></i>
                     </button>
                     `
                 ]);
@@ -536,13 +536,41 @@ $('#table').on('submit', async function(e) {
     }
 });
 
+//view service
+
+$(document).on('click', '.view-service', async function() {
+    const servId = $(this).data('id');
+    editingRow = tables.row($(this).closest('tr'));
+    try {
+        const response = await fetch(`/api-commande/routes/service.php?id=${servId}`, {
+            headers: { 'Authorization': 'Bearer ' + token }
+        });
+        const result = await response.json();
+        if(result.success) {
+            const e = result.data;
+            $('.modal-service input[name="id"]').val(servId);
+            $('.code').text(e.code);
+            $('.date_ouverture').text(e.date_heure_ouverture);
+            $('.date_fermeture').text(e.date_heure_fermeture);
+            $('.user').text(e.login);
+            $('.modal-service .modal-title').text("detail du service");
+            $('.modal-service').modal({backdrop:'static', keyboard:false});
+        } else {
+            alert(result.message);
+        }
+    } catch(err) {
+        console.error(err);
+        alert("Erreur serveur : " + err.message);
+    }
+});
+
 // Bouton Edit
 
 $(document).on('click', '.edit-table', async function() {
-    const etabId = $(this).data('id');
+    const tableId = $(this).data('id');
     editingRow = tables.row($(this).closest('tr'));
     try {
-        const response = await fetch(`/api-commande/routes/table.php?id=${etabId}`, {
+        const response = await fetch(`/api-commande/routes/table.php?id=${tableId}`, {
             headers: { 'Authorization': 'Bearer ' + token }
         });
         const result = await response.json();
@@ -561,3 +589,71 @@ $(document).on('click', '.edit-table', async function() {
         alert("Erreur serveur : " + err.message);
     }
 });
+
+// bouton delete
+
+$(document).on('click', '.delete-table', async function () {
+    const id = $(this).data('id');
+    if (!confirm("Voulez-vous vraiment supprimer cet appareil ?")) return;
+    try {
+        const response = await fetch(`/api-commande/routes/table.php?id=${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': 'Bearer ' + token
+                }
+            }
+        );
+        const result = await response.json();
+        if (result.success) {
+            // Supprime uniquement la ligne concernée dans le DataTable
+            tables.rows().every(function () {
+                const row = this.node();
+                if ($(row).find('.delete-table').data('id') == id) {
+                    this.remove().draw(false);
+                }
+            });
+        } else {
+            alert(result.message || "Impossible de supprimer la table");
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Erreur serveur : " + err.message);
+    }
+});
+
+// bouton qr
+
+$(document).on('click', '.qr', async function () {
+    const id = $(this).data('id');
+    try {
+        const response = await fetch(`/api-commande/routes/qrcode.php?id=${id}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + token
+            }
+        });
+        if (!response.ok) {
+            throw new Error('Erreur lors de la génération du QR code');
+        }
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `qrcode_table_${id}.png`;
+        document.body.appendChild(a);
+        a.click();
+
+        a.remove();
+        window.URL.revokeObjectURL(url);
+
+    } catch (err) {
+        console.error(err);
+        alert("Erreur serveur : " + err.message);
+    }
+
+});
+
+
+
+
+

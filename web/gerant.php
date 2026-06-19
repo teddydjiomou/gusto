@@ -274,6 +274,33 @@
           </div>
         </div>
 
+        <div class="modal fade modal-service" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-md" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title m-0 font-weight-bold" id="modalLabel"></h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">×</span>
+                  </button>
+              </div>
+              <div class="modal-body">
+                <form>
+                  <div class="row">
+                    <div class="col-lg-6 code"></div>
+                    <div class="col-lg-6 date_ouverture"></div>
+                    <div class="col-lg-6 date_fermeture"></div>
+                    <div class="col-lg-6 user"></div>
+                    <input type="hidden" name="id">
+                    <div class="col-md-12 text-center">
+                      <button class="loading" type="submit"></button>
+                    </div>
+                  </div>
+                </form>  
+              </div>
+            </div>
+          </div>
+        </div>
+
     </main>
 
 
