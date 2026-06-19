@@ -10,8 +10,10 @@ if (!class_exists('QRcode')) {
 class QrCodeController {
 
     private $model;
+    private $user; // utilisateur connecté
 
     public function __construct() {
+        $this->user = Middleware::checkAuth();
         $this->model = new QrCode();
     }
 
@@ -25,19 +27,14 @@ class QrCodeController {
             ob_end_clean();
         }
 
-        // ========================
-        // AUTH
-        // ========================
-        $user = Middleware::checkAuth();
-
-        if (!$user) {
+        if (!$this->user) {
             http_response_code(401);
             header('Content-Type: application/json');
             echo json_encode(["error" => "Unauthorized"]);
             exit;
         }
 
-        $id_etablissement = $user->id_etablissement ?? null;
+        $id_etablissement = $this->user->id_etablissement;
 
         if (!$id_etablissement) {
             http_response_code(400);
