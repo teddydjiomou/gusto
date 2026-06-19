@@ -2,8 +2,10 @@
 
 require_once __DIR__ . '/../models/QrCode.php';
 require_once __DIR__ . '/../core/Middleware.php';
-require_once __DIR__ . '/../utils/phpqrcode/qrlib.php';
 
+if (!class_exists('QRcode')) {
+    require_once __DIR__ . '/../utils/phpqrcode/qrlib.php';
+}
 
 class QrCodeController {
 
@@ -56,9 +58,9 @@ class QrCodeController {
         // ========================
         $tableData = $this->model->getByIdAndEtablissement($id, $id_etablissement);
 
-//         var_dump($id);
-// var_dump($id_etablissement);
-// var_dump($tableData);
+        var_dump($id);
+var_dump($id_etablissement);
+var_dump($tableData);
 
         if (!$tableData) {
             http_response_code(404);
@@ -72,23 +74,6 @@ class QrCodeController {
             $tableData['id_table']
         );
 
-        if (empty($url)) {
-            http_response_code(500);
-            header('Content-Type: application/json');
-            echo json_encode(["error" => "QR URL generation failed"]);
-            exit;
-        }
-
-        // ========================
-        // CHECK QR LIB
-        // ========================
-        if (!class_exists('QRcode')) {
-            http_response_code(500);
-            header('Content-Type: application/json');
-            echo json_encode(["error" => "QR library not loaded"]);
-            exit;
-        }
-
         // 🔥 CLEAN AGAIN BEFORE IMAGE
         while (ob_get_level() > 0) {
             ob_end_clean();
@@ -100,7 +85,7 @@ class QrCodeController {
         header('Content-Disposition: attachment; filename="qrcode.png"');
         header('Cache-Control: no-cache, no-store, must-revalidate');
 
-        \QRcode::png($url, null, QR_ECLEVEL_H, 8);
+        QRcode::png($url, null, QR_ECLEVEL_H, 8);
 
         exit;
     }
