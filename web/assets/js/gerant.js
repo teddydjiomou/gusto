@@ -419,3 +419,59 @@ document.getElementById('logoutBtn').addEventListener('click', function(e) {
   // Rediriger vers la page de login
   window.location.href = './user.php';
 });
+
+
+$('#profileBtn').on('click', function() {
+    $('.modal-login .modal-title').text("Modifier mes informations");
+    $('.modal-login button[type=submit]').text("Modifier");
+    let login = $('#userLogin').text().trim();
+    $('#modalLoginField').val(login);
+    $('.modal-login').modal({backdrop:'static', keyboard:false});
+});
+
+
+$('#userLoginForm').on('submit', function(e){
+    e.preventDefault();
+    const form = this;
+    const submitBtn = $(form).find('button[type="submit"]');
+
+    submitBtn.addClass('show-loader').prop('disabled', true);
+
+    const payload = {
+        login: $(form).find('[name="login"]').val(),
+        password: $(form).find('[name="password"]').val()
+    };
+
+    $.ajax({
+        url: '/api-commande/routes/updateLogin.php',
+        type: 'POST',
+        headers: {
+            'Authorization': 'Bearer ' + token,
+            'Content-Type': 'application/json'
+        },
+        data: JSON.stringify(payload),
+
+        success: function(res){
+
+            submitBtn.removeClass('show-loader').prop('disabled', false);
+
+            if(res.success){
+
+                localStorage.setItem('token', res.token);
+
+                document.getElementById('userLogin').textContent =
+                    parseJwt(res.token).data.login;
+
+                $('.modal-login').modal('hide');
+
+            } else {
+                alert(res.message);
+            }
+        },
+
+        error: function(){
+            submitBtn.removeClass('show-loader').prop('disabled', false);
+            alert('Erreur serveur');
+        }
+    });
+});
