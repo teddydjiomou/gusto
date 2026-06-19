@@ -1,61 +1,77 @@
 <?php
-
 require_once __DIR__ . '/../models/QrCode.php';
 require_once __DIR__ . '/../core/Middleware.php';
 
-require_once __DIR__ . '/../utils/phpqrcode/qrlib.php';
+if (!class_exists('QRcode')) {
+    require_once __DIR__ . '/../utils/phpqrcode/qrlib.php';
+}
 
 class QrCodeController {
 
-    private $qrModel;
-    private $user;
+    private $model;
 
     public function __construct() {
-        $this->user = Middleware::checkAuth();
-        $this->qrModel = new QrCode();
+        // 🔐 Auth obligatoire (employé)
+        $user = Middleware::checkAuth();
+        $this->model = new QrCode();
 
+        // Nettoyage warnings
         error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING);
     }
 
-    public function generate($id)
-    {
-        try {
+    public function generate($id) {
 
-            // sécurité
-            if (!$this->user || !isset($this->user->id_etablissement)) {
-                http_response_code(401);
-                echo "Unauthorized";
-                exit;
-            }
+        // =========================
+        // Récupération user
+        // =========================
+        return $user->id_etablissement;
 
-            $id_etablissement = $this->user->id_etablissement;
-
-            // validation id
-            if (!$id || !ctype_digit((string)$id)) {
-                http_response_code(400);
-                echo "Invalid ID";
-                exit;
-            }
-
-            // URL QR
-            $url = $this->qrModel->generateQrUrl($id_etablissement, $id);
-
-            // clean buffer (IMPORTANT sur Heroku)
-            while (ob_get_level()) {
-                ob_end_clean();
-            }
-
-            header('Content-Type: image/png');
-            header('Content-Disposition: attachment; filename="qrcode.png"');
-
-            \QRcode::png($url, false, QR_ECLEVEL_H, 8);
-
-            exit;
-
-        } catch (Throwable $e) {
-            http_response_code(500);
-            echo $e->getMessage();
-            exit;
+        if (!$id || !ctype_digit((string)$id)) {
+            http_response_code(400);
+            echo json_encode([
+                "success" => false,
+                "message" => "Invalid table ID"
+            ]);
+            return;
         }
+
+        // =========================
+        // Récupération en base
+        // =========================
+        $tableData = $this->model->getByIdAndEtablissement($id, $id_etablissement);
+
+        if (!$tableData) {
+            http_response_code(404);
+            echo json_encode([
+                "success" => false,
+                "message" => "Table not found"
+            ]);
+            return;
+        }
+
+        // =========================
+        // Données fiables
+        // =========================
+        $id_table = $tableData['id_table'];
+        $nom_table = $tableData['nom'];
+
+        // =========================
+        // Génération URL sécurisée
+        // =========================
+        $url = $this->model->generateQrUrl($id_etablissement, $id_table);
+
+        // =========================
+        // Génération QR
+        // =========================
+        $filename = "qrcode_table_" . preg_replace('/[^a-zA-Z0-9_-]/', '_', $nom_table) . ".png";
+
+        header('Content-Type: image/png');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        header('Cache-Control: no-store, no-cache, must-revalidate');
+        header('Pragma: no-cache');
+
+        QRcode::png($url, null, QR_ECLEVEL_H, 8);
+
+        exit;
     }
 }
