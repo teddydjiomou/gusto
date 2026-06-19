@@ -58,6 +58,10 @@ class QrCodeController {
         // ========================
         $tableData = $this->model->getByIdAndEtablissement($id, $id_etablissement);
 
+        var_dump($id);
+var_dump($id_etablissement);
+var_dump($tableData);
+
         if (!$tableData) {
             http_response_code(404);
             header('Content-Type: application/json');
