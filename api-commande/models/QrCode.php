@@ -14,6 +14,7 @@ class QrCode extends BaseModel {
 
     public function __construct()
     {
+        parent::__construct(); // IMPORTANT
         $this->secret = getenv('secret_key');
         //ce qui marche en local
         //$this->secret = $_ENV['secret_key'];
