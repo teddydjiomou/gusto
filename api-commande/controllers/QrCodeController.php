@@ -2,13 +2,11 @@
 
 require_once __DIR__ . '/../models/QrCodeModel.php';
 require_once __DIR__ . '/../core/Middleware.php';
-require_once __DIR__ . '/../utils/phpqrcode/qrlib.php';
-
 
 class QrCodeController {
 
     private $model;
-    private $user; // utilisateur connecté
+    private $user;
 
     public function __construct() {
         $this->user = Middleware::checkAuth();
@@ -17,11 +15,14 @@ class QrCodeController {
 
     public function generate($id) {
 
-        // 🔥 START CLEAN BUFFER (IMPORTANT)
+        // 🔥 Clean buffer
         while (ob_get_level() > 0) {
             ob_end_clean();
         }
 
+        // ========================
+        // AUTH
+        // ========================
         if (!$this->user) {
             http_response_code(401);
             header('Content-Type: application/json');
@@ -39,7 +40,7 @@ class QrCodeController {
         }
 
         // ========================
-        // VALIDATION
+        // VALIDATION ID
         // ========================
         if (!ctype_digit((string)$id)) {
             http_response_code(400);
@@ -60,24 +61,33 @@ class QrCodeController {
             exit;
         }
 
+        // ========================
+        // QR URL
+        // ========================
         $url = $this->model->generateQrUrl(
             $id_etablissement,
             $tableData['id_table']
         );
 
-        // 🔥 CLEAN AGAIN BEFORE IMAGE
-        while (ob_get_level() > 0) {
-            ob_end_clean();
+        if (empty($url)) {
+            http_response_code(500);
+            echo json_encode(["error" => "QR URL generation failed"]);
+            exit;
         }
 
-       
-         header('Content-Type: text/plain');
+        // ========================
+        // EXTERNAL QR GENERATION (NO GD)
+        // ========================
+        $qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" . urlencode($url);
 
-      
+        // ========================
+        // OPTION 1: DOWNLOAD IMAGE
+        // ========================
+        header('Content-Type: image/png');
+        header('Content-Disposition: attachment; filename="qrcode.png"');
+        header('Cache-Control: no-cache, no-store, must-revalidate');
 
-        var_dump(extension_loaded('gd'));
-var_dump(function_exists('imagepng'));
-var_dump(function_exists('imagecreate'));
-exit;
+        echo file_get_contents($qrUrl);
+        exit;
     }
 }
