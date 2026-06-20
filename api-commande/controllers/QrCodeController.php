@@ -66,17 +66,17 @@ class QrCodeController {
 
         ini_set('zlib.output_compression', 'Off');
 
-        // ================= QR CODE (SAFE v4.6) =================
+        // ================= QR CODE (WORKING v4.6) =================
         try {
 
-            $qrCode = new QrCode($url);
-            $qrCode->setSize(300);
-            $qrCode->setMargin(10);
+            $qrCode = QrCode::create($url)
+                ->setSize(300)
+                ->setMargin(10);
 
             $writer = new PngWriter();
             $result = $writer->write($qrCode);
 
-            header('Content-Type: ' . $result->getMimeType());
+            header('Content-Type: image/png');
             header('Content-Disposition: attachment; filename="qrcode.png"');
             header('Cache-Control: no-cache, no-store, must-revalidate');
 
