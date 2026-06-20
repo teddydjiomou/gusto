@@ -53,7 +53,7 @@
 		        e.preventDefault();
 		        const codeInput = $('input[name="code"]').val().trim();
 		        $.ajax({
-		            url: "http://gusto/api-commande/routes/check.php?id_etablissement=" + id_etablissement + "&id_table=" + id_table,
+		            url: "https://gusto-api-48f214a89058.herokuapp.com/api-commande/routes/check.php?id_etablissement=" + id_etablissement + "&id_table=" + id_table,
 		            method: "GET",
 		            dataType: "json",
 		            success: function(result) {

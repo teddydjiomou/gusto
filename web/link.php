@@ -1,6 +1,12 @@
 <?php
+require __DIR__ . '/../vendor/autoload.php';
+
+if (file_exists(__DIR__ . '/../.env')) {
+    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
+    $dotenv->load();
+}
     $code = $_GET['code'] ?? null;
-    $secret = "CLE_SECRETE_GUSTO"; // ✅ AJOUT OBLIGATOIRE
+    $secret = getenv('secret_key'); 
     if (!$code) {
         exit("Lien invalide");
     }
