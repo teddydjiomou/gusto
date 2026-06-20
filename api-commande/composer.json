@@ -1,7 +1,6 @@
 {
     "require": {
         "firebase/php-jwt": "^6.10",
-        "mike42/escpos-php": "^4.0",
-        "endroid/qr-code": "3.9"
+        "mike42/escpos-php": "^4.0"
     }
 }
