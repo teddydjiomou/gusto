@@ -6,7 +6,9 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Writer\PngWriter;
-use Endroid\QrCode\ErrorCorrectionLevel;
+use Endroid\QrCode\Encoding\Encoding;
+use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelHigh;
+use Endroid\QrCode\RoundBlockSizeMode;
 
 class QrCodeController {
 
@@ -20,6 +22,7 @@ class QrCodeController {
 
     public function generate($id) {
 
+        // ================= AUTH =================
         if (!$this->user) {
             http_response_code(401);
             header('Content-Type: application/json');
@@ -29,12 +32,20 @@ class QrCodeController {
 
         $id_etablissement = $this->user->id_etablissement;
 
+        if (!$id_etablissement) {
+            http_response_code(400);
+            echo json_encode(["error" => "Missing establishment"]);
+            exit;
+        }
+
+        // ================= VALIDATION =================
         if (!ctype_digit((string)$id)) {
             http_response_code(400);
             echo json_encode(["error" => "Invalid table ID"]);
             exit;
         }
 
+        // ================= DATA =================
         $tableData = $this->model->getByIdAndEtablissement($id, $id_etablissement);
 
         if (!$tableData) {
@@ -48,17 +59,25 @@ class QrCodeController {
             $tableData['id_table']
         );
 
-        // 🧹 Nettoyage buffer
+        // ================= CLEAN BUFFER =================
         while (ob_get_level() > 0) {
             ob_end_clean();
         }
 
-        // 📦 Génération QR
-        $qrCode = new QrCode($url);
-        $writer = new PngWriter();
+        ini_set('zlib.output_compression', 'Off');
 
+        // ================= QR CODE v4.6 =================
+        $qrCode = new QrCode($url);
+        $qrCode->setEncoding(new Encoding('UTF-8'));
+        $qrCode->setErrorCorrectionLevel(new ErrorCorrectionLevelHigh());
+        $qrCode->setSize(300);
+        $qrCode->setMargin(10);
+        $qrCode->setRoundBlockSizeMode(RoundBlockSizeMode::Margin);
+
+        $writer = new PngWriter();
         $result = $writer->write($qrCode);
 
+        // ================= OUTPUT =================
         header('Content-Type: ' . $result->getMimeType());
         header('Content-Disposition: attachment; filename="qrcode.png"');
         header('Cache-Control: no-cache, no-store, must-revalidate');
