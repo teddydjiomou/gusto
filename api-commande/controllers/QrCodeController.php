@@ -69,12 +69,12 @@ class QrCodeController {
         // ================= QR CODE (WORKING v4.6) =================
         try {
 
-            $qrCode = QrCode::create($url)
-                ->setSize(300)
-                ->setMargin(10);
+           $qrCode = new QrCode($url);
+$qrCode->setSize(300);
+$qrCode->setMargin(10);
 
-            $writer = new PngWriter();
-            $result = $writer->write($qrCode);
+$writer = new PngWriter();
+$result = $writer->write($qrCode);
 
             header('Content-Type: image/png');
             header('Content-Disposition: attachment; filename="qrcode.png"');
