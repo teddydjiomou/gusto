@@ -1,13 +1,8 @@
 <?php
 
-require_once __DIR__ . '/../models/QrCode.php';
+require_once __DIR__ . '/../models/QrCodeModel.php';
 require_once __DIR__ . '/../core/Middleware.php';
-
-if (!class_exists('QRcode')) {
-    require_once __DIR__ . '/../utils/phpqrcode/qrlib.php';
-    var_dump(class_exists('QRcode'));
-die();
-}
+require_once __DIR__ . '/../utils/phpqrcode/qrlib.php';
 
 class QrCodeController {
 
@@ -16,7 +11,7 @@ class QrCodeController {
 
     public function __construct() {
         $this->user = Middleware::checkAuth();
-        $this->model = new QrCode();
+        $this->model = new QrCodeModel();
     }
 
     public function generate($id) {
@@ -59,10 +54,6 @@ class QrCodeController {
         // TABLE
         // ========================
         $tableData = $this->model->getByIdAndEtablissement($id, $id_etablissement);
-
-        var_dump($id);
-var_dump($id_etablissement);
-var_dump($tableData);
 
         if (!$tableData) {
             http_response_code(404);

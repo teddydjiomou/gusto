@@ -7,7 +7,7 @@ if (file_exists(__DIR__ . '/../../.env')) {
     $dotenv->load();
 }
 
-class QrCode extends BaseModel {
+class QrCodeModel extends BaseModel {
 
     private $secret;
 
