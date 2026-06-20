@@ -6,9 +6,6 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Writer\PngWriter;
-use Endroid\QrCode\Encoding\Encoding;
-use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelHigh;
-use Endroid\QrCode\RoundBlockSizeMode;
 
 class QrCodeController {
 
@@ -34,6 +31,7 @@ class QrCodeController {
 
         if (!$id_etablissement) {
             http_response_code(400);
+            header('Content-Type: application/json');
             echo json_encode(["error" => "Missing establishment"]);
             exit;
         }
@@ -41,6 +39,7 @@ class QrCodeController {
         // ================= VALIDATION =================
         if (!ctype_digit((string)$id)) {
             http_response_code(400);
+            header('Content-Type: application/json');
             echo json_encode(["error" => "Invalid table ID"]);
             exit;
         }
@@ -50,6 +49,7 @@ class QrCodeController {
 
         if (!$tableData) {
             http_response_code(404);
+            header('Content-Type: application/json');
             echo json_encode(["error" => "Table not found"]);
             exit;
         }
@@ -66,23 +66,27 @@ class QrCodeController {
 
         ini_set('zlib.output_compression', 'Off');
 
-        // ================= QR CODE v4.6 =================
-        $qrCode = new QrCode($url);
-        $qrCode->setEncoding(new Encoding('UTF-8'));
-        $qrCode->setErrorCorrectionLevel(new ErrorCorrectionLevelHigh());
-        $qrCode->setSize(300);
-        $qrCode->setMargin(10);
-        $qrCode->setRoundBlockSizeMode(RoundBlockSizeMode::Margin);
+        // ================= QR CODE (SAFE v4.6) =================
+        try {
 
-        $writer = new PngWriter();
-        $result = $writer->write($qrCode);
+            $qrCode = new QrCode($url);
+            $qrCode->setSize(300);
+            $qrCode->setMargin(10);
 
-        // ================= OUTPUT =================
-        header('Content-Type: ' . $result->getMimeType());
-        header('Content-Disposition: attachment; filename="qrcode.png"');
-        header('Cache-Control: no-cache, no-store, must-revalidate');
+            $writer = new PngWriter();
+            $result = $writer->write($qrCode);
 
-        echo $result->getString();
-        exit;
+            header('Content-Type: ' . $result->getMimeType());
+            header('Content-Disposition: attachment; filename="qrcode.png"');
+            header('Cache-Control: no-cache, no-store, must-revalidate');
+
+            echo $result->getString();
+            exit;
+
+        } catch (Throwable $e) {
+            http_response_code(500);
+            echo "QR ERROR: " . $e->getMessage();
+            exit;
+        }
     }
 }
