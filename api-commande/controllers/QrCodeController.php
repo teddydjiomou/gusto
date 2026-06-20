@@ -2,8 +2,13 @@
 
 require_once __DIR__ . '/../models/QrCodeModel.php';
 require_once __DIR__ . '/../core/Middleware.php';
-require_once __DIR__ . '/../utils/phpqrcode/qrlib.php';
+//require_once __DIR__ . '/../utils/phpqrcode/qrlib.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
+var_dump(file_exists(__DIR__ . '/../vendor/autoload.php'));
+var_dump(class_exists('Endroid\\QrCode\\Builder\\Builder'));
+
+die();
 class QrCodeController {
 
     private $model;
