@@ -47,5 +47,4 @@ if (file_exists(__DIR__ . '/../.env')) {
         exit("Table invalide");
     }
     $nom_table = $tableData['nom'];
-    echo "Etablissement: $id_etablissement, Table: $nom_table";
 ?>
