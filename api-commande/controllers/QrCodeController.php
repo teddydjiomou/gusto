@@ -5,6 +5,8 @@ require_once __DIR__ . '/../core/Middleware.php';
 
 if (!class_exists('QRcode')) {
     require_once __DIR__ . '/../utils/phpqrcode/qrlib.php';
+    var_dump(class_exists('QRcode'));
+die();
 }
 
 class QrCodeController {
