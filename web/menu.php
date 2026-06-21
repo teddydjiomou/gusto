@@ -34,21 +34,18 @@
 }
 
 /* Global Colors - The following color variables are used throughout the website. Updating them here will change the color scheme of the entire website */
-:root{
-    --primary:#ff7a00;
-    --primary-light:#ff922b;
-    --dark:#111c31;
-
-    --background:#f5f6f8;
-    --card:#ffffff;
-    --text:#111827;
-    --text-light:#6b7280;
-
-    --shadow:0 8px 24px rgba(0,0,0,.08);
+:root { 
+  --background-color: #ffffff; /* Background color for the entire website, including individual sections */
+  --accent-color: #d97706; /* Accent color that represents your brand on the website. It's used for buttons, links, and other elements that need to stand out */
+  --default-color: #000;
+  --design-color: #fef3c7;
+  --hover-color: #7b4105;
+  --body-color: #f5f6fa;
+  --nav-dropdown-color: #444444;
 }
 
 /* ============================
-   header
+   Base
 ============================ */
 * {
     /*font-family: 'Poppins', sans-serif;*/
