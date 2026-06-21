@@ -6,26 +6,108 @@
 <head>
 	<title><?=htmlspecialchars($etablissements['nom'])?></title>
 	<?php
-            $logos = json_decode($etablissements['logo'], true);
-            $logo = $logos[0] ?? '';
-        ?>
-        <link href="<?= htmlspecialchars($logo) ?>" rel="icon">
+        $logos = json_decode($etablissements['logo'], true);
+        $logo = $logos[0] ?? '';
+    ?>
+    <link href="<?= htmlspecialchars($logo) ?>" rel="icon">
 	<link href="./assets/vendor/bootstrap/css/bootstrap.css" rel="stylesheet">
     <link href="./assets/vendor/icofont/icofont.min.css" rel="stylesheet">
 	<link rel="stylesheet" href="./assets/css/style.css" />
 	<style>
-        body {
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 0;
-            background: #f5f5f5;
-        }
-        .card {
-	        width: 80%;
-	        max-width: 500px; /* 👈 limite sur grand écran */
-	    }
+		:root{
+		    --dark:#111c31;
+		    --primary:#ff7a00;
+		    --primary-light:#ff922b;
+		    --bg:#f5f6f8;
+		}
+
+		*{
+		    margin:0;
+		    padding:0;
+		    box-sizing:border-box;
+		}
+
+		body{
+		    min-height:100vh;
+		    padding:20px;
+		    display:flex;
+		    justify-content:center;
+		    align-items:center;
+		    font-family:'Segoe UI',sans-serif;
+		}
+
+		.card{
+		    width:100%;
+		    max-width:420px;
+		    border:none;
+		    border-radius:24px;
+		    padding:30px !important;
+		    background:#fff;
+		    box-shadow:0 15px 40px rgba(0,0,0,.15);
+		}
+
+		.card h5{
+		    text-align:center;
+		    font-weight:700;
+		    margin-bottom:25px;
+		    color:#111c31;
+		}
+
+		.form-control{
+		    height:55px;
+		    border-radius:14px;
+		    border:1px solid #e5e7eb;
+		    font-size:16px;
+		}
+
+		.form-control:focus{
+		    border-color:#ff7a00;
+		    box-shadow:0 0 0 3px rgba(255,122,0,.15);
+		}
+
+		.btn-warning{
+		    width:100%;
+		    height:55px;
+		    border:none;
+		    border-radius:14px;
+
+		    background:linear-gradient(
+		        90deg,
+		        #ff7a00,
+		        #ff922b
+		    );
+
+		    color:#fff;
+		    font-weight:700;
+		    font-size:16px;
+
+		    margin-top:10px;
+		}
+
+		.btn-warning:hover{
+		    opacity:.95;
+		}
+
+		.erreur{
+		    margin-bottom:15px;
+		}
+
+		@media (max-width:576px){
+
+		    body{
+		        padding:15px;
+		    }
+
+		    .card{
+		        padding:25px !important;
+		        border-radius:20px;
+		    }
+
+		    .card h5{
+		        font-size:18px;
+		    }
+		}
+
     </style>
 </head>
 	<body>
@@ -53,7 +135,7 @@
 		        e.preventDefault();
 		        const codeInput = $('input[name="code"]').val().trim();
 		        $.ajax({
-		            url: "https://gusto-api-48f214a89058.herokuapp.com/api-commande/routes/check.php?id_etablissement=" + id_etablissement + "&id_table=" + id_table,
+		            url: "/api-commande/routes/check.php?id_etablissement=" + id_etablissement + "&id_table=" + id_table,
 		            method: "GET",
 		            dataType: "json",
 		            success: function(result) {
