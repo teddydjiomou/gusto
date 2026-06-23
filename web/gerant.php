@@ -36,6 +36,11 @@
                 Tables
             </li>
 
+            <li data-target="categories">
+                <i class="fa-solid fa-list"></i>
+                Categories
+            </li>
+
             <li data-target="produits">
                 <i class="fa-solid fa-burger"></i>
                 Produits
@@ -137,7 +142,7 @@
                 </button>
             </div>
 
-            <table class="DataTable info-table">
+            <table class="info-table">
                 <thead>
                     <tr>
                         <th>Table</th>
@@ -146,10 +151,31 @@
                     </tr>
                 </thead>
 
-                <tbody id="tableBody"></tbody>
+                <tbody></tbody>
             </table>
 
         </section>
+
+        <!-- CATEGORIE -->
+        <section id="categories" class="content-section" style="display:none">
+            <div class="section-header">
+                <h2>Gestion des Catégories</h2>
+                <button class="btn-primary btn-cat">
+                    <i class="fa-solid fa-plus"></i> Ajouter
+                </button>
+            </div>
+
+            <table class="info-cat">
+                <thead>
+                    <tr>
+                        <th>Libelle</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </section>
+
 
         <!-- PRODUITS -->
         <section id="produits" class="content-section" style="display:none">
@@ -157,23 +183,26 @@
             <div class="section-header">
                 <h2>Produits</h2>
 
+                <button class="btn-primary btn-cat">
+                    <i class="fa-solid fa-list"></i> Gérer les catégorie
+                </button>
+
                 <button class="btn-primary btn-produit">
                     <i class="fa-solid fa-plus"></i> Ajouter Produit
                 </button>
             </div>
 
-            <table class="DataTable info-produit">
+            <table class="info-produit">
                 <thead>
                     <tr>
                         <th>Image</th>
                         <th>Nom</th>
-                        <th>Catégorie</th>
                         <th>Prix</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
 
-                <tbody id="produitBody"></tbody>
+                <tbody></tbody>
             </table>
 
         </section>
@@ -189,18 +218,17 @@
                 </button>
             </div>
 
-            <table class="DataTable info-user">
+            <table class="info-user">
                 <thead>
                     <tr>
                         <th>Nom</th>
-                        <th>Téléphone</th>
                         <th>login</th>
                         <th>Date</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
 
-                <tbody id="userBody"></tbody>
+                <tbody></tbody>
             </table>
 
         </section>
@@ -233,7 +261,7 @@
                 <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>" method="post" role="form" id='userLoginForm' class="php-form">
                   <div class="row">
                     <div class="col-lg-12">
-                      <input type="text" name="login" class="form-control" id="modalLoginField">
+                      <input type="text" name="login" class="form-control" disabled id="modalLoginField">
                     </div>
                     <div class="col-lg-12">
                       <input type="password" name="password" placeholder="Entrer le mot de passe" class="form-control password">
@@ -300,6 +328,122 @@
             </div>
           </div>
         </div>
+
+        <div class="modal fade modal-produit" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-md" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title m-0 font-weight-bold" id="modalLabel"></h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">×</span>
+                  </button>
+              </div>
+              <div class="modal-body">
+                <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>" method="post" role="form" id='produit' class="php-form">
+                    <center class="mb-2">
+                      <img id="image" src='' class="img-fluid mb-3">
+                      <div class="cam"></div>
+                      <label for="imgInp" class="btn-img">Entrer le logo</label>             
+                      <input type="file" name="image" accept=".png, .jpg, .jpeg, .gif, .ico" id="imgInp">
+                  </center>
+                  <div class="row">
+                    <div class="col-lg-12">
+                      <input type="text" name="nom" placeholder="Entrer le nom du produit" class="form-control">
+                    </div>
+                    <div class="col-lg-12">
+                      <select name="id_categorie" class="select" required>
+                        <option value="" disabled selected>&nbsp;&nbsp;&nbsp;Choisir la catégorie</option>
+                      </select>
+                    </div>
+                    <div class="col-lg-12">
+                      <input type="text" name="prix" placeholder="Entrer le prix" class="form-control">
+                    </div>
+                    <div class="col-lg-12">
+                      <textarea name="description" class="form-control" rows="4" placeholder="Ecrivez quelques choses"></textarea>
+                    </div>
+                    <input type="hidden" name="id">
+                    <div class="col-md-12 text-center">
+                      <button class="loading" type="submit"></button>
+                    </div>
+                  </div>
+                </form>  
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal fade modal-cat" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-md" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title m-0 font-weight-bold" id="modalLabel"></h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">×</span>
+                  </button>
+              </div>
+              <div class="modal-body">
+                <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>" method="post" role="form" id='categorie' class="php-form">
+                  <div class="row">
+                    <div class="col-lg-12">
+                      <input type="text" name="libelle" placeholder="Entrer le nom de la categorie" class="form-control">
+                    </div>
+                    <input type="hidden" name="id">
+                    <div class="col-md-12 text-center">
+                      <button class="loading" type="submit"></button>
+                    </div>
+                  </div>
+                </form>  
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal fade modal-user" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-md" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title m-0 font-weight-bold" id="modalLabel"></h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">×</span>
+                  </button>
+              </div>
+              <div class="modal-body">
+                <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>" method="post" role="form" id='user' class="php-form">
+                  <div class="row">
+                    <div class="col-lg-12">
+                      <input type="text" name="nom" placeholder="Entrer le nom de l'employé" class="form-control">
+                    </div>
+                    <div class="col-lg-12">
+                      <input type="text" name="login" placeholder="Entrer le login" class="form-control">
+                    </div>
+                    <div class="col-lg-12">
+                      <input type="text" name="telephone" placeholder="Entrer le téléphone" class="form-control">
+                    </div>
+                    <div class="col-lg-12">
+                      <input type="email" name="email" placeholder="Entrer l'email" class="form-control">
+                    </div>
+                    <div class="col-lg-12">
+                      <input type="text" name="adresse" placeholder="Entrer l'adresse" class="form-control">
+                    </div>
+                    <div class="col-lg-12">
+                        <select name="role" required>
+                            <option value="" disabled selected>&nbsp;&nbsp;&nbsp;Choisir le rôle</option>
+                            <option value="2">&nbsp;&nbsp;&nbsp;Serveur</option>
+                            <option value="1">&nbsp;&nbsp;&nbsp;Gérant</option>
+                        </select>
+                    </div>
+                    <input type="hidden" name="id">
+                    <div class="col-md-12 text-center">
+                      <button class="loading" type="submit"></button>
+                    </div>
+                  </div>
+                </form>  
+              </div>
+            </div>
+          </div>
+        </div>
+
+
 
     </main>
 

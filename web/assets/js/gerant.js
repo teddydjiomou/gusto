@@ -1,5 +1,6 @@
 const token = localStorage.getItem('token');
 let allOrders = []; // on stocke toutes les commandes
+const tableMap = new Map();
 
 
 document.addEventListener("DOMContentLoaded", async function () {
@@ -45,7 +46,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         // ======================
         // CHARGEMENT PARALLÈLE
         // ======================
-        const [statsRes, tableRes, produitRes, userRes, orderRes] = await Promise.all([
+        const [statsRes, tableRes, produitRes, userRes, orderRes, catsRes] = await Promise.all([
 
             fetch('/api-commande/routes/statistique.php', {
                 method: 'GET',
@@ -70,6 +71,11 @@ document.addEventListener("DOMContentLoaded", async function () {
             fetch('/api-commande/routes/commande.php', {
                 method: 'GET',
                 headers: { 'Authorization': 'Bearer ' + token }
+            }).then(r => r.json()),
+
+            fetch('/api-commande/routes/categorie.php', {
+                method: 'GET',
+                headers: { 'Authorization': 'Bearer ' + token }
             }).then(r => r.json())
 
         ]);
@@ -79,6 +85,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         console.log("PRODUITS:", produitRes);
         console.log("USERS:", userRes);
         console.log("ORDERS:", orderRes);
+        console.log("CATS:", catsRes);
 
         // ======================
         // GRAPHIQUES
@@ -128,8 +135,10 @@ document.addEventListener("DOMContentLoaded", async function () {
         if (tableRes?.success && Array.isArray(tableRes.data)) {
 
             tables.clear();
+            tableMap.clear();
 
             tableRes.data.forEach(table => {
+                tableMap.set(table.id_table, table.nom);
 
                 const isOpen = table.statu === "Ouvert";
 
@@ -175,10 +184,8 @@ document.addEventListener("DOMContentLoaded", async function () {
                 produits.row.add([
                     image,
                     produit.nom,
-                    produit.id_categorie,
-                    `${produit.prix} ${produit.devise}`,
-                    `
-                    <button class="icon-btn edit-produit" data-id="${produit.id_produit}">
+                    produit.prix,
+                    `<button class="icon-btn edit-produit" data-id="${produit.id_produit}">
                         <i class="fa-solid fa-pen"></i>
                     </button>
                     <button class="icon-btn danger delete-produit" data-id="${produit.id_produit}">
@@ -193,6 +200,32 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
 
         // ======================
+        // CATEGORIE
+        // ======================
+
+        if (catsRes?.success && Array.isArray(catsRes.data)) {
+
+            cats.clear();
+
+            catsRes.data.forEach(cat => {
+
+                cats.row.add([
+                    cat.libelle,
+                    `<button class="icon-btn edit-cat" data-id="${cat.id_categorie}">
+                        <i class="fa-solid fa-pen"></i>
+                    </button>
+                    <button class="icon-btn danger delete-cat" data-id="${cat.id_categorie}">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                    `
+                ]);
+
+            });
+
+            cats.draw();
+        }
+
+        // ======================
         // UTILISATEUR
         // ======================
         if (userRes?.success && Array.isArray(userRes.data)) {
@@ -203,7 +236,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
                 users.row.add([
                     utilisateur.nom,
-                    utilisateur.telephone,
                     utilisateur.login,
                     utilisateur.date_enreg,
                     `
@@ -221,6 +253,21 @@ document.addEventListener("DOMContentLoaded", async function () {
             users.draw();
         }
 
+        const selects = document.querySelectorAll('.select');
+
+        if (catsRes.success && Array.isArray(catsRes.data)) {
+            catsRes.data.forEach(categorie => {
+                selects.forEach(select => {
+                    const option = document.createElement('option');
+
+                    option.value = categorie.id_categorie;
+                    option.textContent = "\u00A0\u00A0\u00A0" + categorie.libelle;
+
+                    select.appendChild(option);
+                });
+            });
+        }
+
         // ======================
         // COMMANDES
         // ======================
@@ -234,6 +281,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
 
 });
+
 function renderFilteredOrders() {
 
     const container = document.getElementById('commandesContainer');
@@ -243,6 +291,11 @@ function renderFilteredOrders() {
     const dateFin = document.getElementById('dateFin').value;
 
     let filtered = [...allOrders];
+
+    filtered = filtered.map(ticket => ({
+        ...ticket,
+        table_nom: tableMap.get(ticket.id_table) || "Table inconnue"
+    }));
 
     if (dateDebut) {
         filtered = filtered.filter(ticket =>
@@ -288,7 +341,7 @@ function renderFilteredOrders() {
 
                 <div class="ticket-header">
                     <div>
-                        <h3>Ticket #${ticket.id_ticket}</h3>
+                        <h3>${ticket.table_nom}: ${ticket.id_ticket}</h3>
                         <small>${ticket.date_enreg}</small>
                     </div>
 
@@ -305,6 +358,8 @@ function renderFilteredOrders() {
         `;
     });
 }
+
+
 
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -423,6 +478,21 @@ $('.btn-user').on('click', function() {
     $('.modal-user').modal({backdrop: 'static', keyboard: false});
 });
 
+$('.btn-cat').on('click', function() {
+    $('#categorie')[0].reset();
+    $('#categorie input[name="id"]').val('');
+    $('.modal-cat .modal-title').text("Ajouter une catégorie");
+    $('.modal-cat button[type=submit]').text("Ajouter");
+    $('.modal-cat').modal({backdrop: 'static', keyboard: false});
+});
+
+imgInp.onchange = evt=>{
+  const [file] = imgInp.files
+  if (file) {
+    image.src = URL.createObjectURL(file)
+  }
+}
+
 
 $('#userLoginForm').on('submit', function(e){
     e.preventDefault();
@@ -499,6 +569,20 @@ let users = $('.info-user').DataTable({
     }
 });
 
+let cats = $('.info-cat').DataTable({
+    pageLength: 5,
+    language:{
+        paginate:{
+            previous:"<i class='fas fa-angle-left'></i>",
+            next:"<i class='fas fa-angle-right'></i>"
+        }
+    }
+});
+
+/* =========================
+       TABLE
+    ========================= */
+
 $('#table').on('submit', async function(e) {
     e.preventDefault();
     const form = this;
@@ -518,13 +602,35 @@ $('#table').on('submit', async function(e) {
             submitBtn.removeClass('show-loader').prop('disabled', false);
             $('.modal-table').modal('hide');
             form.reset();
+            const isOpen = result.data.statu === "Ouvert";
+            const rowData = [
+                result.data.nom,
+                `<span class="badge ${isOpen ? "success" : "danger"}">
+                    ${isOpen ? "Ouvert" : "Fermé"}
+                </span>`,
+                `
+                <button class="icon-btn view view-service" data-id="${result.data.id_table}">
+                    <i class="fa-solid fa-eye"></i>
+                </button>
+                <button class="icon-btn edit-table" data-id="${result.data.id_table}">
+                    <i class="fa-solid fa-pen"></i>
+                </button>
+                <button class="icon-btn qr" data-id="${result.data.id_table}">
+                    <i class="fa-solid fa-qrcode"></i>
+                </button>
+                <button class="icon-btn danger delete-table" data-id="${result.data.id_table}">
+                    <i class="fa-solid fa-trash"></i>
+                </button>`,
+                result.data.id_table,
+                result.data.id_etablissement
+            ];
 
             if(isEdit && editingRow) {
                 // ⚡ Mettre à jour uniquement la ligne modifiée
-                editingRow.data(result.data).draw(false);
+                editingRow.data(rowData).draw(false);
                 editingRow = null; // reset la référence
             } else {
-                tables.row.add(result.data).draw(false);
+                tables.row.add(rowData).draw(false);
             }
         } else {
             alert(result.message || "Erreur lors de l'enregistrement");
@@ -536,7 +642,7 @@ $('#table').on('submit', async function(e) {
     }
 });
 
-//view service
+
 
 $(document).on('click', '.view-service', async function() {
     const idTable = $(this).data('id');
@@ -549,10 +655,10 @@ $(document).on('click', '.view-service', async function() {
         if(result.success) {
             const e = result.data;
             $('.modal-service input[name="id"]').val(idTable);
-            $('.code').text(e.code);
-            $('.date_ouverture').text(e.date_heure_ouverture);
-            $('.date_fermeture').text(e.date_heure_fermeture);
-            $('.user').text(e.login);
+            $('.code').html('<b>Code du service</b>'+' : '+e.code);
+            $('.date_ouverture').html("<b>Date d'ouverture</b>"+' : '+e.date_heure_ouverture);
+            $('.date_fermeture').html('<b>Date de fermeture</b>'+' : '+e.date_heure_fermeture);
+            $('.user').html('<b>Serveur</b>'+' : '+e.login);
             $('.modal-service .modal-title').text("detail du service");
             $('.modal-service').modal({backdrop:'static', keyboard:false});
         } else {
@@ -564,7 +670,7 @@ $(document).on('click', '.view-service', async function() {
     }
 });
 
-// Bouton Edit
+
 
 $(document).on('click', '.edit-table', async function() {
     const tableId = $(this).data('id');
@@ -590,11 +696,11 @@ $(document).on('click', '.edit-table', async function() {
     }
 });
 
-// bouton delete
+
 
 $(document).on('click', '.delete-table', async function () {
     const id = $(this).data('id');
-    if (!confirm("Voulez-vous vraiment supprimer cet appareil ?")) return;
+    if (!confirm("Voulez-vous vraiment supprimer cette table ?")) return;
     try {
         const response = await fetch(`/api-commande/routes/table.php?id=${id}`, {
                 method: 'DELETE',
@@ -621,7 +727,7 @@ $(document).on('click', '.delete-table', async function () {
     }
 });
 
-// bouton qr
+
 
 $(document).on('click', '.qr', async function () {
     const id = $(this).data('id');
@@ -654,6 +760,354 @@ $(document).on('click', '.qr', async function () {
         alert("Erreur serveur : " + err.message);
     }
 });
+
+/* =========================
+       CATEGORIE
+    ========================= */
+
+
+$('#categorie').on('submit', async function(e) {
+    e.preventDefault();
+    const form = this;
+    const formData = new FormData(form);
+    const isEdit = formData.get('id') ? true : false;
+    const submitBtn = $(form).find('button[type="submit"]');
+    submitBtn.addClass('show-loader').prop('disabled', true);
+    try {
+        const response = await fetch('/api-commande/routes/categorie.php', {
+            method: 'POST',
+            headers: { 'Authorization': 'Bearer ' + token },
+            body: formData
+        });
+        const result = await response.json();
+        submitBtn.prop('disabled', false).text(isEdit ? "Modifier" : "Ajouter");
+        if(result.success) {
+            submitBtn.removeClass('show-loader').prop('disabled', false);
+            $('.modal-cat').modal('hide');
+            form.reset();
+            const rowData = [
+                result.data.libelle,
+                `<button class="icon-btn edit-cat" data-id="${result.data.id_categorie}">
+                    <i class="fa-solid fa-pen"></i>
+                </button>
+                <button class="icon-btn danger delete-cat" data-id="${result.data.id_categorie}">
+                    <i class="fa-solid fa-trash"></i>
+                </button>`,
+                result.data.id_categorie,
+                result.data.id_etablissement
+            ];
+
+            if(isEdit && editingRow) {
+                editingRow.data(rowData).draw(false);
+                editingRow = null; // reset la référence
+            } else {
+                cats.row.add(rowData).draw(false);
+            }
+        } else {
+            alert(result.message || "Erreur lors de l'enregistrement");
+        }
+    } catch(err) {
+        console.error(err);
+        submitBtn.prop('disabled', false).text(isEdit ? "Modifier" : "Ajouter");
+        alert("Erreur serveur : " + err.message);
+    }
+});
+
+
+$(document).on('click', '.edit-cat', async function() {
+    const catId = $(this).data('id');
+    editingRow = cats.row($(this).closest('tr'));
+    try {
+        const response = await fetch(`/api-commande/routes/categorie.php?id=${catId}`, {
+            headers: { 'Authorization': 'Bearer ' + token }
+        });
+        const result = await response.json();
+        if(result.success) {
+            const e = result.data;
+            $('#categorie input[name="id"]').val(catId);
+            $('#categorie input[name="libelle"]').val(e.libelle);
+            $('.modal-cat .modal-title').text("Modifier la catégorie");
+            $('.modal-cat button[type=submit]').text("Modifier");
+            $('.modal-cat').modal({backdrop:'static', keyboard:false});
+
+        } else {
+            alert(result.message);
+        }
+
+    } catch(err) {
+        console.error(err);
+        alert("Erreur serveur : " + err.message);
+    }
+});
+
+$(document).on('click', '.delete-cat', async function () {
+    const id = $(this).data('id');
+    if (!confirm("Voulez-vous vraiment supprimer cette categorie ?")) return;
+    try {
+        const response = await fetch(`/api-commande/routes/categorie.php?id=${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': 'Bearer ' + token
+                }
+            }
+        );
+        const result = await response.json();
+        if (result.success) {
+            // Supprime uniquement la ligne concernée dans le DataTable
+            cats.rows().every(function () {
+                const row = this.node();
+                if ($(row).find('.delete-cat').data('id') == id) {
+                    this.remove().draw(false);
+                }
+            });
+        } else {
+            alert(result.message || "Impossible de supprimer la categorie");
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Erreur serveur : " + err.message);
+    }
+});
+
+
+/* =========================
+       PRODUIT
+    ========================= */
+
+
+$('#produit').on('submit', async function(e) {
+    e.preventDefault();
+    const form = this;
+    const formData = new FormData(form);
+    const isEdit = formData.get('id') ? true : false;
+    const submitBtn = $(form).find('button[type="submit"]');
+    submitBtn.addClass('show-loader').prop('disabled', true);
+    try {
+        const response = await fetch('/api-commande/routes/produit.php', {
+            method: 'POST',
+            headers: { 'Authorization': 'Bearer ' + token },
+            body: formData
+        });
+        const result = await response.json();
+        submitBtn.prop('disabled', false).text(isEdit ? "Modifier" : "Ajouter");
+        if(result.success) {
+            submitBtn.removeClass('show-loader').prop('disabled', false);
+            $('.modal-produit').modal('hide');
+            form.reset();
+            $('#image').attr('src','');
+
+            const image = result.data.image?.length
+                    ? `<img src="${result.data.image[0]}" width="50" height="50" style="object-fit:cover;border-radius:5px;">`
+                    : 'Aucune image';
+            const rowData = [
+                image,
+                result.data.nom,
+                result.data.prix,
+                `<button class="icon-btn edit-produit" data-id="${result.data.id_produit}">
+                    <i class="fa-solid fa-pen"></i>
+                </button>
+                <button class="icon-btn danger delete-produit" data-id="${result.data.id_produit}">
+                    <i class="fa-solid fa-trash"></i>
+                </button>`,
+                result.data.id_produit,
+                result.data.id_etablissement
+            ];
+
+            if(isEdit && editingRow) {
+                editingRow.data(rowData).draw(false);
+                editingRow = null; // reset la référence
+            } else {
+                produits.row.add(rowData).draw(false);
+            }
+        } else {
+            alert(result.message || "Erreur lors de l'enregistrement");
+        }
+    } catch(err) {
+        console.error(err);
+        submitBtn.prop('disabled', false).text(isEdit ? "Modifier" : "Ajouter");
+        alert("Erreur serveur : " + err.message);
+    }
+});
+
+
+$(document).on('click', '.edit-produit', async function() {
+    const produitId = $(this).data('id');
+    editingRow = produits.row($(this).closest('tr'));
+    try {
+        const response = await fetch(`/api-commande/routes/produit.php?id=${produitId}`, {
+            headers: { 'Authorization': 'Bearer ' + token }
+        });
+        const result = await response.json();
+        if(result.success) {
+            const e = result.data;
+            $('#produit input[name="id"]').val(produitId);
+            const image = Array.isArray(e.image) ? e.image: JSON.parse(e.image || '[]');
+            $('#image').attr('src', image[0] || '');
+            $('#produit input[name="nom"]').val(e.nom);
+            $('#produit select[name="id_categorie"]').val(e.id_categorie).trigger('change');
+            $('#produit input[name="prix"]').val(e.prix);
+            $('#produit textarea[name="description"]').val(e.description);
+            $('.modal-produit .modal-title').text("Modifier le produit");
+            $('.modal-produit button[type=submit]').text("Modifier");
+
+            $('.modal-produit').modal({backdrop:'static', keyboard:false});
+
+        } else {
+            alert(result.message);
+        }
+
+    } catch(err) {
+        console.error(err);
+        alert("Erreur serveur : " + err.message);
+    }
+});
+
+$(document).on('click', '.delete-produit', async function () {
+    const id = $(this).data('id');
+    if (!confirm("Voulez-vous vraiment supprimer ce produit ?")) return;
+    try {
+        const response = await fetch(`/api-commande/routes/produit.php?id=${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': 'Bearer ' + token
+                }
+            }
+        );
+        const result = await response.json();
+        if (result.success) {
+            // Supprime uniquement la ligne concernée dans le DataTable
+            produits.rows().every(function () {
+                const row = this.node();
+                if ($(row).find('.delete-produit').data('id') == id) {
+                    this.remove().draw(false);
+                }
+            });
+        } else {
+            alert(result.message || "Impossible de supprimer le produit");
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Erreur serveur : " + err.message);
+    }
+});
+
+
+/* =========================
+       EMPLOYE
+    ========================= */
+
+
+$('#user').on('submit', async function(e) {
+    e.preventDefault();
+    const form = this;
+    const formData = new FormData(form);
+    const isEdit = formData.get('id') ? true : false;
+    const submitBtn = $(form).find('button[type="submit"]');
+    submitBtn.addClass('show-loader').prop('disabled', true);
+    try {
+        const response = await fetch('/api-commande/routes/employe.php', {
+            method: 'POST',
+            headers: { 'Authorization': 'Bearer ' + token },
+            body: formData
+        });
+        const result = await response.json();
+        submitBtn.prop('disabled', false).text(isEdit ? "Modifier" : "Ajouter");
+        if(result.success) {
+            submitBtn.removeClass('show-loader').prop('disabled', false);
+            $('.modal-user').modal('hide');
+            form.reset();
+            const rowData = [
+                result.data.nom,
+                result.data.login,
+                result.data.date_enreg,
+                `<button class="icon-btn edit-user" data-id="${result.data.id_utilisateur}">
+                    <i class="fa-solid fa-pen"></i>
+                </button>
+                <button class="icon-btn danger delete-user" data-id="${result.data.id_utilisateur}">
+                    <i class="fa-solid fa-trash"></i>
+                </button>`,
+                result.data.id_utilisateur,
+                result.data.id_etablissement
+            ];
+
+            if(isEdit && editingRow) {
+                editingRow.data(rowData).draw(false);
+                editingRow = null; // reset la référence
+            } else {
+                users.row.add(rowData).draw(false);
+            }
+        } else {
+            alert(result.message || "Erreur lors de l'enregistrement");
+        }
+    } catch(err) {
+        console.error(err);
+        submitBtn.prop('disabled', false).text(isEdit ? "Modifier" : "Ajouter");
+        alert("Erreur serveur : " + err.message);
+    }
+});
+
+
+$(document).on('click', '.edit-user', async function() {
+    const userId = $(this).data('id');
+    editingRow = users.row($(this).closest('tr'));
+    try {
+        const response = await fetch(`/api-commande/routes/employe.php?id=${userId}`, {
+            headers: { 'Authorization': 'Bearer ' + token }
+        });
+        const result = await response.json();
+        if(result.success) {
+            const e = result.data;
+            $('#user input[name="id"]').val(userId);
+            $('#user input[name="nom"]').val(e.nom);
+            $('#user input[name="login"]').val(e.login);
+            $('#user input[name="telephone"]').val(e.telephone);
+            $('#user input[name="email"]').val(e.email);
+            $('#user input[name="adresse"]').val(e.adresse);
+            $('#user select[name="role"]').val(e.role).trigger('change');
+            $('.modal-user .modal-title').text("Modifier l'employé");
+            $('.modal-user button[type=submit]').text("Modifier");
+            $('.modal-user').modal({backdrop:'static', keyboard:false});
+
+        } else {
+            alert(result.message);
+        }
+
+    } catch(err) {
+        console.error(err);
+        alert("Erreur serveur : " + err.message);
+    }
+});
+
+$(document).on('click', '.delete-user', async function () {
+    const id = $(this).data('id');
+    if (!confirm("Voulez-vous vraiment supprimer cet employé ?")) return;
+    try {
+        const response = await fetch(`/api-commande/routes/employe.php?id=${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': 'Bearer ' + token
+                }
+            }
+        );
+        const result = await response.json();
+        if (result.success) {
+            // Supprime uniquement la ligne concernée dans le DataTable
+            users.rows().every(function () {
+                const row = this.node();
+                if ($(row).find('.delete-user').data('id') == id) {
+                    this.remove().draw(false);
+                }
+            });
+        } else {
+            alert(result.message || "Impossible de supprimer l'employé");
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Erreur serveur : " + err.message);
+    }
+});
+
+
 
 
 

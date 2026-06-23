@@ -22,22 +22,10 @@ class ProduitController {
 
         $id_etablissement = $this->user->id_etablissement;
         $data = $this->produit->getProduitsByEtablissement($id_etablissement);
-        $rows = [];
-
-        foreach ($data as $e) {
-            $rows[] = [
-                'id_produit' => $e['id_produit'],
-                'nom' => $e['nom'],
-                'image' => json_decode($e['image'], true), // renvoie un tableau d'images
-                'id_categorie' => $e['id_categorie'],
-                'prix' => $e['prix'],
-                'devise' => $e['devise'],
-                'description' => $e['description'],
-                'id_etablissement' => $e['id_etablissement']
-            ];
+         foreach ($data as &$e) {
+            $e['image'] = json_decode($e['image'], true);
         }
-
-        echo json_encode(['success'=>true, 'data'=>$rows]);
+        echo json_encode(['success'=>true, 'data'=>$data]);
         
         exit;
     }

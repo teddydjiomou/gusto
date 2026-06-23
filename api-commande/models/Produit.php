@@ -67,15 +67,16 @@ class Produit extends BaseModel {
     // Mettre à jour un produit
     // =========================
     public function update($id, $id_etablissement, $data) {
+        $current = $this->getByIdAndEtablissement($id, $id_etablissement);
         return $this->set(
             "produit",
             ["nom", "image", "id_categorie", "prix", "description"],
             [
                 $data['nom'],
-                $data['image'] ?? null,
-                $data['id_categorie'] ?? null,
-                $data['prix'] ?? 0,
-                $data['description'] ?? ''
+                $data['image'] ,
+                $data['id_categorie'],
+                $data['prix'],
+                $data['description']
             ],
             "WHERE id_produit = ? AND id_etablissement = ?",
             [$id, $id_etablissement]

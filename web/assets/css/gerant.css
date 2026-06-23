@@ -72,6 +72,34 @@
             -webkit-text-fill-color:transparent;
         }
 
+        #image{
+          height:100px;
+          width:100px;
+          border-radius:24px;
+          border:3px solid #fff;
+          box-shadow:0 10px 25px rgba(0,0,0,.1);
+          object-fit:cover;
+        }
+
+        .btn-img{
+          background:linear-gradient(135deg,#ff7a00,#ff922b);
+          color:white;
+          border:none;
+          border-radius:12px;
+          padding:8px 10px;
+          font-size:12px;
+          font-weight:700;
+          cursor:pointer;
+          transition:.3s;
+        }
+
+        #imgInp{
+          display: none;
+        }
+
+        .btn-img:hover{
+          transform:translateY(-2px);
+        }
         /* ======================
         MENU
         ====================== */
@@ -731,9 +759,6 @@
       transition:.3s;
     }
 
-    .select{
-      height: 90%;
-    }
 
     .modal .php-form textarea{
       min-height:120px;

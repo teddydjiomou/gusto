@@ -64,14 +64,18 @@ class Table extends BaseModel {
     }
 
     public function update($id, $id_etablissement, $data) {
+
+        // récupérer l'existant
+        $current = $this->getByIdAndEtablissement($id, $id_etablissement);
+
         return $this->set(
             "tables_restaurant",
-            ["nom", "statu"], // ❌ on retire id_etablissement
+            ["nom", "statu"],
             [
-                $data['nom'],
-                $data['statu'],
+                $data['nom'] ?? $current['nom'],
+                $data['statu'] ?? $current['statu'],
             ],
-            "WHERE id_table = ? AND id_etablissement = ?", // ✅ sécurité
+            "WHERE id_table = ? AND id_etablissement = ?",
             [$id, $id_etablissement]
         );
     }
@@ -110,7 +114,7 @@ class Table extends BaseModel {
 
         } else {
             // Ouvrir la table
-            $code = substr(bin2hex(random_bytes(3)), 0, 6);
+            $code = substr(bin2hex(random_bytes(3)), 0, 3);
             $this->set(
                 "tables_restaurant",
                 ["statu"],
