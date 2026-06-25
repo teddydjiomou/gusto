@@ -167,14 +167,14 @@ document.addEventListener("DOMContentLoaded", async function () {
                 // Gains
                 if (Array.isArray(statsRes.vals.gains)) {
                     statsRes.vals.gains.forEach(item => {
-                        totalGain += Number(item.sum_commandes || 0);
+                        totalGain += Number(item.total_jour || 0);
                     });
                 }
 
                 // Affichage
                 $("#svc").text(totalServices);
                 $("#cmd").text(totalCmd);
-                $("#gain").text(totalGain.toLocaleString('fr-FR') + " FCFA");
+                $("#gain").text(totalGain +" " + statsRes.devise);
             }
         }
 
