@@ -98,39 +98,28 @@ class Commande extends BaseModel {
     { 
        $svc = $this->personnalSelect(
             'service',
-            '
-            COUNT(*) AS nb_services
-            ',
-            '
-            WHERE id_etablissement = ?
-            AND DATE(date_heure_fermeture) = CURDATE()
-            ',
+            'COUNT(*) AS nb_services',
+            'WHERE id_etablissement = ?
+             AND DATE(date_heure_fermeture) = CURDATE()',
             [$id_etablissement]
         )->fetch(PDO::FETCH_ASSOC);
 
-       $gain = $this->personnalSelect(
+        $gain = $this->personnalSelect(
             'commande',
-            '
-            SUM(montant_total) AS total_jour,
-            devise
-            ',
-            '
-            WHERE id_etablissement = ?
-            AND DATE(date_enreg) = CURDATE()
-            GROUP BY devise
-            ',
+            'COALESCE(SUM(montant_total),0) AS total_jour, devise',
+            'WHERE id_etablissement = ?
+             AND date_enreg >= CURDATE()
+             AND date_enreg < (CURDATE() + INTERVAL 1 DAY)
+             GROUP BY devise',
             [$id_etablissement]
-        )->fetch(PDO::FETCH_ASSOC);
+        )->fetchAll(PDO::FETCH_ASSOC);
 
-       $cmd = $this->personnalSelect(
+        $cmd = $this->personnalSelect(
             'commande',
-            '
-            COUNT(*) AS nb_commandes
-            ',
-            '
-            WHERE id_etablissement = ?
-            AND DATE(date_enreg) = CURDATE()
-            ',
+            'COUNT(*) AS nb_commandes',
+            'WHERE id_etablissement = ?
+             AND date_enreg >= CURDATE()
+             AND date_enreg < (CURDATE() + INTERVAL 1 DAY)',
             [$id_etablissement]
         )->fetch(PDO::FETCH_ASSOC);
 

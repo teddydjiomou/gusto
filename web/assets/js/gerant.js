@@ -148,7 +148,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
                 let totalServices = 0;
                 let totalCmd = 0;
-                let totalGain = 0;
 
                 // Services
                 if (statsRes.vals.services) {
@@ -160,17 +159,21 @@ document.addEventListener("DOMContentLoaded", async function () {
                     totalCmd = Number(statsRes.vals.commandes.nb_commandes || 0);
                 }
 
-                // Gains (OBJET direct)
-                const gain = statsRes.vals.gains;
+                // Gains (ARRAY maintenant)
+                let gainText = "";
 
-                if (gain) {
-                    totalGain = Number(gain.total_jour || 0);
+                if (Array.isArray(statsRes.vals.gains)) {
+
+                    gainText = statsRes.vals.gains
+                        .map(g => `${Number(g.total_jour || 0)} ${g.devise}`)
+                        .join(" | ");
+
                 }
 
                 // Affichage
                 $("#svc").text(totalServices);
                 $("#cmd").text(totalCmd);
-                $("#gain").text(`${totalGain} ${gain?.devise || ""}`);
+                $("#gain").text(gainText);
             }
         }
 
