@@ -111,11 +111,13 @@ class Commande extends BaseModel {
        $gain = $this->personnalSelect(
             'commande',
             '
-            SUM(montant_total) AS total_jour
+            SUM(montant_total) AS total_jour,
+            devise
             ',
             '
             WHERE id_etablissement = ?
             AND DATE(date_enreg) = CURDATE()
+            GROUP BY devise
             ',
             [$id_etablissement]
         )->fetch(PDO::FETCH_ASSOC);

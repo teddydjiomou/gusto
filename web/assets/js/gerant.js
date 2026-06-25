@@ -171,10 +171,12 @@ document.addEventListener("DOMContentLoaded", async function () {
                     });
                 }
 
+                const gain = statsRes.vals.gains?.[0];
+
                 // Affichage
                 $("#svc").text(totalServices);
                 $("#cmd").text(totalCmd);
-                $("#gain").text(totalGain +" " + statsRes.devise);
+                $("#gain").text(`${gain.total_jour} ${gain.devise}`);
             }
         }
 
