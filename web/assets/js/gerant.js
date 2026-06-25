@@ -151,32 +151,26 @@ document.addEventListener("DOMContentLoaded", async function () {
                 let totalGain = 0;
 
                 // Services
-                if (Array.isArray(statsRes.vals.services)) {
-                    statsRes.vals.services.forEach(item => {
-                        totalServices += Number(item.nb_services || 0);
-                    });
+                if (statsRes.vals.services) {
+                    totalServices = Number(statsRes.vals.services.nb_services || 0);
                 }
 
                 // Commandes
-                if (Array.isArray(statsRes.vals.commandes)) {
-                    statsRes.vals.commandes.forEach(item => {
-                        totalCmd += Number(item.nb_commandes || 0);
-                    });
+                if (statsRes.vals.commandes) {
+                    totalCmd = Number(statsRes.vals.commandes.nb_commandes || 0);
                 }
 
-                // Gains
-                if (Array.isArray(statsRes.vals.gains)) {
-                    statsRes.vals.gains.forEach(item => {
-                        totalGain += Number(item.total_jour || 0);
-                    });
-                }
+                // Gains (OBJET direct)
+                const gain = statsRes.vals.gains;
 
-                const gain = statsRes.vals.gains?.[0];
+                if (gain) {
+                    totalGain = Number(gain.total_jour || 0);
+                }
 
                 // Affichage
                 $("#svc").text(totalServices);
                 $("#cmd").text(totalCmd);
-                $("#gain").text(`${gain.total_jour} ${gain.devise}`);
+                $("#gain").text(`${totalGain} ${gain?.devise || ""}`);
             }
         }
 
@@ -1134,10 +1128,3 @@ $(document).on('click', '.delete-user', async function () {
         alert("Erreur serveur : " + err.message);
     }
 });
-
-
-
-
-
-
-
