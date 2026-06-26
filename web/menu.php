@@ -1508,6 +1508,7 @@
                 }
 
                 let payload = {
+                    id_table,
                     nom_table,
                     id_etablissement,
                     commande: panier,
