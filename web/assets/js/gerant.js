@@ -11,9 +11,9 @@ document.getElementById('dateFin').addEventListener('change', renderFilteredOrde
 document.addEventListener("DOMContentLoaded", async function () {
     const aujourdHui = new Date();
     const annee = aujourdHui.getFullYear();
-
+    
     document.getElementById('dateDebut').value = `${annee}-01-01`;
-    document.getElementById('dateFin').value = aujourdHui.toISOString().split('T')[0];
+    document.getElementById('dateFin').value = `${annee}-12-31`;
 
     if (!token) {
         console.error("Token manquant !");
