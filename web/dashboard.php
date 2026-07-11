@@ -158,7 +158,6 @@
                           <th>Nom</th>
                           <th>Adresse</th>
                           <th>Téléphone</th>
-                          <th>role</th>
                           <th>Date</th>
                           <th>Action</th>
                         </tr>
@@ -348,14 +347,7 @@
                 <div class="col-lg-6">
                   <input type="text" name="login" class="form-control" placeholder="Entrez le login de l'utilisateur" required>
                 </div>
-                <div class="col-lg-6 mb-4">
-                  <select name="role" class="select w-100"  required>
-                    <option value="" disabled selected>&nbsp;&nbsp;&nbsp;Choisir le rôle</option>
-                    <option value="0">&nbsp;&nbsp;&nbsp;Admin</option>
-                    <option value="1">&nbsp;&nbsp;&nbsp;Gérant</option>
-                  </select>
-                </div>
-                <div class="col-lg-6 mb-4">
+                <div class="col-lg-12 mb-4">
                   <select name="id_etablissement" class="select  w-100 selectEtablissement" required>
                     <option value="" disabled selected>&nbsp;&nbsp;&nbsp;Choisir l'etablissement géré</option>
                   </select>

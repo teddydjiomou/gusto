@@ -5,6 +5,13 @@ require_once __DIR__ . '/../utils/phpmailer/src/Exception.php';
 require_once __DIR__ . '/../utils/phpmailer/src/PHPMailer.php';
 require_once __DIR__ . '/../utils/phpmailer/src/SMTP.php';
 
+require __DIR__ . '/../../vendor/autoload.php';
+
+if (file_exists(__DIR__ . '/../../.env')) {
+    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../../');
+    $dotenv->load();
+}
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
@@ -15,14 +22,14 @@ class Utilisateur extends BaseModel {
        LECTURE
     ======================= */
 
-    function generateRestaurantCode(string $name, int $randomLength = 8): string
+    function generateRestaurantCode(string $name, int $randomLength = 3): string
     {
         // Nettoyer le nom
-        $prefix = strtoupper(preg_replace('/[^A-Z0-9]/i', '', $name));
-        $prefix = substr($prefix, 0, 10);
+        $prefix = strtolower(preg_replace('/[^A-Z0-9]/i', '', $name));
+        $prefix = substr($prefix, 0, 3);
 
         // Partie aléatoire sécurisée
-        $random = strtoupper(bin2hex(random_bytes(ceil($randomLength / 2))));
+        $random = strtolower(bin2hex(random_bytes(ceil($randomLength / 2))));
         $random = substr($random, 0, $randomLength);
 
         return $prefix . '-' . $random;
@@ -82,8 +89,8 @@ class Utilisateur extends BaseModel {
                 $data['telephone'],
                 $data['login'],
                 password_hash($password, PASSWORD_DEFAULT),
-                $data['id_etablissement'],
-                $data['role'],
+                $id_etablissement,
+                2,
                 date('Y-m-d'),
             ]
         );
@@ -94,10 +101,10 @@ class Utilisateur extends BaseModel {
         try {
             $mail = new PHPMailer(true);
             $mail->isSMTP();
-            $mail->Host       = 'smtp.gmail.com';   // à adapter
+            $mail->Host       = 'smtp.gmail.com';
             $mail->SMTPAuth   = true;
-            $mail->Username   = 'djiomounandavivienenderlin@gmail.com'; // à adapter
-            $mail->Password   = 'vvzm ioaa gckv vcze ';       // à adapter
+            $mail->Username   = getenv('email'); /*$_ENV['email'];*/
+            $mail->Password   = getenv('password_app'); /*$_ENV['password_app'];*/
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $mail->Port       = 587;
 
@@ -132,7 +139,7 @@ class Utilisateur extends BaseModel {
                 $data['email'],
                 $data['telephone'],
                 $data['login'],
-                $data['role']
+                2
             ],
             "WHERE id_utilisateur = ? AND id_etablissement = ?",
             [$id, $id_etablissement]

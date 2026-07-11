@@ -7,11 +7,6 @@ class EmployeController {
     private $model;
     private $user; // utilisateur connecté
 
-    private $roles = [
-        1 => 'Gérant',
-        2 => 'Serveur'
-    ];
-
     public function __construct() {
         // 🔐 Vérifie le token
         $this->user = Middleware::checkAuth();

@@ -50,7 +50,7 @@ class Produit extends BaseModel {
             "produit",
             ["id_etablissement", "nom", "image", "id_categorie", "prix", "devise", "description"],
             [
-                $data['id_etablissement'],
+                $id_etablissement,
                 $data['nom'],
                 $data['image'] ?? null,
                 $data['id_categorie'] ?? null,

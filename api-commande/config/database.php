@@ -15,6 +15,29 @@ class Database {
         $this->connect();
     }
 
+    // private function createDatabaseIfNotExists(array $srv){
+    //     try {
+
+    //         // Connexion au serveur MySQL (sans sélectionner de base)
+    //         $pdo = new PDO(
+    //             "mysql:host={$srv['host']};charset=utf8mb4",
+    //             $srv['user'],
+    //             $srv['password']
+    //         );
+
+    //         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    //         $dbname = str_replace('`', '``', $srv['dbname']);
+
+    //         $pdo->exec("CREATE DATABASE IF NOT EXISTS `$dbname`
+    //                     CHARACTER SET utf8mb4
+    //                     COLLATE utf8mb4_unicode_ci");
+
+    //     } catch (PDOException $e) {
+    //         throw $e;
+    //     }
+    // }
+
     public function connect() {
 
         self::$servers = [
@@ -38,6 +61,7 @@ class Database {
     
         foreach (self::$servers as $srv) {
             try {
+                //$this->createDatabaseIfNotExists($srv);
                 $this->pdo = new PDO(
                     "mysql:host={$srv['host']};dbname={$srv['dbname']};charset=utf8mb4",
                     $srv['user'],

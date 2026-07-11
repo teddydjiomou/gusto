@@ -7,11 +7,11 @@ class UtilisateurController {
     private $model;
     private $user; // utilisateur connecté
 
-    private $roles = [
-        0 => 'Admin',
-        1 => 'Gérant',
-        2 => 'Serveur'
-    ];
+    // private $roles = [
+    //     0 => 'Admin',
+    //     1 => 'Gérant',
+    //     2 => 'Serveur'
+    // ];
 
     public function __construct() {
         // 🔐 Vérifie le token
@@ -34,7 +34,7 @@ class UtilisateurController {
                 $e['nom'],
                 $e['adresse'],
                 $e['telephone'],
-                $this->roles[$e['role']],
+                // $this->roles[$e['role']],
                 $e['date_enreg'],
                 "<button class='btn btn-sm btn-primary edit-user' data-id='{$e['id_utilisateur']}'>Modifier</button>"
             ];
@@ -69,7 +69,7 @@ class UtilisateurController {
              $e['nom'],
              $e['adresse'],
              $e['telephone'],
-             $this->roles[$e['role']],
+             // $this->roles[$e['role']],
              $e['date_enreg'],
             "<button class='btn btn-sm btn-primary edit-user' data-id={$e['id_utilisateur']}>Modifier</button>"
         ];
@@ -99,7 +99,7 @@ class UtilisateurController {
             $e['nom'],
             $e['adresse'],
             $e['telephone'],
-            $this->roles[$e['role']],
+            // $this->roles[$e['role']],
             $e['date_enreg'],
             "<button class='btn btn-sm btn-primary edit-user' data-id='{$e['id_utilisateur']}'>Modifier</button>"
         ];

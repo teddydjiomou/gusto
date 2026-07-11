@@ -1090,7 +1090,6 @@ $(document).on('click', '.edit-user', async function() {
             $('#user input[name="telephone"]').val(e.telephone);
             $('#user input[name="email"]').val(e.email);
             $('#user input[name="adresse"]').val(e.adresse);
-            $('#user select[name="role"]').val(e.role).trigger('change');
             $('.modal-user .modal-title').text("Modifier l'employé");
             $('.modal-user button[type=submit]').text("Modifier");
             $('.modal-user').modal({backdrop:'static', keyboard:false});

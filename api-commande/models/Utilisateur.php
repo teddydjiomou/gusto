@@ -4,6 +4,13 @@ require_once __DIR__ . '/../utils/phpmailer/src/Exception.php';
 require_once __DIR__ . '/../utils/phpmailer/src/PHPMailer.php';
 require_once __DIR__ . '/../utils/phpmailer/src/SMTP.php';
 
+require __DIR__ . '/../../vendor/autoload.php';
+
+if (file_exists(__DIR__ . '/../../.env')) {
+    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../../');
+    $dotenv->load();
+}
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
@@ -18,7 +25,7 @@ class Utilisateur extends BaseModel {
     {
         // Nettoyer le nom
         $prefix = strtoupper(preg_replace('/[^A-Z0-9]/i', '', $name));
-        $prefix = substr($prefix, 0, 10);
+        $prefix = substr($prefix, 0, 4);
 
         // Partie aléatoire sécurisée
         $random = strtoupper(bin2hex(random_bytes(ceil($randomLength / 2))));
@@ -108,7 +115,7 @@ class Utilisateur extends BaseModel {
                 "En attente",
                 date('Y-m-d'),
                 "En attente",
-                $data['role'],
+                1,
                 date('Y-m-d'),
             ]
         );
@@ -121,8 +128,8 @@ class Utilisateur extends BaseModel {
             $mail->isSMTP();
             $mail->Host       = 'smtp.gmail.com';   // à adapter
             $mail->SMTPAuth   = true;
-            $mail->Username   = 'djiomounandavivienenderlin@gmail.com'; // à adapter
-            $mail->Password   = 'vvzm ioaa gckv vcze ';       // à adapter
+            $mail->Username   = getenv('email'); /*$_ENV['email'];*/
+            $mail->Password   = getenv('password_app'); /*$_ENV['password_app'];*/
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $mail->Port       = 587;
 
@@ -157,7 +164,7 @@ class Utilisateur extends BaseModel {
                 $data['email'],
                 $data['telephone'],
                 $data['login'],
-                $data['role']
+                1
             ],
             "WHERE id_utilisateur = ?",
             [$id]
@@ -186,7 +193,7 @@ class Utilisateur extends BaseModel {
         $stmt = $this->personnalSelect(
             "utilisateur",
             "*",
-            "WHERE login = ?",
+            "WHERE BINARY login = ?",
             [$login]
         );
         return $stmt->fetch(PDO::FETCH_ASSOC);

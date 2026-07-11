@@ -150,6 +150,9 @@
 			                }
 			                    
 		                }
+		                else{
+		                	$('.erreur').hide().html('<div class="alert alert-block alert-danger"><i class="icofont-close" style="margin-right: 10px; font-weight: bold;"></i>No Available service </div>').slideDown(500);
+		                }
 		                
 		            },
 		        });

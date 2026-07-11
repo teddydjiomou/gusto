@@ -300,7 +300,6 @@ $(document).on('click', '.edit-user', async function() {
             $('#user input[name="email"]').val(e.email);
             $('#user input[name="telephone"]').val(e.telephone);
             $('#user input[name="login"]').val(e.login);
-            $('#user select[name="role"]').val(e.role);
             $('#user select[name="id_etablissement"]').val(e.id_etablissement);
             
             $('.modal-user .modal-title').text("Modifier le client");

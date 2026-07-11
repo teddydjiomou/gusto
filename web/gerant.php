@@ -71,6 +71,9 @@
 
         <!-- HEADER -->
         <header class="header">
+            <button class="menu-toggle" id="menuToggle">
+                <i class="fas fa-bars"></i>
+            </button>
 
             <div>
                 <h2>Bonjour <span id="userLogin"></span> 👋</h2>
@@ -420,13 +423,6 @@
                     </div>
                     <div class="col-lg-12">
                       <input type="text" name="adresse" placeholder="Entrer l'adresse" class="form-control">
-                    </div>
-                    <div class="col-lg-12">
-                        <select name="role" required>
-                            <option value="" disabled selected>&nbsp;&nbsp;&nbsp;Choisir le rôle</option>
-                            <option value="2">&nbsp;&nbsp;&nbsp;Serveur</option>
-                            <option value="1">&nbsp;&nbsp;&nbsp;Gérant</option>
-                        </select>
                     </div>
                     <input type="hidden" name="id">
                     <div class="col-md-12 text-center">

@@ -37,7 +37,7 @@ class Categorie extends BaseModel {
             "categorie",
             ["id_etablissement", "libelle"],
             [
-                $data['id_etablissement'],
+                $id_etablissement,
                 $data['libelle']
             ]
         );
