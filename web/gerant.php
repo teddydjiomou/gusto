@@ -82,10 +82,6 @@
 
             <div class="header-actions">
 
-                <button class="notification-btn">
-                    <i class="fa-solid fa-bell"></i>
-                </button>
-
                 <div class="avatar" id="profileBtn"></div>
 
             </div>
@@ -145,7 +141,7 @@
                 </button>
             </div>
 
-            <div class="table-responsive">
+            <div class="table-responsive" style="height: 310px; overflow-y: scroll; scrollbar-width: thin;">
 
                 <table class="info-table">
                     <thead>
@@ -172,7 +168,7 @@
                 </button>
             </div>
 
-            <div class="table-responsive">
+            <div class="table-responsive" style="height: 310px; overflow-y: scroll; scrollbar-width: thin;">
                 <table class="info-cat">
                     <thead>
                         <tr>
@@ -197,7 +193,7 @@
                 </button>
             </div>
 
-            <div class="table-responsive">
+            <div class="table-responsive" style="height: 310px; overflow-y: scroll; scrollbar-width: thin;">
                 <table class="info-produit">
                     <thead>
                         <tr>
@@ -224,7 +220,7 @@
                 </button>
             </div>
 
-            <div class="table-responsive">
+            <div class="table-responsive" style="height: 310px; overflow-y: scroll; scrollbar-width: thin;">
                 <table class="info-user">
                     <thead>
                         <tr>
@@ -238,7 +234,7 @@
                     <tbody></tbody>
                 </table>
             </div>
-            
+
         </section>
 
         <section id="commandes" class="content-section" style="display:none">

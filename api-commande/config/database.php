@@ -52,11 +52,11 @@ class Database {
                 'user' => getenv('JAWSDB_USERNAME'),
                 'password' => getenv('JAWSDB_PASSWORD')
             ],
-             [
-               // autre connexion
+             // [
+               
                 
                 
-             ]
+             // ]
         ];
     
         foreach (self::$servers as $srv) {
