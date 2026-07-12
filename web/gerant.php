@@ -145,17 +145,21 @@
                 </button>
             </div>
 
-            <table class="info-table">
-                <thead>
-                    <tr>
-                        <th>Table</th>
-                        <th>Etat</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
+            <div class="table-responsive">
 
-                <tbody></tbody>
-            </table>
+                <table class="info-table">
+                    <thead>
+                        <tr>
+                            <th>Table</th>
+                            <th>Etat</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody></tbody>
+                </table>
+
+            </div>
 
         </section>
 
@@ -168,15 +172,17 @@
                 </button>
             </div>
 
-            <table class="info-cat">
-                <thead>
-                    <tr>
-                        <th>Libelle</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
+            <div class="table-responsive">
+                <table class="info-cat">
+                    <thead>
+                        <tr>
+                            <th>Libelle</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
         </section>
 
 
@@ -191,19 +197,20 @@
                 </button>
             </div>
 
-            <table class="info-produit">
-                <thead>
-                    <tr>
-                        <th>Image</th>
-                        <th>Nom</th>
-                        <th>Prix</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
+            <div class="table-responsive">
+                <table class="info-produit">
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>Nom</th>
+                            <th>Prix</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
 
-                <tbody></tbody>
-            </table>
-
+                    <tbody></tbody>
+                </table>
+            </div>
         </section>
 
         <!-- EMPLOYES -->
@@ -217,19 +224,21 @@
                 </button>
             </div>
 
-            <table class="info-user">
-                <thead>
-                    <tr>
-                        <th>Nom</th>
-                        <th>login</th>
-                        <th>Date</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
+            <div class="table-responsive">
+                <table class="info-user">
+                    <thead>
+                        <tr>
+                            <th>Nom</th>
+                            <th>login</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
 
-                <tbody></tbody>
-            </table>
-
+                    <tbody></tbody>
+                </table>
+            </div>
+            
         </section>
 
         <section id="commandes" class="content-section" style="display:none">
@@ -263,7 +272,7 @@
                       <input type="text" name="login" class="form-control" disabled id="modalLoginField">
                     </div>
                     <div class="col-lg-12">
-                      <input type="password" name="password" placeholder="Entrer le mot de passe" class="form-control password">
+                      <input type="password" name="password" placeholder="Entrer le mot de passe" minlength="8" pattern="^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.#_\-])[A-Za-z\d@$!%*?&.#_\-]{8,}$" title="Le mot de passe doit contenir au moins 8 caractères, une majuscule, un chiffre et un caractère spécial." class="form-control password">
                     </div>
                     <div class="col-md-12 text-center">
                       <button class="loading" type="submit"></button>

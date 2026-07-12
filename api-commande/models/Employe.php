@@ -5,13 +5,6 @@ require_once __DIR__ . '/../utils/phpmailer/src/Exception.php';
 require_once __DIR__ . '/../utils/phpmailer/src/PHPMailer.php';
 require_once __DIR__ . '/../utils/phpmailer/src/SMTP.php';
 
-require __DIR__ . '/../../vendor/autoload.php';
-
-if (file_exists(__DIR__ . '/../../.env')) {
-    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../../');
-    $dotenv->load();
-}
-
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
@@ -26,7 +19,7 @@ class Utilisateur extends BaseModel {
     {
         // Nettoyer le nom
         $prefix = strtolower(preg_replace('/[^A-Z0-9]/i', '', $name));
-        $prefix = substr($prefix, 0, 3);
+        $prefix = substr($prefix, 0, 2);
 
         // Partie aléatoire sécurisée
         $random = strtolower(bin2hex(random_bytes(ceil($randomLength / 2))));
@@ -103,8 +96,8 @@ class Utilisateur extends BaseModel {
             $mail->isSMTP();
             $mail->Host       = 'smtp.gmail.com';
             $mail->SMTPAuth   = true;
-            $mail->Username   = getenv('email'); /*$_ENV['email'];*/
-            $mail->Password   = getenv('password_app'); /*$_ENV['password_app'];*/
+            $mail->Username   = 'djiomounandavivienenderlin@gmail.com';
+            $mail->Password   = 'dhtc ixqe gqxz hqxy';
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $mail->Port       = 587;
 
@@ -118,7 +111,6 @@ class Utilisateur extends BaseModel {
                 <p>Votre compte a été créé avec succès.</p>
                 <p><strong>Login :</strong> {$data['login']}<br>
                    <strong>Password :</strong> {$password}</p>
-                <p>You can change your password at any time</p>
             ";
 
             $mail->send();

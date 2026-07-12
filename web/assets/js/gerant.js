@@ -1130,3 +1130,12 @@ $(document).on('click', '.delete-user', async function () {
         alert("Erreur serveur : " + err.message);
     }
 });
+
+const toggle = document.getElementById("menuToggle");
+const sidebar = document.querySelector(".sidebar");
+const main = document.querySelector(".main");
+
+toggle.addEventListener("click", () => {
+    sidebar.classList.toggle("close");
+    main.classList.toggle("full");
+});
