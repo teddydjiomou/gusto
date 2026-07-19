@@ -46,16 +46,15 @@ class Produit extends BaseModel {
     // Créer un produit
     // =========================
 
-        $stmt = $this->personnalSelect(
-        "etablissement",
-        "devise",
-        "WHERE id_etablissement = ?",
-        [$id_etablissement]
-    );
-
-    $devise = $stmt->fetch(PDO::FETCH_ASSOC)['devise'];
-
     public function create($data, $id_etablissement) {
+        $stmt = $this->personnalSelect(
+            "etablissement",
+            "devise",
+            "WHERE id_etablissement = ?",
+            [$id_etablissement]
+        );
+
+        $devise = $stmt->fetch(PDO::FETCH_ASSOC)['devise'];
         $this->insert(
             "produit",
             ["id_etablissement", "nom", "image", "id_categorie", "prix", "devise", "description"],
