@@ -562,6 +562,7 @@ $('#userLoginForm').on('submit', function(e){
                     parseJwt(res.token).data.login;
 
                 $('.modal-login').modal('hide');
+                alert('mise à jour effectuer');
 
             } else {
                 alert(res.message);

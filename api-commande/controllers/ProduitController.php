@@ -56,7 +56,10 @@ class ProduitController {
 
         // Gestion image
         if (!empty($_FILES['image'])) {
-            $upload = uploadfile(['png','jpg','jpeg','gif','ico'],'/../uploads/images/');
+            $upload = uploadfile(
+                ['png','jpg','jpeg','gif','ico'],
+                __DIR__ . '/../uploads/images/'
+            );
             $data['image'] = json_encode($upload);
         }
 
@@ -84,7 +87,10 @@ class ProduitController {
 
         // Gestion image
         if (!empty($_FILES['image']) && $_FILES['image']['error'] !== 4) {
-            $upload = uploadfile(['png','jpg','jpeg','gif','ico'],'/../uploads/images/');
+            $upload = uploadfile(
+                ['png','jpg','jpeg','gif','ico'],
+                __DIR__ . '/../uploads/images/'
+            );
             $data['image'] = json_encode($upload);
         } else {
             $data['image'] = $e['image']; // garder l'ancien

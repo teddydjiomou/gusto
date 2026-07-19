@@ -32,8 +32,8 @@ class Utilisateur extends BaseModel {
         $stmt = $this->personnalSelect(
             "utilisateur",
             "*",
-            "WHERE id_etablissement = ?",
-            [$id_etablissement]
+            "WHERE id_etablissement = ? AND role != ?",
+            [$id_etablissement, 1]
         );
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
