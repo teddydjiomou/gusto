@@ -216,8 +216,8 @@ class Utilisateur extends BaseModel {
             $mail->isSMTP();
             $mail->Host       = 'smtp.gmail.com';
             $mail->SMTPAuth   = true;
-            $mail->Username   = 'djiomounandavivienenderlin@gmail.com';
-            $mail->Password   = 'dhtc ixqe gqxz hqxy';
+            $mail->Username   = 'gusto7439@gmail.com';
+            $mail->Password   = 'ibep pfrv htds mqky';
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $mail->Port       = 587;
 
