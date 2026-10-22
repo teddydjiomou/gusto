@@ -118,12 +118,12 @@ class Utilisateur extends BaseModel {
             $mail->isSMTP();
             $mail->Host       = 'smtp.gmail.com';
             $mail->SMTPAuth   = true;
-            $mail->Username   = 'djiomounandavivienenderlin@gmail.com';
-            $mail->Password   = 'dhtc ixqe gqxz hqxy';
+            $mail->Username   = 'gusto7439@gmail.com';
+            $mail->Password   = 'ibep pfrv htds mqky';
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $mail->Port       = 587;
 
-            $mail->setFrom('djiomounandavivienenderlin@gmail.com', 'Gusto');
+            $mail->setFrom('gusto7439@gmail.com', 'Gusto');
             $mail->addAddress($data['email'], $data['nom']);
 
             $mail->isHTML(true);
@@ -222,7 +222,7 @@ class Utilisateur extends BaseModel {
             $mail->Port       = 587;
 
             $mail->setFrom(
-                'djiomounandavivienenderlin@gmail.com',
+                'gusto7439@gmail.com',
                 'Gusto'
             );
 

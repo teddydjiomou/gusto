@@ -126,7 +126,7 @@ class Utilisateur extends BaseModel {
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $mail->Port       = 587;
 
-            $mail->setFrom('djiomounandavivienenderlin@gmail.com', 'Gusto');
+            $mail->setFrom('gusto7439@gmail.com', 'Gusto');
             $mail->addAddress($data['email'], $data['nom']);
 
             $mail->isHTML(true);
